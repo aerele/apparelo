@@ -5,18 +5,114 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "dia"
+  "parameter",
+  "varients_based_on_section",
+  "dia",
+  "type",
+  "gsm",
+  "texture",
+  "gauge",
+  "loop_length",
+  "conversion_details_section",
+  "input_qty",
+  "output_qty",
+  "column_break_12",
+  "input_uom",
+  "output_uom"
  ],
  "fields": [
   {
-   "allow_in_quick_entry": 1,
+   "default": "1",
    "fieldname": "dia",
-   "fieldtype": "Table",
+   "fieldtype": "Check",
    "label": "Dia",
-   "options": "Knitting Dia"
+   "read_only": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "parameter",
+   "fieldtype": "Table",
+   "label": "Parameter",
+   "options": "Knitting Parameter"
+  },
+  {
+   "fieldname": "varients_based_on_section",
+   "fieldtype": "Section Break",
+   "label": "Varients Based On",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "type",
+   "fieldtype": "Check",
+   "label": "Type",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "gsm",
+   "fieldtype": "Check",
+   "label": "GSM",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "texture",
+   "fieldtype": "Check",
+   "label": "Texture",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "gauge",
+   "fieldtype": "Check",
+   "label": "Gauge",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "loop_length",
+   "fieldtype": "Check",
+   "label": "Loop Length",
+   "read_only": 1
+  },
+  {
+   "fieldname": "conversion_details_section",
+   "fieldtype": "Section Break",
+   "label": "Conversion Details"
+  },
+  {
+   "default": "1",
+   "fieldname": "input_qty",
+   "fieldtype": "Float",
+   "label": "Input Qty"
+  },
+  {
+   "default": "1",
+   "fieldname": "output_qty",
+   "fieldtype": "Float",
+   "label": "Output Qty"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Kg",
+   "fieldname": "input_uom",
+   "fieldtype": "Link",
+   "label": "Input UOM",
+   "options": "UOM"
+  },
+  {
+   "default": "Kg",
+   "fieldname": "output_uom",
+   "fieldtype": "Link",
+   "label": "Output UOM",
+   "options": "UOM"
   }
  ],
- "modified": "2019-10-02 14:21:37.790655",
+ "modified": "2019-10-02 17:00:28.142748",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Knitting",

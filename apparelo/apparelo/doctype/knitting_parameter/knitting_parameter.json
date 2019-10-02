@@ -1,5 +1,5 @@
 {
- "creation": "2019-10-02 13:58:14.249660",
+ "creation": "2019-10-02 16:25:56.713324",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -8,7 +8,7 @@
   "type",
   "gsm",
   "texture",
-  "guage",
+  "gauge",
   "loop_length"
  ],
  "fields": [
@@ -39,10 +39,10 @@
    "label": "Texture"
   },
   {
-   "fieldname": "guage",
+   "fieldname": "gauge",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Guage"
+   "label": "Gauge"
   },
   {
    "fieldname": "loop_length",
@@ -52,10 +52,10 @@
   }
  ],
  "istable": 1,
- "modified": "2019-10-02 14:02:53.705443",
+ "modified": "2019-10-02 16:25:56.713324",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Knitting Dia",
+ "name": "Knitting Parameter",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
