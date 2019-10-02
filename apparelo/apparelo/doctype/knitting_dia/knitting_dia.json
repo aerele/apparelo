@@ -1,0 +1,65 @@
+{
+ "creation": "2019-10-02 13:58:14.249660",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "dia",
+  "type",
+  "gsm",
+  "texture",
+  "guage",
+  "loop_length"
+ ],
+ "fields": [
+  {
+   "fieldname": "dia",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Dia",
+   "precision": "2"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "\nSingle Rib\nFine\nRib\nSingle Rib (Fold)\nFine (Fold)\nRib (Fold)"
+  },
+  {
+   "fieldname": "gsm",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "GSM"
+  },
+  {
+   "fieldname": "texture",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Texture"
+  },
+  {
+   "fieldname": "guage",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Guage"
+  },
+  {
+   "fieldname": "loop_length",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Loop Length"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-10-02 14:02:53.705443",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Knitting Dia",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,68 @@
+{
+ "creation": "2019-10-02 13:14:57.659926",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_name",
+  "sizes",
+  "colours",
+  "processes",
+  "additional_flows"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sizes",
+   "fieldtype": "Table",
+   "label": "Sizes",
+   "options": "Item Production Detail Size"
+  },
+  {
+   "fieldname": "colours",
+   "fieldtype": "Table",
+   "label": "Colours",
+   "options": "Item Production Detail Colour"
+  },
+  {
+   "fieldname": "processes",
+   "fieldtype": "Table",
+   "label": "Processes",
+   "options": "Item Production Detail Process"
+  },
+  {
+   "fieldname": "additional_flows",
+   "fieldtype": "Table",
+   "label": "Additional Flows",
+   "options": "Item Production Detail Additional BOM"
+  }
+ ],
+ "modified": "2019-10-02 13:52:03.893392",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Item Production Detail",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
