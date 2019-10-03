@@ -1,0 +1,52 @@
+{
+ "creation": "2019-10-02 13:43:14.196316",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "input_item",
+  "input_index",
+  "process_name",
+  "process_record"
+ ],
+ "fields": [
+  {
+   "fieldname": "input_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Input Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "input_index",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Input Index"
+  },
+  {
+   "fieldname": "process_record",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Process Record",
+   "options": "process_name"
+  },
+  {
+   "fieldname": "process_name",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Process Name",
+   "options": "DocType"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-10-02 13:44:30.778500",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Item Production Detail Process",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
