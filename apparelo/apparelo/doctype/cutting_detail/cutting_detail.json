@@ -1,0 +1,57 @@
+{
+ "creation": "2019-10-03 12:59:33.859798",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "part",
+  "dia",
+  "size",
+  "weight"
+ ],
+ "fields": [
+  {
+   "fieldname": "part",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Part",
+   "options": "\nFront\nBack\nPanel\nSleeve",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dia",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Dia",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Size",
+   "options": "\n35 cm\n40 cm\n45 cm\n50 cm\n55 cm\n60 cm\n65 cm\n70 cm\n75 cm\n80 cm\n85 cm\n90 cm\n95 cm\n100 cm\n105 cm\n110 cm\n115 cm",
+   "reqd": 1
+  },
+  {
+   "description": "In grams",
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Weight",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-10-03 14:07:18.830377",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Cutting Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

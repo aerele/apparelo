@@ -1,0 +1,29 @@
+{
+ "creation": "2019-10-03 15:34:10.504879",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "dia"
+ ],
+ "fields": [
+  {
+   "fieldname": "dia",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Dia",
+   "precision": "2"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-10-03 15:34:10.504879",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Knitting Dia",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

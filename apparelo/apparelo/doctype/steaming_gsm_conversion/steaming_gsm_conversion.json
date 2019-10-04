@@ -1,0 +1,35 @@
+{
+ "creation": "2019-10-03 12:46:47.801027",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "from_gsm",
+  "to_gsm"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_gsm",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "From GSM"
+  },
+  {
+   "fieldname": "to_gsm",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "To GSM"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-10-03 12:49:07.510991",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Steaming GSM Conversion",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

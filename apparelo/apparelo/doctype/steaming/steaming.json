@@ -1,28 +1,26 @@
 {
  "autoname": "Prompt",
- "creation": "2019-10-02 14:15:32.721640",
+ "creation": "2019-10-03 12:47:25.417597",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "type",
+  "dia_conversions",
   "conversion_details_section",
   "input_qty",
   "output_qty",
   "column_break_5",
-  "input__uom",
+  "input_uom",
   "output_uom",
   "amended_from"
  ],
  "fields": [
   {
    "allow_in_quick_entry": 1,
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Type",
-   "options": "\nWhite\nMelange",
-   "reqd": 1
+   "fieldname": "dia_conversions",
+   "fieldtype": "Table",
+   "label": "Dia Conversions",
+   "options": "Steaming Dia Conversion"
   },
   {
    "allow_in_quick_entry": 1,
@@ -31,34 +29,29 @@
    "label": "Conversion Details"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "1",
    "fieldname": "input_qty",
    "fieldtype": "Float",
    "label": "Input Qty"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "1",
    "fieldname": "output_qty",
    "fieldtype": "Float",
    "label": "Output Qty"
   },
   {
-   "allow_in_quick_entry": 1,
    "fieldname": "column_break_5",
    "fieldtype": "Column Break"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "Kg",
-   "fieldname": "input__uom",
+   "fieldname": "input_uom",
    "fieldtype": "Link",
-   "label": "Input  UOM",
+   "label": "Input UOM",
    "options": "UOM"
   },
   {
-   "allow_in_quick_entry": 1,
    "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
@@ -70,16 +63,16 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Bleaching",
+   "options": "Steaming",
    "print_hide": 1,
    "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-03 13:52:16.504998",
+ "modified": "2019-10-03 16:05:22.983136",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Bleaching",
+ "name": "Steaming",
  "owner": "Administrator",
  "permissions": [
   {
