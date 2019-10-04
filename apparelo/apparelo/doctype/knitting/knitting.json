@@ -5,35 +5,34 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "parameter",
-  "varients_based_on_section",
   "dia",
   "type",
   "gsm",
   "texture",
   "gauge",
   "loop_length",
+  "varients_based_on_section",
+  "check_dia",
+  "check_type",
+  "check_gsm",
+  "check_texture",
+  "check_gauge",
+  "check_loop_length",
   "conversion_details_section",
   "input_qty",
   "output_qty",
   "column_break_12",
   "input_uom",
-  "output_uom"
+  "output_uom",
+  "amended_from"
  ],
  "fields": [
   {
-   "default": "1",
-   "fieldname": "dia",
-   "fieldtype": "Check",
-   "label": "Dia",
-   "read_only": 1
-  },
-  {
    "allow_in_quick_entry": 1,
-   "fieldname": "parameter",
+   "fieldname": "dia",
    "fieldtype": "Table",
-   "label": "Parameter",
-   "options": "Knitting Parameter"
+   "label": "Dia",
+   "options": "Knitting Dia"
   },
   {
    "fieldname": "varients_based_on_section",
@@ -42,39 +41,24 @@
    "read_only": 1
   },
   {
-   "default": "1",
-   "fieldname": "type",
-   "fieldtype": "Check",
-   "label": "Type",
-   "read_only": 1
-  },
-  {
-   "default": "0",
    "fieldname": "gsm",
-   "fieldtype": "Check",
-   "label": "GSM",
-   "read_only": 1
+   "fieldtype": "Data",
+   "label": "GSM"
   },
   {
-   "default": "0",
    "fieldname": "texture",
-   "fieldtype": "Check",
-   "label": "Texture",
-   "read_only": 1
+   "fieldtype": "Data",
+   "label": "Texture"
   },
   {
-   "default": "0",
    "fieldname": "gauge",
-   "fieldtype": "Check",
-   "label": "Gauge",
-   "read_only": 1
+   "fieldtype": "Data",
+   "label": "Gauge"
   },
   {
-   "default": "0",
    "fieldname": "loop_length",
-   "fieldtype": "Check",
-   "label": "Loop Length",
-   "read_only": 1
+   "fieldtype": "Data",
+   "label": "Loop Length"
   },
   {
    "fieldname": "conversion_details_section",
@@ -110,9 +94,67 @@
    "fieldtype": "Link",
    "label": "Output UOM",
    "options": "UOM"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Knitting",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "check_dia",
+   "fieldtype": "Check",
+   "label": "Dia",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "check_type",
+   "fieldtype": "Check",
+   "label": "Type",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "check_gsm",
+   "fieldtype": "Check",
+   "label": "GSM",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "check_texture",
+   "fieldtype": "Check",
+   "label": "Texture",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "check_gauge",
+   "fieldtype": "Check",
+   "label": "Gauge",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "check_loop_length",
+   "fieldtype": "Check",
+   "label": "Loop Length",
+   "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "\nSingle Rib\nFine\nSingle Rib (Fold)\nFine (Fold)"
   }
  ],
- "modified": "2019-10-02 17:00:28.142748",
+ "is_submittable": 1,
+ "modified": "2019-10-03 15:56:04.306833",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Knitting",
