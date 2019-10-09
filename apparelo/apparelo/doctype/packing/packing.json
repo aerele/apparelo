@@ -1,46 +1,15 @@
 {
  "autoname": "Prompt",
- "creation": "2019-10-03 13:22:36.708923",
+ "creation": "2019-10-09 13:54:11.430615",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "colour_mappings",
-  "parts_per_piece",
-  "additional_parts",
+  "additional_part",
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "parts_per_piece",
-   "fieldtype": "Table",
-   "label": "Parts Per Piece",
-   "options": "Stitching Parts Per Piece",
-   "reqd": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Stitching",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
-   "fieldname": "colour_mappings",
-   "fieldtype": "Table",
-   "label": "Colour Mappings",
-   "options": "Stitching Colour Mapping",
-   "reqd": 1
-  },
-  {
-   "fieldname": "additional_parts",
-   "fieldtype": "Table",
-   "label": "Additional Parts",
-   "options": "Stitching Additional Part"
-  },
   {
    "fieldname": "item",
    "fieldtype": "Link",
@@ -48,13 +17,29 @@
    "label": "Item",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "additional_part",
+   "fieldtype": "Table",
+   "label": "Additional Part",
+   "options": "Stitching Additional Part",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Packing",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 12:50:10.669812",
+ "modified": "2019-10-09 13:54:11.430615",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Stitching",
+ "name": "Packing",
  "owner": "Administrator",
  "permissions": [
   {

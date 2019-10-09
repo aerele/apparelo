@@ -1,22 +1,28 @@
 {
  "autoname": "Prompt",
- "creation": "2019-10-03 13:22:36.708923",
+ "creation": "2019-10-09 13:09:41.825770",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
-  "colour_mappings",
-  "parts_per_piece",
+  "part",
   "additional_parts",
   "amended_from"
  ],
  "fields": [
   {
-   "fieldname": "parts_per_piece",
+   "fieldname": "part",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Part",
+   "options": "\nFront\nBack\nPanel\nSleeve",
+   "reqd": 1
+  },
+  {
+   "fieldname": "additional_parts",
    "fieldtype": "Table",
-   "label": "Parts Per Piece",
-   "options": "Stitching Parts Per Piece",
+   "label": "Additional Parts",
+   "options": "Stitching Additional Part",
    "reqd": 1
   },
   {
@@ -24,37 +30,16 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Stitching",
+   "options": "Label Fusing",
    "print_hide": 1,
    "read_only": 1
-  },
-  {
-   "fieldname": "colour_mappings",
-   "fieldtype": "Table",
-   "label": "Colour Mappings",
-   "options": "Stitching Colour Mapping",
-   "reqd": 1
-  },
-  {
-   "fieldname": "additional_parts",
-   "fieldtype": "Table",
-   "label": "Additional Parts",
-   "options": "Stitching Additional Part"
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 12:50:10.669812",
+ "modified": "2019-10-09 13:23:41.140902",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Stitching",
+ "name": "Label Fusing",
  "owner": "Administrator",
  "permissions": [
   {

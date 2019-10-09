@@ -11,6 +11,70 @@ class Knitting(Document):
 		create_item_template()
 
 def create_item_template():
+	if not frappe.db.exists("Item Attribute", "Yarn Shade"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Yarn Shade",
+			"item_attribute_values": [
+				{
+					"attribute_value" : "Grey",
+					"abbr" : "Grey"
+				},
+				{
+					"attribute_value" : "A.Melange",
+					"abbr" : "A.Melange"
+				},
+				{
+					"attribute_value" : "G.Melange",
+					"abbr" : "G.Melange"
+				}
+			]
+		}).save()
+	
+	if not frappe.db.exists("Item Attribute", "Yarn Category"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Yarn Category",
+			"item_attribute_values": [
+				{
+					"attribute_value" : "Green Label",
+					"abbr" : "Green Label"
+				},
+				{
+					"attribute_value" : "Violet Label",
+					"abbr" : "Violet Label"
+				},
+				{
+					"attribute_value" : "Red Label",
+					"abbr" : "Red Label"
+				}
+			]
+		}).save()
+	
+	if not frappe.db.exists("Item Attribute", "Yarn Count"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Yarn Count",
+			"item_attribute_values": [
+				{
+					"attribute_value" : "30'S",
+					"abbr" : "30'S"
+				},
+				{
+					"attribute_value" : "34'S",
+					"abbr" : "34'S"
+				},
+				{
+					"attribute_value" : "36'S",
+					"abbr" : "36'S"
+				},
+				{
+					"attribute_value" : "40'S",
+					"abbr" : "40'S"
+				}
+			]
+		}).save()
+
 	if not frappe.db.exists("Item Attribute", "Dia"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -20,7 +84,6 @@ def create_item_template():
 			"to_range": 36.0,
 			"increment": 0.25
 		}).save()
-
 	if not frappe.db.exists("Item Attribute", "Knitting Type"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -48,6 +111,29 @@ def create_item_template():
 	# todo: need to check if an item already exists with the same name
 	item = frappe.get_doc({
 		"doctype": "Item",
+		"item_code": "Yarn",
+		"item_name": "Yarn",
+		"description": "Yarn",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Kg",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"attributes" : [
+			{
+				"attribute" : "Yarn Shade" 
+			},
+			{
+				"attribute" : "Yarn Category"
+			},
+			{
+				"attribute" : "Yarn Count"
+			}
+		]
+	})
+	item.save()
+	item.submit()
+	item = frappe.get_doc({
+		"doctype": "Item",
 		"item_code": "Knitted Cloth",
 		"item_name": "Knitted Cloth",
 		"description": "Knitted Cloth",
@@ -56,6 +142,15 @@ def create_item_template():
 		"has_variants" : "1",
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
+			{
+				"attribute" : "Yarn Shade" 
+			},
+			{
+				"attribute" : "Yarn Category"
+			},
+			{
+				"attribute" : "Yarn Count"
+			},
 			{
 				"attribute" : "Dia" 
 			},
