@@ -8,30 +8,45 @@ from frappe.model.document import Document
 
 class LabelFusing(Document):
 	def on_submit(self):
-		create_item_template()
+		create_item_template(self)
 
-def create_item_template():
-	if not frappe.db.exists("Item Attribute", "Part"):
-		frappe.get_doc({
-			"doctype": "Item Attribute",
-			"attribute_name": "Part",
-			"item_attribute_values": [
-				{
-					"attribute_value" : "Front",
-					"abbr" : "Front"
-				},
-				{
-					"attribute_value" : "Back",
-					"abbr" : "Back"
-				},
-				{
-					"attribute_value" : "Panel",
-					"abbr" : "Panel"
-				},
-				{
-					"attribute_value" : "Sleeve",
-					"abbr" : "Sleeve"
-				}
-			]
-		}).save()
-
+def create_item_template(self):
+	# todo: need to check if an item already exists with the same name
+	item = frappe.get_doc({
+		"doctype": "Item",
+		"item_code": self.item+" Labeled Cloth",
+		"item_name": self.item+" Labeled Cloth",
+		"description":self.item+" Labeled Cloth",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Kg",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"attributes" : [
+			{
+				"attribute" : "Yarn Shade" 
+			},
+			{
+				"attribute" : "Yarn Category"
+			},
+			{
+			
+				"attribute" : "Yarn Count"
+			},
+			{
+				"attribute" : "Dia" 
+			},
+			{
+				"attribute" : "Knitting Type"
+			},
+			{
+				"attribute" : "Apparelo Colour" 
+			},
+			{
+				"attribute" : "Part" 
+			},
+			{
+				"attribute" : "Apparelo Size"
+			}
+		]
+	})
+	item.save()

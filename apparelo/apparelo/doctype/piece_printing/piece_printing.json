@@ -5,6 +5,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "item",
   "part",
   "amended_from"
  ],
@@ -25,10 +26,17 @@
    "options": "Piece Printing",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 13:35:03.967054",
+ "modified": "2019-10-09 20:10:52.072365",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Piece Printing",

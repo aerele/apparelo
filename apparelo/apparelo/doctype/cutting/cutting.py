@@ -9,7 +9,7 @@ from frappe.model.document import Document
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
-		create_item_template()
+		create_item_template(self)
 
 def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Part"):
@@ -110,13 +110,13 @@ def create_item_attribute():
 				}
 			]
 		}).save()
-	def create_item_template():
+def create_item_template(self):
 	# todo: need to check if an item already exists with the same name
 	item = frappe.get_doc({
 		"doctype": "Item",
-		"item_code": "Cut Cloth",
-		"item_name": "Cut Cloth",
-		"description": "Cut Cloth",
+		"item_code": self.item+" Cut Cloth",
+		"item_name": self.item+" Cut Cloth",
+		"description":self.item+" Cut Cloth",
 		"item_group": "Sub Assemblies",
 		"stock_uom" : "Kg",
 		"has_variants" : "1",
@@ -128,6 +128,7 @@ def create_item_attribute():
 			{
 				"attribute" : "Yarn Category"
 			},
+			{
 			
 				"attribute" : "Yarn Count"
 			},
