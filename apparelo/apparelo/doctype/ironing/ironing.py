@@ -50,4 +50,3 @@ def create_item_template(self):
 		]
 	})
 	item.save()
-

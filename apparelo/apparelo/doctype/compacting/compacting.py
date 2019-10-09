@@ -10,33 +10,6 @@ class Compacting(Document):
 		create_item_template()
 
 def create_item_template():
-	if not frappe.db.exists("Item Attribute", "From Dia"):
-		frappe.get_doc({
-			"doctype": "Item Attribute",
-			"attribute_name": "From Dia",
-			"numeric_values": 1,
-			"from_range": 18.0,
-			"to_range": 36.0,
-			"increment": 0.25
-		}).save()
-	if not frappe.db.exists("Item Attribute", "To Dia"):
-		frappe.get_doc({
-			"doctype": "Item Attribute",
-			"attribute_name": "To Dia",
-			"numeric_values": 1,
-			"from_range": 18.0,
-			"to_range": 36.0,
-			"increment": 0.25
-		}).save()
-	# if not frappe.db.exists("Item Attribute", "Target GSM"):
-	# 	frappe.get_doc({
-	# 		"doctype": "Item Attribute",
-	# 		"attribute_name": "Target GSM",
-	# 		"numeric_values": 1,
-	# 		"from_range": 120,
-	# 		"to_range": 180,
-	# 		"increment": 1
-	# 	}).save()
 	# todo: need to check if an item already exists with the same name
 	item = frappe.get_doc({
 		"doctype": "Item",
@@ -69,4 +42,3 @@ def create_item_template():
 		]
 	})
 	item.save()
-	item.submit()

@@ -160,4 +160,3 @@ def create_item_template():
 		]
 	})
 	item.save()
-	item.submit()
