@@ -11,13 +11,6 @@
   "texture",
   "gauge",
   "loop_length",
-  "varients_based_on_section",
-  "check_dia",
-  "check_type",
-  "check_gsm",
-  "check_texture",
-  "check_gauge",
-  "check_loop_length",
   "conversion_details_section",
   "input_qty",
   "output_qty",
@@ -32,13 +25,8 @@
    "fieldname": "dia",
    "fieldtype": "Table",
    "label": "Dia",
-   "options": "Knitting Dia"
-  },
-  {
-   "fieldname": "varients_based_on_section",
-   "fieldtype": "Section Break",
-   "label": "Varients Based On",
-   "read_only": 1
+   "options": "Knitting Dia",
+   "reqd": 1
   },
   {
    "fieldname": "gsm",
@@ -69,13 +57,17 @@
    "default": "1",
    "fieldname": "input_qty",
    "fieldtype": "Float",
-   "label": "Input Qty"
+   "in_list_view": 1,
+   "label": "Input Qty",
+   "reqd": 1
   },
   {
    "default": "1",
    "fieldname": "output_qty",
    "fieldtype": "Float",
-   "label": "Output Qty"
+   "in_list_view": 1,
+   "label": "Output Qty",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_12",
@@ -85,15 +77,18 @@
    "default": "Kg",
    "fieldname": "input_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Input UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
    "label": "Output UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -105,56 +100,16 @@
    "read_only": 1
   },
   {
-   "default": "1",
-   "fieldname": "check_dia",
-   "fieldtype": "Check",
-   "label": "Dia",
-   "read_only": 1
-  },
-  {
-   "default": "1",
-   "fieldname": "check_type",
-   "fieldtype": "Check",
-   "label": "Type",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "check_gsm",
-   "fieldtype": "Check",
-   "label": "GSM",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "check_texture",
-   "fieldtype": "Check",
-   "label": "Texture",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "check_gauge",
-   "fieldtype": "Check",
-   "label": "Gauge",
-   "read_only": 1
-  },
-  {
-   "default": "0",
-   "fieldname": "check_loop_length",
-   "fieldtype": "Check",
-   "label": "Loop Length",
-   "read_only": 1
-  },
-  {
    "fieldname": "type",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Type",
-   "options": "\nSingle Rib\nFine\nSingle Rib (Fold)\nFine (Fold)"
+   "options": "\nSingle Rib\nFine\nSingle Rib (Fold)\nFine (Fold)",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-03 15:56:04.306833",
+ "modified": "2019-10-04 15:49:22.103801",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Knitting",
