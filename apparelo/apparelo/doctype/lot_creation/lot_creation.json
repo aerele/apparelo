@@ -5,29 +5,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "items",
-  "item_details",
+  "item",
+  "item_production_detail",
   "amended_from"
  ],
  "fields": [
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "items",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Items",
-   "options": "Item",
-   "reqd": 1
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "item_details",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item details",
-   "options": "Item Production Detail",
-   "reqd": 1
-  },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
@@ -36,10 +18,28 @@
    "options": "Lot Creation",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "item_production_detail",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item production detail",
+   "options": "Item Production Detail",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 10:22:46.433202",
+ "modified": "2019-10-09 10:34:23.971843",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
