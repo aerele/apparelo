@@ -1,11 +1,10 @@
 {
- "autoname": "field:name1",
+ "autoname": "Prompt",
  "creation": "2019-10-08 11:49:31.987436",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "name1",
   "items",
   "item_details",
   "amended_from"
@@ -30,13 +29,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name",
-   "reqd": 1,
-   "unique": 1
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -47,7 +39,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-08 12:14:04.237559",
+ "modified": "2019-10-09 10:22:46.433202",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
