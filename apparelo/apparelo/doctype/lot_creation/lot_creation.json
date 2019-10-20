@@ -1,0 +1,62 @@
+{
+ "autoname": "Prompt",
+ "creation": "2019-10-08 11:49:31.987436",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "item_production_detail",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Creation",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "item_production_detail",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item production detail",
+   "options": "Item Production Detail"
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2019-10-10 11:07:22.045008",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Creation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
