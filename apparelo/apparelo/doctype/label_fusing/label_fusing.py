@@ -6,16 +6,17 @@ from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
 
-class Bleaching(Document):
+class LabelFusing(Document):
 	def on_submit(self):
-		create_item_template()
-def create_item_template():
+		create_item_template(self)
+
+def create_item_template(self):
 	# todo: need to check if an item already exists with the same name
 	item = frappe.get_doc({
 		"doctype": "Item",
-		"item_code": "Bleached Cloth",
-		"item_name": "Bleached Cloth",
-		"description": "Bleached Cloth",
+		"item_code": self.item+" Labeled Cloth",
+		"item_name": self.item+" Labeled Cloth",
+		"description":self.item+" Labeled Cloth",
 		"item_group": "Sub Assemblies",
 		"stock_uom" : "Kg",
 		"has_variants" : "1",
@@ -28,6 +29,7 @@ def create_item_template():
 				"attribute" : "Yarn Category"
 			},
 			{
+			
 				"attribute" : "Yarn Count"
 			},
 			{
@@ -38,6 +40,12 @@ def create_item_template():
 			},
 			{
 				"attribute" : "Apparelo Colour" 
+			},
+			{
+				"attribute" : "Part" 
+			},
+			{
+				"attribute" : "Apparelo Size"
 			}
 		]
 	})
