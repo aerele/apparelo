@@ -5,8 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "item_production_details",
-  "bom",
-  "amended_from"
+  "bom"
  ],
  "fields": [
   {
@@ -20,20 +19,10 @@
    "fieldtype": "Link",
    "label": "BOM",
    "options": "BOM"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "IPD BOM Mapping",
-   "print_hide": 1,
-   "read_only": 1
   }
  ],
  "in_create": 1,
- "is_submittable": 1,
- "modified": "2019-10-04 12:57:30.827563",
+ "modified": "2019-11-09 08:55:46.810272",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD BOM Mapping",

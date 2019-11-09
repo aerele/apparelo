@@ -6,34 +6,35 @@
  "field_order": [
   "item_production_details",
   "item",
-  "amended_from"
+  "ipd_process_index"
  ],
  "fields": [
   {
    "fieldname": "item_production_details",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Item Production Details",
-   "options": "Item Production Detail"
+   "options": "Item Production Detail",
+   "reqd": 1
   },
   {
    "fieldname": "item",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Item",
-   "options": "Item"
+   "options": "Item",
+   "reqd": 1
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "IPD Item Mapping",
-   "print_hide": 1,
-   "read_only": 1
+   "fieldname": "ipd_process_index",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "IPD Process Index",
+   "reqd": 1
   }
  ],
  "in_create": 1,
- "is_submittable": 1,
- "modified": "2019-10-04 12:56:10.245242",
+ "modified": "2019-11-09 08:55:24.089972",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD Item Mapping",
