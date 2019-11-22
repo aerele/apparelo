@@ -4,8 +4,10 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
 
@@ -35,32 +37,36 @@ class Knitting(Document):
 			for attribute_values in args_set:
 				variant = get_variant("Knitted Cloth", args=attribute_values)
 				if variant in variants:
-					# TODO: Check if bom already present active/default
-					existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
-					if not existing_bom:
-						bom = frappe.get_doc({
-							"doctype": "BOM",
-							"currency": get_default_currency(),
-							"item": variant,
-							"company": get_default_company(),
-							"quantity": self.output_qty,
-							"uom": self.output_uom,
-							"items": [
-								{
-									"item_code": item.name,
-									"qty": self.input_qty,
-									"uom": self.input_uom,
-									"rate": 0.0,
-								}
-							]
-						})
-						bom.save()
-						bom.submit()
-						boms.append(bom.name)
+					bom_for_variant = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						"item": variant,
+						"company": get_default_company(),
+						"quantity": self.output_qty,
+						"uom": self.output_uom,
+						"items": [
+							{
+								"item_code": item.name,
+								"qty": self.input_qty,
+								"uom": self.input_uom,
+								"rate": 0.0,
+							}
+						]
+					})
+					existing_bom_name = frappe.db.get_value('BOM', {'item': variant, 'docstatus': 1, 'is_active': 1}, 'name')
+					if not existing_bom_name:
+						bom_for_variant.save()
+						bom_for_variant.submit()
+						boms.append(bom_for_variant.name)
 					else:
-						boms.append(existing_bom)
+						existing_bom = frappe.get_doc('BOM', existing_bom_name)
+						similar_diff = is_similar_bom(existing_bom, bom_for_variant)
+						if similar_diff:
+							boms.append(existing_bom_name)
+						else:
+							frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
 				else:
-					frappe.throw(_("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
+					frappe.throw(_("Unexpected error while creating BOM. Expected variant not found in list of supplied variants"))
 		return boms
 
 	def get_variant_values(self):
@@ -199,6 +205,7 @@ def create_item_template():
 		}).save()
 
 	dia = frappe.get_doc('Item Attribute', 'Dia')
+<<<<<<< HEAD
 	if not frappe.db.exists("Item", "Knitted Cloth"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -231,3 +238,37 @@ def create_item_template():
 				}
 			]
 		}).save()
+=======
+	item = frappe.get_doc({
+		"doctype": "Item",
+		"item_code": "Knitted Cloth",
+		"item_name": "Knitted Cloth",
+		"description": "Knitted Cloth",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Kg",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"attributes" : [
+			{
+				"attribute" : "Yarn Shade" 
+			},
+			{
+				"attribute" : "Yarn Category"
+			},
+			{
+				"attribute" : "Yarn Count"
+			},
+			{
+				"attribute" : "Dia" ,
+				"numeric_values": 1,
+				"from_range": dia.from_range,
+				"to_range": dia.to_range,
+				"increment": dia.increment
+			},
+			{
+				"attribute" : "Knitting Type"
+			}
+		]
+	})
+	item.save()
+>>>>>>> 5661218... add validation for existing bom
