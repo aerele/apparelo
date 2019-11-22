@@ -6,7 +6,13 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
+<<<<<<< HEAD
 from apparelo.apparelo.utils.utils import is_similar_bom
+=======
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from apparelo.apparelo.utils.utils import is_similar_bom
+from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+>>>>>>> updated Knitting bom
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
@@ -207,6 +213,7 @@ def create_item_template():
 		}).save()
 
 	dia = frappe.get_doc('Item Attribute', 'Dia')
+<<<<<<< HEAD
 	if not frappe.db.exists("Item", "Knitted Cloth"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -239,3 +246,40 @@ def create_item_template():
 				}
 			]
 		}).save()
+<<<<<<< HEAD
+=======
+=======
+	item = frappe.get_doc({
+		"doctype": "Item",
+		"item_code": "Knitted Cloth",
+		"item_name": "Knitted Cloth",
+		"description": "Knitted Cloth",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Kg",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"attributes" : [
+			{
+				"attribute" : "Yarn Shade" 
+			},
+			{
+				"attribute" : "Yarn Category"
+			},
+			{
+				"attribute" : "Yarn Count"
+			},
+			{
+				"attribute" : "Dia" ,
+				"numeric_values": 1,
+				"from_range": dia.from_range,
+				"to_range": dia.to_range,
+				"increment": dia.increment
+			},
+			{
+				"attribute" : "Knitting Type"
+			}
+		]
+	})
+	item.save()
+>>>>>>> 5661218... add validation for existing bom
+>>>>>>> updated Knitting bom
