@@ -13,13 +13,19 @@ class Knitting(Document):
 	def on_submit(self):
 		create_item_template()
 
-	def create_variants(self, input_items):
+	def create_variants(self, input_item_names):
+		input_items = []
+		for input_item_name in input_item_names:
+			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Knitted Cloth', attribute_set)
 		return variants
 
-	def create_boms(self, input_items, variants):
+	def create_boms(self, input_item_names, variants):
+		input_items = []
+		for input_item_name in input_item_names:
+			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
 		doc_values = self.get_variant_values()
 		for item in input_items:
