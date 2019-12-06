@@ -7,7 +7,8 @@
  "field_order": [
   "item",
   "details",
-  "amended_from"
+  "amended_from",
+  "colour_mapping"
  ],
  "fields": [
   {
@@ -32,10 +33,16 @@
    "label": "Item ",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "colour_mapping",
+   "fieldtype": "Table",
+   "label": "Colour Mapping",
+   "options": "Cutting colour details"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 12:46:11.621792",
+ "modified": "2019-12-06 10:09:06.442399",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",
