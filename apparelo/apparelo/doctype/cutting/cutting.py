@@ -4,12 +4,67 @@
 
 from __future__ import unicode_literals
 import frappe
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from frappe.model.document import Document
 
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
 		create_item_template(self)
+
+	def create_variants(self, input_item_names):
+		input_items = []
+		for input_item_name in input_item_names:
+			input_items.append(frappe.get_doc('Item', input_item_name))
+		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		variants = []
+		if self.validate("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate("Dia", attribute_set["Dia"]):
+			parts = set(self.get_attribute_values("Part"))
+			for part in parts:
+				variant_attribute_set = {}
+				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
+				variant_attribute_set['Size'] = self.get_attribute_values('Size', part)
+				variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+		else:
+			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
+		return variants
+	
+	def validate(self, attribute_name, input_attribute_values):
+		return set(input_attribute_values).issubset(self.get_attribute_values(attribute_name))
+
+	def get_attribute_values(self, attribute_name, part=None):
+		attribute_value = set()
+
+		if attribute_name == "Apparelo Colour":
+			if part == None:
+				for colour_mapping in self.colour_mapping:
+					attribute_value.add(colour_mapping.colour)
+			elif part:
+				for colour_mapping in self.colour_mapping:
+					if colour_mapping.part == part:
+						attribute_value.add(colour_mapping.colour)
+
+		elif attribute_name == "Dia":
+			for detail in self.details:
+				attribute_value.add(detail.dia)
+
+		elif attribute_name == "Size":
+			if part == None:
+				for detail in self.details:
+					attribute_value.add(detail.size)
+			elif part:
+				for detail in self.details:
+					if detail.part == part:
+						attribute_value.add(detail.size)
+
+		elif attribute_name == "Part":
+			for detail in self.details:
+					attribute_value.add(detail.part)
+
+		return list(attribute_value)
+
+
 
 def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Part"):
@@ -35,6 +90,7 @@ def create_item_attribute():
 				}
 			]
 		}).save()
+
 	if not frappe.db.exists("Item Attribute", "Apparelo Size"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -110,43 +166,29 @@ def create_item_attribute():
 				}
 			]
 		}).save()
+
 def create_item_template(self):
 	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": self.item+" Cut Cloth",
-		"item_name": self.item+" Cut Cloth",
-		"description":self.item+" Cut Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-			
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" 
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour" 
-			},
-			{
-				"attribute" : "Part" 
-			},
-			{
-				"attribute" : "Apparelo Size"
-			}
-		]
-	})
-	item.save()
+	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
+		item = frappe.get_doc({
+			"doctype": "Item",
+			"item_code": self.item+" Cut Cloth",
+			"item_name": self.item+" Cut Cloth",
+			"description":self.item+" Cut Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"attributes" : [
+				{
+					"attribute" : "Apparelo Colour" 
+				},
+				{
+					"attribute" : "Part" 
+				},
+				{
+					"attribute" : "Apparelo Size"
+				}
+			]
+		})
+		item.save()

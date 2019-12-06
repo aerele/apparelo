@@ -80,7 +80,7 @@ def create_item_template():
 	item = frappe.get_doc({
 		"doctype": "Item",
 		"item_code": "Compacted Cloth",
-		"item_name": "Compacteded Cloth",
+		"item_name": "Compacted Cloth",
 		"description": "Compaced Cloth",
 		"item_group": "Sub Assemblies",
 		"stock_uom" : "Kg",
