@@ -4,8 +4,11 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from frappe.model.document import Document
+from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+from erpnext import get_default_company, get_default_currency
 
 class Cutting(Document):
 	def on_submit(self):
@@ -18,19 +21,62 @@ class Cutting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		if self.validate_attr_values("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate_attr_values("Dia", attribute_set["Dia"]):
-			parts = set(self.get_attribute_values("Part"))
+		if self.validate_attribute_values("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate_attribute_values("Dia",(attribute_set["Dia"])):
+			parts = list(self.get_attribute_values("Part"))
 			for part in parts:
 				variant_attribute_set = {}
 				variant_attribute_set['Part'] = [part]
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-				variant_attribute_set['Size'] = self.get_attribute_values('Size', part)
+				variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
 				variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+				print(variants)
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
 		return variants
-	
-	def validate_attr_values(self, attribute_name, input_attribute_values):
+
+	def get_matching_details(self, part, size):
+		# ToDo: Part Size combination may not be unique
+		for detail in self.details:
+			if detail.part == part[0] and detail.size == size[0]:
+				return {"Dia": detail.dia, "Weight": detail.weight}
+
+	def create_boms(self, input_item_names, variants):
+		input_items = []
+		for input_item_name in input_item_names:
+			input_items.append(frappe.get_doc('Item', input_item_name))
+		boms = []
+		for variant in variants:
+			var=frappe.get_doc('Item', variant[0])
+			attr = get_attr_dict(var.attributes)
+			attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
+			for input_item in input_items:
+				input_item_attr = get_attr_dict(input_item.attributes)
+				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"] and input_item_attr["Dia"] == attr["Dia"]:
+					break
+			existing_bom = frappe.db.get_value('BOM', {'item': variant[0]}, 'name')
+			if not existing_bom:
+				bom = frappe.get_doc({
+					"doctype": "BOM",
+					"currency": get_default_currency(),
+					"item": variant[0],
+					"company": get_default_company(),
+					"items": [
+						{
+							"item_code": input_item.name,
+							"qty": attr["Weight"],
+							"uom": 'Gram',
+						}
+					]
+				})
+				bom.save()
+				bom.submit()
+				boms.append(bom.name)
+			else:
+				boms.append(existing_bom)
+		return boms
+
+
+	def validate_attribute_values(self, attribute_name, input_attribute_values):
 		return set(input_attribute_values).issubset(self.get_attribute_values(attribute_name))
 
 	def get_attribute_values(self, attribute_name, part=None):
@@ -47,7 +93,10 @@ class Cutting(Document):
 
 		elif attribute_name == "Dia":
 			for detail in self.details:
-				attribute_value.add(detail.dia)
+				if int(str(float(detail.dia)).split('.')[1]) > 0:
+					attribute_value.add(str(detail.dia))
+				else:
+					attribute_value.add(str(detail.dia).split('.')[0])
 
 		elif attribute_name == "Size":
 			if part == None:
@@ -62,9 +111,10 @@ class Cutting(Document):
 			for detail in self.details:
 					attribute_value.add(detail.part)
 
+		elif attribute_name == "weight":
+			for detail in self.details:
+					attribute_value.add(detail.weight)
 		return list(attribute_value)
-
-
 
 def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Part"):
@@ -181,10 +231,10 @@ def create_item_template(self):
 			"variant_based_on" : "Item Attribute",
 			"attributes" : [
 				{
-					"attribute" : "Apparelo Colour" 
+					"attribute" : "Apparelo Colour"
 				},
 				{
-					"attribute" : "Part" 
+					"attribute" : "Part"
 				},
 				{
 					"attribute" : "Apparelo Size"
