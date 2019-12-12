@@ -38,7 +38,7 @@ class Cutting(Document):
 		return variants
 
 	def get_matching_details(self, part, size):
-		# ToDo: Part Size combination may not be unique		
+		# ToDo: Part Size combination may not be unique
 		for detail in self.details:
 			if detail.part == part[0] and detail.size == size[0]:
 				return {"Dia": detail.dia, "Weight": detail.weight}
@@ -126,8 +126,7 @@ class Cutting(Document):
 			for detail in self.details:
 					attribute_value.add(detail.weight)
 		return list(attribute_value)
-		
-	
+
 def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Part"):
 		frappe.get_doc({
@@ -243,10 +242,10 @@ def create_item_template(self):
 			"variant_based_on" : "Item Attribute",
 			"attributes" : [
 				{
-					"attribute" : "Apparelo Colour" 
+					"attribute" : "Apparelo Colour"
 				},
 				{
-					"attribute" : "Part" 
+					"attribute" : "Part"
 				},
 				{
 					"attribute" : "Apparelo Size"
