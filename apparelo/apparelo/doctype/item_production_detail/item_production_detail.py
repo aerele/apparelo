@@ -95,4 +95,23 @@ class ItemProductionDetail(Document):
 					boms = bleaching_doc.create_boms(input_items, variants)
 					ipd.append(process_variants)
 				continue
+			if process.process_name == 'Cutting':
+				process_variants['process'] = 'Cutting'
+				if process.input_item:
+					pass
+				elif process.input_index:
+					# Get the variants that were created out of that index
+					# Pass them to the Compacting.create_variants as input items
+					input_items = []
+					for pro in ipd:
+						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
+							input_items.extend(pro['variants'])
+					cutting_doc = frappe.get_doc('Cutting', process.process_record)
+					variants = cutting_doc.create_variants(input_items)
+					process_variants['variants'] = variants
+					boms = cutting_doc.create_boms(input_items, variants)
+					ipd.append(process_variants)
+				continue
+			
+			
 
