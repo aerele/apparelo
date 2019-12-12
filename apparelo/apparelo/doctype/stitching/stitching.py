@@ -25,8 +25,8 @@ class Stitching(Document):
 			variant_attribute_set = {}
 			variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 			variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-			variants.append(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
-		return variants
+			variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
+		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
 		return set(input_attribute_values).issubset(self.get_attribute_values(attribute_name))
@@ -51,12 +51,12 @@ class Stitching(Document):
 		for input_item in input_item_names:
 			item_list.append({"item_code": input_item[0],"uom": "Nos"})
 		print(item_list)
-		existing_bom = frappe.db.get_value('BOM', {'item': variants[0][0]}, 'name')
+		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
 			bom = frappe.get_doc({
 				"doctype": "BOM",
 				"currency": get_default_currency(),
-				"item": variants[0][0],
+				"item": variants[0],
 				"company": get_default_company(),
 				"items": item_list
 			})
