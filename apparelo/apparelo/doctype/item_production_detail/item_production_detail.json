@@ -6,8 +6,8 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "sizes",
-  "colours",
+  "size",
+  "colour",
   "processes",
   "additional_flows",
   "amended_from"
@@ -22,28 +22,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "sizes",
-   "fieldtype": "Table",
-   "label": "Sizes",
-   "options": "Item Production Detail Size"
-  },
-  {
-   "fieldname": "colours",
-   "fieldtype": "Table",
-   "label": "Colours",
-   "options": "Item Production Detail Colour"
-  },
-  {
    "fieldname": "processes",
    "fieldtype": "Table",
    "label": "Processes",
    "options": "Item Production Detail Process"
-  },
-  {
-   "fieldname": "additional_flows",
-   "fieldtype": "Table",
-   "label": "Additional Flows",
-   "options": "Item Production Detail Additional BOM"
   },
   {
    "fieldname": "amended_from",
@@ -53,10 +35,28 @@
    "options": "Item Production Detail",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Table",
+   "label": "sizes",
+   "options": "Item Production Detail Size"
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Table",
+   "label": "Colours",
+   "options": "Item Production Detail Colour"
+  },
+  {
+   "fieldname": "additional_flows",
+   "fieldtype": "Table",
+   "label": "Additional Flows",
+   "options": "Item Production Detail Additional BOM"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-05 14:12:57.223926",
+ "modified": "2019-12-12 10:22:19.440623",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
