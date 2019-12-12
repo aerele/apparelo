@@ -10,7 +10,7 @@
   "input_qty",
   "output_qty",
   "column_break_5",
-  "input__uom",
+  "input_uom",
   "output_uom",
   "amended_from"
  ],
@@ -43,14 +43,6 @@
   {
    "allow_in_quick_entry": 1,
    "default": "Kg",
-   "fieldname": "input__uom",
-   "fieldtype": "Link",
-   "label": "Input  UOM",
-   "options": "UOM"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
    "label": "Output UOM",
@@ -72,10 +64,18 @@
    "label": "Types",
    "options": "Item Production Detail Colour",
    "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "Kg",
+   "fieldname": "input_uom",
+   "fieldtype": "Link",
+   "label": "Input  UOM",
+   "options": "UOM"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-12-05 11:01:04.428623",
+ "modified": "2019-12-12 11:26:45.530493",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",
