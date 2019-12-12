@@ -29,7 +29,6 @@ class Cutting(Document):
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 				variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
 				variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
-				print(variants)
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
 		return variants

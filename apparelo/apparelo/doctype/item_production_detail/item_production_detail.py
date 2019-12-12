@@ -7,7 +7,7 @@ import frappe
 from frappe.model.document import Document
 
 class ItemProductionDetail(Document):
-	
+
 	def on_submit(self):
 		self.create_process_details()
 
@@ -26,7 +26,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					pass
 				continue
-			
+
 			if process.process_name == 'Dyeing':
 				process_variants['process'] = 'Dyeing'
 				if process.input_item:
@@ -84,7 +84,7 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					# Get the variants that were created out of that index
-					# Pass them to the Compacting.create_variants as input items
+					# Pass them to the Bleaching.create_variants as input items
 					input_items = []
 					for pro in ipd:
 						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
@@ -93,6 +93,40 @@ class ItemProductionDetail(Document):
 					variants = bleaching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = bleaching_doc.create_boms(input_items, variants)
+					ipd.append(process_variants)
+				continue
+			if process.process_name == 'Cutting':
+				process_variants['process'] = 'Cutting'
+				if process.input_item:
+					pass
+				elif process.input_index:
+					# Get the variants that were created out of that index
+					# Pass them to the Cutting.create_variants as input items
+					input_items = []
+					for pro in ipd:
+						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
+							input_items.extend(pro['variants'])
+					cutting_doc = frappe.get_doc('Cutting', process.process_record)
+					variants = cutting_doc.create_variants(input_items)
+					process_variants['variants'] = variants
+					boms = cutting_doc.create_boms(input_items, variants)
+					ipd.append(process_variants)
+				continue
+			if process.process_name == 'Stitching':
+				process_variants['process'] = 'Stitching'
+				if process.input_item:
+					pass
+				elif process.input_index:
+					# Get the variants that were created out of that index
+					# Pass them to the Stitching.create_variants as input items
+					input_items = []
+					for pro in ipd:
+						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
+							input_items.extend(pro['variants'])
+					stitching_doc = frappe.get_doc('Stitching', process.process_record)
+					variants = stitching_doc.create_variants(input_items)
+					process_variants['variants'] = variants
+					boms = stitching_doc.create_boms(input_items, variants)
 					ipd.append(process_variants)
 				continue
 

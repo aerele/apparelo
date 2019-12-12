@@ -8,7 +8,6 @@ from frappe.model.document import Document
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant, create_variant
 
 def create_variants(item_template, args):
-	print(args)
 	args_set = generate_keyed_value_combinations(args)
 	variants = []
 	for attribute_values in args_set:
