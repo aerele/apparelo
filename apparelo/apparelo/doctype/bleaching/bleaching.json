@@ -5,25 +5,16 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "type",
+  "types",
   "conversion_details_section",
   "input_qty",
   "output_qty",
   "column_break_5",
-  "input__uom",
+  "input_uom",
   "output_uom",
   "amended_from"
  ],
  "fields": [
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Type",
-   "options": "\nWhite\nMelange",
-   "reqd": 1
-  },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "conversion_details_section",
@@ -52,14 +43,6 @@
   {
    "allow_in_quick_entry": 1,
    "default": "Kg",
-   "fieldname": "input__uom",
-   "fieldtype": "Link",
-   "label": "Input  UOM",
-   "options": "UOM"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
    "label": "Output UOM",
@@ -73,10 +56,25 @@
    "options": "Bleaching",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "types",
+   "fieldtype": "Table",
+   "label": "Types",
+   "options": "Item Production Detail Colour",
+   "reqd": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "Kg",
+   "fieldname": "input_uom",
+   "fieldtype": "Link",
+   "label": "Input  UOM",
+   "options": "UOM"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-03 13:52:16.504998",
+ "modified": "2019-12-12 11:27:02.151901",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",
