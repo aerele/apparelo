@@ -23,26 +23,7 @@ def create_item_template(self):
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-			
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" 
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour" 
-			},
-			{
-				"attribute" : "Part" 
+				"attribute" : "Apparelo Colour"
 			},
 			{
 				"attribute" : "Apparelo Size"

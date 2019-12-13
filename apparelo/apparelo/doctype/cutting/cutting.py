@@ -31,11 +31,10 @@ class Cutting(Document):
 							variant_attribute_set['Part'] = [part]
 							variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 							variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
-							variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+							variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
 					else:
-						
 						frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-		return variants
+		return list(set(variants))
 
 	def get_matching_details(self, part, size):
 		# ToDo: Part Size combination may not be unique
@@ -49,7 +48,7 @@ class Cutting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
 		for variant in variants:
-			var=frappe.get_doc('Item', variant[0])
+			var=frappe.get_doc('Item', variant)
 			attr = get_attr_dict(var.attributes)
 			attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
 			for input_item in input_items:
@@ -61,7 +60,7 @@ class Cutting(Document):
 				bom = frappe.get_doc({
 					"doctype": "BOM",
 					"currency": get_default_currency(),
-					"item": variant[0],
+					"item": variant,
 					"company": get_default_company(),
 					"items": [
 						{

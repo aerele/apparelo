@@ -126,6 +126,8 @@ class ItemProductionDetail(Document):
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
 					variants = stitching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
+					print(input_items)
+					print("************************")
 					boms = stitching_doc.create_boms(input_items, variants)
 					ipd.append(process_variants)
 				continue
