@@ -21,19 +21,6 @@ class Cutting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-<<<<<<< HEAD
-		if self.validate_attribute_values("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate_attribute_values("Dia",(attribute_set["Dia"])):
-			parts = list(self.get_attribute_values("Part"))
-			for part in parts:
-				variant_attribute_set = {}
-				variant_attribute_set['Part'] = [part]
-				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-				variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
-				variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
-		else:
-			
-			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-=======
 		for colour_mapping in self.colour_mapping:
 			for detail in self.details:
 				if colour_mapping.part==detail.part:
@@ -48,7 +35,6 @@ class Cutting(Document):
 					else:
 						
 						frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
->>>>>>> 106f9cece3d8c6be84dcbcb86b08e06fd34c79c4
 		return variants
 
 	def get_matching_details(self, part, size):
