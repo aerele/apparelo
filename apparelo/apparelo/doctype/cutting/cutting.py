@@ -24,7 +24,7 @@ class Cutting(Document):
 		for colour_mapping in self.colour_mapping:
 			for detail in self.details:
 				if colour_mapping.part==detail.part:
-					if self.validate_colour(colour_mapping.colour, attribute_set["Apparelo Colour"]) and self.validate_dia(detail.dia,(attribute_set["Dia"])):
+					if colour_mapping.colour==attribute_set["Apparelo Colour"][0] and str(int(detail.dia))==attribute_set["Dia"][0]:
 						parts = list(self.get_attribute_values("Part"))
 						for part in parts:
 							variant_attribute_set = {}
@@ -77,18 +77,6 @@ class Cutting(Document):
 			else:
 				boms.append(existing_bom)
 		return boms
-
-
-	def validate_colour(self, cutting_attribute_values, input_attribute_values):
-		if cutting_attribute_values==input_attribute_values[0]:
-			return True
-		else:
-			return False
-	def validate_dia(self, cutting_attribute_values, input_attribute_values):
-		if str(int(cutting_attribute_values))==input_attribute_values[0]:
-			return True
-		else:
-			return False
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
