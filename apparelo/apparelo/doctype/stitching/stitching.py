@@ -21,6 +21,8 @@ class Stitching(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
 		parts = attribute_set["Part"]
+		print('#*****************#')
+		print(input_item_names,attribute_set,parts)
 		for part in parts:
 			variant_attribute_set = {}
 			variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
@@ -68,23 +70,23 @@ class Stitching(Document):
 		return boms
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": self.item+" Stitched Cloth",
-		"item_name": self.item+" Stitched Cloth",
-		"description":self.item+" Stitched Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Apparelo Colour"
-			},
-			{
-				"attribute" : "Apparelo Size"
-			}
-		]
-	})
-	item.save()
+	if not frappe.db.exists("Item", self.item+" Stitched Cloth"):
+		item = frappe.get_doc({
+			"doctype": "Item",
+			"item_code": self.item+" Stitched Cloth",
+			"item_name": self.item+" Stitched Cloth",
+			"description":self.item+" Stitched Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"attributes" : [
+				{
+					"attribute" : "Apparelo Colour"
+				},
+				{
+					"attribute" : "Apparelo Size"
+				}
+			]
+		})
+		item.save()

@@ -55,7 +55,7 @@ class Cutting(Document):
 				input_item_attr = get_attr_dict(input_item.attributes)
 				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"] and input_item_attr["Dia"] == attr["Dia"]:
 					break
-			existing_bom = frappe.db.get_value('BOM', {'item': variant[0]}, 'name')
+			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
 					"doctype": "BOM",
@@ -216,7 +216,6 @@ def create_item_attribute():
 		}).save()
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
 	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
 		item = frappe.get_doc({
 			"doctype": "Item",

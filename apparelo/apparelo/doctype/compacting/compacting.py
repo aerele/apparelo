@@ -35,7 +35,6 @@ class Compacting(Document):
 			for attribute_values in args_set:
 				variant = get_variant("Compacted Cloth", args=attribute_values)
 				if variant in variants:
-					# TODO: Check if bom already present active/default
 					existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 					if not existing_bom:
 						bom = frappe.get_doc({
