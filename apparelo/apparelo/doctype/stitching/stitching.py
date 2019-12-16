@@ -17,7 +17,7 @@ class Stitching(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
-			input_items.append(frappe.get_doc('Item', input_item_name))
+			input_items.append(frappe.get_doc('Item', input_item_name[0]))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
 		parts = attribute_set["Part"]
@@ -51,7 +51,7 @@ class Stitching(Document):
 		item_list = []
 		boms = []
 		for input_item in input_item_names:
-			item_list.append({"item_code": input_item,"uom": "Nos"})
+			item_list.append({"item_code": input_item[0],"uom": "Nos"})
 		print(item_list)
 		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
