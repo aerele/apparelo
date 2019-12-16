@@ -106,6 +106,9 @@ class ItemProductionDetail(Document):
 					for pro in ipd:
 						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
 							input_items.extend(pro['variants'])
+					print("*********************")
+					print(input_items)
+					print("**********************")
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
 					variants = cutting_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -118,7 +121,7 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					# Get the variants that were created out of that index
-					# Pass them to the Stitching.create_variants as input items
+					# Pass them to the Compacting.create_variants as input items
 					input_items = []
 					for pro in ipd:
 						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
@@ -126,9 +129,25 @@ class ItemProductionDetail(Document):
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
 					variants = stitching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
-					print(input_items)
-					print("************************")
 					boms = stitching_doc.create_boms(input_items, variants)
 					ipd.append(process_variants)
 				continue
+			if process.process_name == 'Piece Printing':
+				process_variants['process'] = 'Piece Printing'
+				if process.input_item:
+					pass
+				elif process.input_index:
+					# Get the variants that were created out of that index
+					# Pass them to the Compacting.create_variants as input items
+					input_items = []
+					for pro in ipd:
+						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
+							input_items.extend(pro['variants'])
+					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
+					variants = piece_printing_doc.create_variants(input_items)
+					process_variants['variants'] = variants
+					#boms = piece_printing_doc.create_boms(input_items, variants)
+					ipd.append(process_variants)
+				continue
+			
 
