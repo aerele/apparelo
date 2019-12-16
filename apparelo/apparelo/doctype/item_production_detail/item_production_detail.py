@@ -121,10 +121,10 @@ class ItemProductionDetail(Document):
 					# Pass them to the Piece Printing.create_variants as input items
 					input_items = []
 					for pro in ipd:
-						if pro['process'] == self.processes[input_index - 1].process_name:
+						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
 							input_items.extend(pro['variants'])
-					piece printing_doc = frappe.get_doc('Piece Printing', process.process_record)
-					variants = piece printing_doc.create_variants(input_items)
+					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
+					variants = piece_printing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = piece_printing_doc.create_boms(input_items, variants)
 					ipd.append(process_variants)
