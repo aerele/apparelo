@@ -123,9 +123,11 @@ class ItemProductionDetail(Document):
 					# Get the variants that were created out of that index
 					# Pass them to the Compacting.create_variants as input items
 					input_items = []
+					input_indexs = list(map(int,process.input_index.split(',')))
 					for pro in ipd:
-						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if pro['process'] == self.processes[input_index - 1].process_name:
+								input_items.extend(pro['variants'])
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
 					variants = stitching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
