@@ -135,7 +135,7 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					# Get the variants that were created out of that index
-					# Pass them to the Compacting.create_variants as input items
+					# Pass them to the Label Fusing.create_variants as input items
 					input_items = []
 					for pro in ipd:
 						if pro['process'] == self.processes[int(process.input_index) - 1].process_name:
