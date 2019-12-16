@@ -55,7 +55,7 @@ class Cutting(Document):
 				input_item_attr = get_attr_dict(input_item.attributes)
 				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"] and input_item_attr["Dia"] == attr["Dia"]:
 					break
-			existing_bom = frappe.db.get_value('BOM', {'item': variant[0]}, 'name')
+			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
 					"doctype": "BOM",
