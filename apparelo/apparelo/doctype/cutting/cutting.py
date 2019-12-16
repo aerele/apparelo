@@ -24,17 +24,18 @@ class Cutting(Document):
 		for colour_mapping in self.colour_mapping:
 			for detail in self.details:
 				if colour_mapping.part==detail.part:
-					if colour_mapping.colour==attribute_set["Apparelo Colour"][0] and str(int(detail.dia))==attribute_set["Dia"][0]:
+					if self.validate_colour(colour_mapping.colour, attribute_set["Apparelo Colour"]) and self.validate_dia(detail.dia,(attribute_set["Dia"])):
 						parts = list(self.get_attribute_values("Part"))
 						for part in parts:
 							variant_attribute_set = {}
 							variant_attribute_set['Part'] = [part]
 							variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 							variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
-							variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+							variants.append(create_variants(self.item+" Cut Cloth", variant_attribute_set))
 					else:
+						
 						frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-		return list(set(variants))
+		return variants
 
 	def get_matching_details(self, part, size):
 		# ToDo: Part Size combination may not be unique
@@ -48,7 +49,7 @@ class Cutting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
 		for variant in variants:
-			var=frappe.get_doc('Item', variant)
+			var=frappe.get_doc('Item', variant[0])
 			attr = get_attr_dict(var.attributes)
 			attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
 			for input_item in input_items:
@@ -60,7 +61,7 @@ class Cutting(Document):
 				bom = frappe.get_doc({
 					"doctype": "BOM",
 					"currency": get_default_currency(),
-					"item": variant,
+					"item": variant[0],
 					"company": get_default_company(),
 					"items": [
 						{
@@ -76,6 +77,18 @@ class Cutting(Document):
 			else:
 				boms.append(existing_bom)
 		return boms
+
+
+	def validate_colour(self, cutting_attribute_values, input_attribute_values):
+		if cutting_attribute_values==input_attribute_values[0]:
+			return True
+		else:
+			return False
+	def validate_dia(self, cutting_attribute_values, input_attribute_values):
+		if str(int(cutting_attribute_values))==input_attribute_values[0]:
+			return True
+		else:
+			return False
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
@@ -216,7 +229,6 @@ def create_item_attribute():
 		}).save()
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
 	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
 		item = frappe.get_doc({
 			"doctype": "Item",
