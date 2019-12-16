@@ -21,7 +21,6 @@ class Stitching(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
 		parts = attribute_set["Part"]
-<<<<<<< HEAD
 		for colour_mapping in self.colour_mappings:
 			for i in range(0,len(attribute_set["Part"])):
 				if colour_mapping.part==attribute_set["Part"][i]:
@@ -33,15 +32,6 @@ class Stitching(Document):
 							variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
 					else:
 						frappe.throw(_("Part colour is not available in the input"))
-=======
-		print('#*****************#')
-		print(input_item_names,attribute_set,parts)
-		for part in parts:
-			variant_attribute_set = {}
-			variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-			variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-			variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
->>>>>>> 31c90cdfbb5e300ef7c1e6828821a8421386041e
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
@@ -65,15 +55,8 @@ class Stitching(Document):
 		item_list = []
 		boms = []
 		for input_item in input_item_names:
-<<<<<<< HEAD
-<<<<<<< HEAD
-			item_list.append({"item_code": input_item,"uom": "Nos"})
-=======
-=======
->>>>>>> 31c90cdfbb5e300ef7c1e6828821a8421386041e
 			item_list.append({"item_code": input_item[0],"uom": "Nos"})
 		print(item_list)
->>>>>>> 31c90cdfbb5e300ef7c1e6828821a8421386041e
 		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
 			bom = frappe.get_doc({
