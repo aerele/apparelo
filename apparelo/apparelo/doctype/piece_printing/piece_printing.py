@@ -16,38 +16,41 @@ class PiecePrinting(Document):
 		create_item_template(self)
 		
 	def create_variants(self, input_item_names):
-		print("***********")
-		print(input_item_names)
-		print("***********")
 		input_items = []
 		for input_item_name in input_item_names:
-			input_items.append(frappe.get_doc('Item', input_item_name[0]))
+			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		#if self.validate_attribute_values("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate_attribute_values("Dia",(attribute_set["Dia"])):
-		parts = list(self.get_attribute_values("Part"))
+		parts = attribute_set["Part"]
+		
 		for part in parts:
-			variant_attribute_set = {}
-			variant_attribute_set['Part'] = [part]
-			# variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-			# variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
-			variants.append(create_variants(self.item+" Printed Cloth", variant_attribute_set))
-		# else:
-			
-		# 	frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
+			if part==self.part:
+				variant_attribute_set = {}
+				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Apparelo Colour'] = attribute_set['Apparelo Colour']
+				variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
+				variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
 		return variants
-
-	# def validate_attribute_values(self, attribute_name, input_attribute_values):
-	# 	return set(input_attribute_values).issubset(self.get_attribute_values(attribute_name))
-
-	def get_attribute_values(self, attribute_name, part=None):
-		attribute_value = set()
-
-		if attribute_name == "Part":
-			for part in self.part:
-					attribute_value.add(part.part)
-
-		return list(attribute_value)
+	def create_boms(self, input_item_names, variants):
+		item_list = []
+		boms = []
+		for input_item in input_item_names:
+			item_list.append({"item_code": input_item,"uom": "Nos"})
+		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
+		if not existing_bom:
+			bom = frappe.get_doc({
+				"doctype": "BOM",
+				"currency": get_default_currency(),
+				"item": variants[0],
+				"company": get_default_company(),
+				"items": item_list
+			})
+			bom.save()
+			bom.submit()
+			boms.append(bom.name)
+		else:
+			boms.append(existing_bom)
+		return boms
 
 def create_item_template(self):
 	# todo: need to check if an item already exists with the same name
