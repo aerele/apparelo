@@ -18,9 +18,10 @@ class Compacting(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		attribute_set["Apparelo Colour"]=[attribute_set["Apparelo Colour"][0]]
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Compacted Cloth', attribute_set)
-		return variants
+		return list(set(variants))
 
 	def create_boms(self, input_item_names, variants):
 		input_items = []
@@ -58,8 +59,8 @@ class Compacting(Document):
 						boms.append(bom.name)
 					else:
 						boms.append(existing_bom)
-				else:
-					frappe.throw(("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
+				# else:
+				# 	frappe.throw(("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
 		return boms
 
 	def get_variant_values(self):

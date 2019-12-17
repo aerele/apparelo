@@ -22,16 +22,16 @@ class Stitching(Document):
 		variants = []
 		parts = attribute_set["Part"]
 		for colour_mapping in self.colour_mappings:
-			for i in range(0,len(attribute_set["Part"])):
-				if colour_mapping.part==attribute_set["Part"][i]:
+			for part in parts:
+				if colour_mapping.part==part:
 					if colour_mapping.part_colour==attribute_set["Apparelo Colour"][0]:
 						for part in parts:
 							variant_attribute_set = {}
 							variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 							variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
 							variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
-					else:
-						frappe.throw(_("Part colour is not available in the input"))
+					# else:
+					# 	frappe.throw(_("Part colour is not available in the input"))
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):

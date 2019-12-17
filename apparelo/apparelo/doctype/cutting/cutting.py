@@ -14,28 +14,27 @@ class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
 		create_item_template(self)
-
 	def create_variants(self, input_item_names):
 		input_items = []
-		for input_item_name in input_item_names:
+		for input_item_name in set(input_item_names):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		for colour_mapping in self.colour_mapping:
-			for detail in self.details:
-				if colour_mapping.part==detail.part:
-					if self.validate_colour(colour_mapping.colour, attribute_set["Apparelo Colour"]) and self.validate_dia(detail.dia,(attribute_set["Dia"])):
-						parts = list(self.get_attribute_values("Part"))
-						for part in parts:
-							variant_attribute_set = {}
-							variant_attribute_set['Part'] = [part]
-							variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-							variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Size', part)
-							variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
-					else:
-						
-						frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-		return list(set(variants))
+		if self.validate("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate("Dia", attribute_set["Dia"]):
+			parts = set(self.get_attribute_values("Part"))
+			for part in parts:
+				variant_attribute_set = {}
+				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
+				variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Apparelo Size', part)
+				variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+		# else:
+		# 	frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
+		return variants
+	
+	def validate(self, attribute_name, input_attribute_values):
+		return set(self.get_attribute_values(attribute_name)).issubset(set(input_attribute_values))
+	
 
 	def get_matching_details(self, part, size):
 		# ToDo: Part Size combination may not be unique
@@ -78,18 +77,6 @@ class Cutting(Document):
 				boms.append(existing_bom)
 		return boms
 
-
-	def validate_colour(self, cutting_attribute_values, input_attribute_values):
-		if cutting_attribute_values==input_attribute_values[0]:
-			return True
-		else:
-			return False
-	def validate_dia(self, cutting_attribute_values, input_attribute_values):
-		if str(int(cutting_attribute_values))==input_attribute_values[0]:
-			return True
-		else:
-			return False
-
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
 
@@ -109,7 +96,7 @@ class Cutting(Document):
 				else:
 					attribute_value.add(str(detail.dia).split('.')[0])
 
-		elif attribute_name == "Size":
+		elif attribute_name == "Apparelo Size":
 			if part == None:
 				for detail in self.details:
 					attribute_value.add(detail.size)
