@@ -54,7 +54,7 @@ class Stitching(Document):
 	def create_boms(self, input_item_names, variants):
 		item_list = []
 		boms = []
-		for input_item in input_item_names:
+		for input_item in set(input_item_names):
 			item_list.append({"item_code": input_item,"uom": "Nos"})
 		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
