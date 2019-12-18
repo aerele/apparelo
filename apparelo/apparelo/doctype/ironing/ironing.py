@@ -5,6 +5,9 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+from erpnext import get_default_company, get_default_currency
 
 class Ironing(Document):
 	def on_submit(self):
@@ -14,7 +17,7 @@ class Ironing(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		variants = create_variants('Ironed Cloth', attribute_set)
+		variants = create_variants(self.item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
 	def create_boms(self, input_item_names, variants):
 		item_list = []
