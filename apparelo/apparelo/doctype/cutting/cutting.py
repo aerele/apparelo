@@ -14,6 +14,7 @@ class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
 		create_item_template(self)
+
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in set(input_item_names):
@@ -31,10 +32,10 @@ class Cutting(Document):
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
 		return variants
-	
+
 	def attribute_validate(self, attribute_name, input_attribute_values):
 		return set(self.get_attribute_values(attribute_name)).issubset(set(input_attribute_values))
-	
+
 
 	def get_matching_details(self, part, size):
 		# ToDo: Part Size combination may not be unique
@@ -79,7 +80,6 @@ class Cutting(Document):
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
-
 		if attribute_name == "Apparelo Colour":
 			if part == None:
 				for colour_mapping in self.colour_mapping:
@@ -88,14 +88,12 @@ class Cutting(Document):
 				for colour_mapping in self.colour_mapping:
 					if colour_mapping.part == part:
 						attribute_value.add(colour_mapping.colour)
-
 		elif attribute_name == "Dia":
 			for detail in self.details:
 				if int(str(float(detail.dia)).split('.')[1]) > 0:
 					attribute_value.add(str(detail.dia))
 				else:
 					attribute_value.add(str(detail.dia).split('.')[0])
-
 		elif attribute_name == "Apparelo Size":
 			if part == None:
 				for detail in self.details:
@@ -104,11 +102,9 @@ class Cutting(Document):
 				for detail in self.details:
 					if detail.part == part:
 						attribute_value.add(detail.size)
-
 		elif attribute_name == "Part":
 			for detail in self.details:
 					attribute_value.add(detail.part)
-
 		elif attribute_name == "weight":
 			for detail in self.details:
 					attribute_value.add(detail.weight)
@@ -139,80 +135,14 @@ def create_item_attribute():
 			]
 		}).save()
 
+	items = []
+	for num in range(35,120,5):
+		items.append({"attribute_value" : num +" cm","abbr" : num+" cm"})
 	if not frappe.db.exists("Item Attribute", "Apparelo Size"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
 			"attribute_name": "Apparelo Size",
-			"item_attribute_values": [
-				{
-					"attribute_value" : "35 cm",
-					"abbr" : "35 cm"
-				},
-				{
-					"attribute_value" : "40 cm",
-					"abbr" : "40 cm"
-				},
-				{
-					"attribute_value" : "45 cm",
-					"abbr" : "45 cm"
-				},
-				{
-					"attribute_value" : "50 cm",
-					"abbr" : "50 cm"
-				},
-				{
-					"attribute_value" : "55 cm",
-					"abbr" : "55 cm"
-				},
-				{
-					"attribute_value" : "60 cm",
-					"abbr" : "60 cm"
-				},
-				{
-					"attribute_value" : "65 cm",
-					"abbr" : "65 cm"
-				},
-				{
-					"attribute_value" : "70 cm",
-					"abbr" : "70 cm"
-				},
-				{
-					"attribute_value" : "75 cm",
-					"abbr" : "75 cm"
-				},
-				{
-					"attribute_value" : "80 cm",
-					"abbr" : "80 cm"
-				},
-				{
-					"attribute_value" : "85 cm",
-					"abbr" : "85 cm"
-				},
-				{
-					"attribute_value" : "90 cm",
-					"abbr" : "90 cm"
-				},
-				{
-					"attribute_value" : "95 cm",
-					"abbr" : "95 cm"
-				},
-				{
-					"attribute_value" : "100 cm",
-					"abbr" : "100 cm"
-				},
-				{
-					"attribute_value" : "105 cm",
-					"abbr" : "105 cm"
-				},
-				{
-					"attribute_value" : "110 cm",
-					"abbr" : "110 cm"
-				},
-				{
-					"attribute_value" : "115 cm",
-					"abbr" : "115 cm"
-				}
-			]
+			"item_attribute_values": items
 		}).save()
 
 def create_item_template(self):

@@ -12,6 +12,7 @@ from erpnext import get_default_company, get_default_currency
 class Knitting(Document):
 	def on_submit(self):
 		create_item_template()
+		create_item_attribute()
 
 	def create_variants(self, input_item_names):
 		input_items = []
@@ -76,7 +77,7 @@ class Knitting(Document):
 		attribute_set['Dia'] = variant_dia
 		return attribute_set
 
-def create_item_template():
+def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Yarn Shade"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -175,6 +176,7 @@ def create_item_template():
 			]
 		}).save()
 
+def create_item_template():
 	if not frappe.db.exists("Item", "Yarn"):
 		frappe.get_doc({
 			"doctype": "Item",

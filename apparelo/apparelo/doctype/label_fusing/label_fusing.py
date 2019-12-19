@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+
 class LabelFusing(Document):
 	def on_submit(self):
 		create_item_template(self)
@@ -19,7 +20,6 @@ class LabelFusing(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
 		return list(set(variants))
-
 
 	def create_boms(self, input_item_names, variants):
 			item_list = []
@@ -46,7 +46,7 @@ class LabelFusing(Document):
 
 def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+"Labeled Cloth"):
-		item = frappe.get_doc({
+		frappe.get_doc({
 			"doctype": "Item",
 			"item_code": self.item+" Labeled Cloth",
 			"item_name": self.item+" Labeled Cloth",
@@ -66,5 +66,4 @@ def create_item_template(self):
 					"attribute" : "Apparelo Size"
 				}
 			]
-		})
-		item.save()
+		}).save()

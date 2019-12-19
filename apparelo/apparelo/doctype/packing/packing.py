@@ -28,7 +28,6 @@ class Packing(Document):
 			item_list.append({"item_code": input_item,"uom": "Nos"})
 		for item in self.additional_part:
 			item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
-		
 		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
 			bom = frappe.get_doc({
@@ -47,8 +46,8 @@ class Packing(Document):
 
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
+	if not frappe.db.exist("Item",self.item+" Packed Cloth"):
+		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Packed Cloth",
 		"item_name": self.item+" Packed Cloth",
@@ -59,12 +58,11 @@ def create_item_template(self):
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Apparelo Colour" 
+				"attribute" : "Apparelo Colour"
 			},
 			{
 				"attribute" : "Apparelo Size"
 			}
 		]
-	})
-	item.save()
+	}).save()
 

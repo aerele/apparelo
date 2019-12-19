@@ -10,11 +10,10 @@ from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
 
-
 class PiecePrinting(Document):
 	def on_submit(self):
 		create_item_template(self)
-		
+
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -29,7 +28,7 @@ class PiecePrinting(Document):
 			variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
 			variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
 		return variants
-	
+
 	def create_boms(self, input_item_names, variants):
 		item_list = []
 		boms = []
@@ -52,8 +51,8 @@ class PiecePrinting(Document):
 		return boms
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
+	if not frappe.db.exists("Item",self.item+"Printed Cloth"):
+		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Printed Cloth",
 		"item_name": self.item+" Printed Cloth",
@@ -64,14 +63,13 @@ def create_item_template(self):
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Apparelo Colour" 
+				"attribute" : "Apparelo Colour"
 			},
 			{
-				"attribute" : "Part" 
+				"attribute" : "Part"
 			},
 			{
 				"attribute" : "Apparelo Size"
 			}
 		]
-	})
-	item.save()
+	}).save()

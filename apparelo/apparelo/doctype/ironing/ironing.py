@@ -12,6 +12,7 @@ from erpnext import get_default_company, get_default_currency
 class Ironing(Document):
 	def on_submit(self):
 		create_item_template(self)
+
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -19,6 +20,7 @@ class Ironing(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = create_variants(self.item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
+
 	def create_boms(self, input_item_names, variants):
 		item_list = []
 		boms = []
@@ -41,8 +43,8 @@ class Ironing(Document):
 		return boms
 
 def create_item_template(self):
-	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
+	if not frappe.db.exists("Item",self.item+"Ironed Cloth"):
+		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Ironed Cloth",
 		"item_name": self.item+" Ironed Cloth",
@@ -53,30 +55,10 @@ def create_item_template(self):
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-			
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" 
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour" 
-			},
-			{
-				"attribute" : "Part" 
+				"attribute" : "Apparelo Colour"
 			},
 			{
 				"attribute" : "Apparelo Size"
 			}
 		]
-	})
-	item.save()
+	}).save()

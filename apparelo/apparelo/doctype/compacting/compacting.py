@@ -60,6 +60,8 @@ class Compacting(Document):
 						boms.append(bom.name)
 					else:
 						boms.append(existing_bom)
+				else:
+					frappe.throw(_("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
 		return boms
 
 	def get_variant_values(self):

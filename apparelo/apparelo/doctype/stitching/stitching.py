@@ -15,8 +15,6 @@ class Stitching(Document):
 		create_item_template(self)
 
 	def create_variants(self, input_item_names):
-		print("YYYY")
-		print(input_item_names)
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -32,8 +30,8 @@ class Stitching(Document):
 							variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 							variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
 							variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
-					# else:
-					# 	frappe.throw(_("Part colour is not available in the input"))
+					else:
+						frappe.throw(_("Part colour is not available in the input"))
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
@@ -41,7 +39,6 @@ class Stitching(Document):
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
-
 		if attribute_name == "Apparelo Colour":
 			if part == None:
 				for colour_mapping in self.colour_mappings:
@@ -50,7 +47,6 @@ class Stitching(Document):
 				for colour_mapping in self.colour_mappings:
 					if colour_mapping.part == part:
 						attribute_value.add(colour_mapping.part_colour)
-
 		return list(attribute_value)
 
 	def create_boms(self, input_item_names, variants):
