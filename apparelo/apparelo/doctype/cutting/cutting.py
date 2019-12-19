@@ -20,7 +20,7 @@ class Cutting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		if self.validate("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.validate("Dia", attribute_set["Dia"]):
+		if self.attribute_validate("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.attribute_validate("Dia", attribute_set["Dia"]):
 			parts = set(self.get_attribute_values("Part"))
 			for part in parts:
 				variant_attribute_set = {}
@@ -28,11 +28,11 @@ class Cutting(Document):
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 				variant_attribute_set['Apparelo Size'] = self.get_attribute_values('Apparelo Size', part)
 				variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
-		# else:
-		# 	frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
+		else:
+			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
 		return variants
 	
-	def validate(self, attribute_name, input_attribute_values):
+	def attribute_validate(self, attribute_name, input_attribute_values):
 		return set(self.get_attribute_values(attribute_name)).issubset(set(input_attribute_values))
 	
 

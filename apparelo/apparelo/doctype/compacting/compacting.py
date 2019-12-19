@@ -16,9 +16,10 @@ class Compacting(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
+			print("@!W213213")
+			print(input_item_name)
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		attribute_set["Apparelo Colour"]=[attribute_set["Apparelo Colour"][0]]
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Compacted Cloth', attribute_set)
 		return list(set(variants))
