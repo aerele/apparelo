@@ -15,21 +15,21 @@ class PiecePrinting(Document):
 	def on_submit(self):
 		create_item_template(self)
 		
-	def create_variants(self, input_item_names,piece):
+	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		for i in piece.details:
-			for j in piece.colour_mapping:
-				if i.part==j.part and i.part==self.part:
-					variant_attribute_set = {}
-					variant_attribute_set['Part'] = [i.part]
-					variant_attribute_set['Apparelo Colour'] = [j.colour]
-					variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-					variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
+		parts=attribute_set["Part"]
+		for part in parts:
+			variant_attribute_set = {}
+			variant_attribute_set['Part'] = [part]
+			variant_attribute_set['Apparelo Colour'] = attribute_set["Apparelo Colour"]
+			variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
+			variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
 		return variants
+	
 	def create_boms(self, input_item_names, variants):
 		item_list = []
 		boms = []
