@@ -15,14 +15,12 @@ class Dyeing(Document):
 
 	def create_variants(self, input_item_names):
 		input_items = []
-
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
-
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Dyed cloth', attribute_set)
-		return variants 
+		return variants
 
 	def create_boms(self, input_item_names, variants):
 		input_items = []
@@ -73,7 +71,6 @@ class Dyeing(Document):
 		return attribute_set
 
 def create_item_template():
-	
 	if not frappe.db.exists("Item Attribute", "Apparelo Colour"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -121,42 +118,40 @@ def create_item_template():
 				}
 			]
 		}).save()
-		
 
-	# todo: need to check if an item already exists with the same name
-	dia = frappe.get_doc('Item Attribute', 'Dia')
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Dyed Cloth",
-		"item_name": "Dyed Cloth",
-		"description": "Dyed Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" ,
-				"numeric_value": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment 
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour" 
-			}
-		]
-	})
-	item.save()
+ 	dia = frappe.get_doc('Item Attribute', 'Dia')
+	if not frappe.db.exists('Item','Dyed Cloth'):
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": "Dyed Cloth",
+			"item_name": "Dyed Cloth",
+			"description": "Dyed Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				},
+				{
+					"attribute" : "Dia" ,
+					"numeric_value": 1,
+					"from_range": dia.from_range,
+					"to_range": dia.to_range,
+					"increment": dia.increment
+				},
+				{
+					"attribute" : "Knitting Type"
+				},
+				{
+					"attribute" : "Apparelo Colour"
+				}
+			]
+		}).save()

@@ -13,7 +13,7 @@ from frappe import _
 class Steaming(Document):
 	def on_submit(self):
 		create_item_template()
-	
+
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -77,9 +77,9 @@ class Steaming(Document):
 
 
 def create_item_template():
-	# todo: need to check if an item already exists with the same name
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	item = frappe.get_doc({
+	if not frappe.db.exists("item","Steamd Cloth"):
+		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": "Steamed Cloth",
 		"item_name": "Steamed Cloth",
@@ -90,7 +90,7 @@ def create_item_template():
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Yarn Shade" 
+				"attribute" : "Yarn Shade"
 			},
 			{
 				"attribute" : "Yarn Category"
@@ -103,14 +103,13 @@ def create_item_template():
 				"numeric_value": 1,
 				"from_range": dia.from_range,
 				"to_range": dia.to_range,
-				"increment": dia.increment 
+				"increment": dia.increment
 			},
 			{
 				"attribute" : "Knitting Type"
 			},
 			{
-				"attribute" : "Apparelo Colour" 
+				"attribute" : "Apparelo Colour"
 			}
 		]
-	})
-	item.save()
+	}).save()

@@ -96,7 +96,7 @@ def create_item_template():
 				}
 			]
 		}).save()
-	
+
 	if not frappe.db.exists("Item Attribute", "Yarn Category"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -116,7 +116,7 @@ def create_item_template():
 				}
 			]
 		}).save()
-	
+
 	if not frappe.db.exists("Item Attribute", "Yarn Count"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -150,6 +150,7 @@ def create_item_template():
 			"to_range": 36.0,
 			"increment": 0.25
 		}).save()
+
 	if not frappe.db.exists("Item Attribute", "Knitting Type"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -174,7 +175,6 @@ def create_item_template():
 			]
 		}).save()
 
-	# todo: need to check if an item already exists with the same name
 	if not frappe.db.exists("Item", "Yarn"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -187,7 +187,7 @@ def create_item_template():
 			"variant_based_on" : "Item Attribute",
 			"attributes" : [
 				{
-					"attribute" : "Yarn Shade" 
+					"attribute" : "Yarn Shade"
 				},
 				{
 					"attribute" : "Yarn Category"
@@ -211,7 +211,7 @@ def create_item_template():
 			"variant_based_on" : "Item Attribute",
 			"attributes" : [
 				{
-					"attribute" : "Yarn Shade" 
+					"attribute" : "Yarn Shade"
 				},
 				{
 					"attribute" : "Yarn Category"

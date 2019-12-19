@@ -18,7 +18,6 @@ class Bleaching(Document):
 
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
-
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Bleached cloth', attribute_set)
@@ -63,6 +62,7 @@ class Bleaching(Document):
 				else:
 					frappe.throw(_("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
 		return boms
+
 	def get_variant_values(self):
 		attribute_set = {}
 		variant_colour = []
@@ -72,9 +72,9 @@ class Bleaching(Document):
 		return attribute_set
 
 def create_item_template():
-	# todo: need to check if an item already exists with the same name
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	item = frappe.get_doc({
+	if not frappe.db.exists("Item","Bleached Cloth"):
+		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": "Bleached Cloth",
 		"item_name": "Bleached Cloth",
@@ -85,7 +85,7 @@ def create_item_template():
 		"variant_based_on" : "Item Attribute",
 		"attributes" : [
 			{
-				"attribute" : "Yarn Shade" 
+				"attribute" : "Yarn Shade"
 			},
 			{
 				"attribute" : "Yarn Category"
@@ -104,8 +104,7 @@ def create_item_template():
 				"attribute" : "Knitting Type"
 			},
 			{
-				"attribute" : "Apparelo Colour" 
+				"attribute" : "Apparelo Colour"
 			}
 		]
-	})
-	item.save()
+	}).save()

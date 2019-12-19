@@ -59,8 +59,6 @@ class Compacting(Document):
 						boms.append(bom.name)
 					else:
 						boms.append(existing_bom)
-				# else:
-				# 	frappe.throw(("unexpected error while creating BOM. Expected variant not found in list of supplied Variants"))
 		return boms
 
 	def get_variant_values(self):
@@ -75,40 +73,39 @@ class Compacting(Document):
 		return attribute_set
 
 def create_item_template():
-	# todo: need to check if an item already exists with the same name
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Compacted Cloth",
-		"item_name": "Compacted Cloth",
-		"description": "Compacted Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia",
-				"numeric_value": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour" 
-			}
-		]
-	})
-	item.save()
+	if not frappe.db.exists("Item","Compacted Cloth"):
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": "Compacted Cloth",
+			"item_name": "Compacted Cloth",
+			"description": "Compacted Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				},
+				{
+					"attribute" : "Dia",
+					"numeric_value": 1,
+					"from_range": dia.from_range,
+					"to_range": dia.to_range,
+					"increment": dia.increment
+				},
+				{
+					"attribute" : "Knitting Type"
+				},
+				{
+					"attribute" : "Apparelo Colour"
+				}
+			]
+		}).save()
