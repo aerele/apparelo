@@ -5,23 +5,35 @@
  "engine": "InnoDB",
  "field_order": [
   "item_production_details",
-  "bom"
+  "item",
+  "bom_mapping"
  ],
  "fields": [
   {
    "fieldname": "item_production_details",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Item Production Details",
-   "options": "Item Production Detail"
+   "options": "Item Production Detail",
+   "reqd": 1
   },
   {
-   "fieldname": "bom",
+   "fieldname": "bom_mapping",
+   "fieldtype": "Table",
+   "label": "BOM Mapping",
+   "options": "BOM Mapping",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item",
    "fieldtype": "Link",
-   "label": "BOM",
-   "options": "BOM"
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
   }
  ],
- "modified": "2019-12-19 16:04:04.160394",
+ "modified": "2019-12-19 20:39:23.986949",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD BOM Mapping",

@@ -9,11 +9,15 @@ from frappe.model.document import Document
 
 class IPDItemMapping(Document):
 	pass
-def ipd_item_mapping(item,ipd_name,index):
+def ipd_item_mapping(ipd_list,ipd_name,item):
+	ipd_item=[]
+	for ipd in ipd_list:
+		for variant in ipd['variants']:
+			ipd_item.append({'item': variant,'ipd_process_index': ipd['index']})
 	frappe.get_doc({
 		'doctype': 'IPD Item Mapping', 
-		'item': item, 
 		'item_production_details': ipd_name,
-		'ipd_process_index': index}).save()
+		'item': item,
+		'item_mapping':ipd_item}).save()
 
 

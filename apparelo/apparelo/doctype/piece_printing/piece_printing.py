@@ -23,11 +23,12 @@ class PiecePrinting(Document):
 		variants = []
 		parts=attribute_set["Part"]
 		for part in parts:
-			variant_attribute_set = {}
-			variant_attribute_set['Part'] = [part]
-			variant_attribute_set['Apparelo Colour'] = attribute_set["Apparelo Colour"]
-			variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-			variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
+			if part==self.part:
+				variant_attribute_set = {}
+				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Apparelo Colour'] = attribute_set["Apparelo Colour"]
+				variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
+				variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
 		return variants
 	
 	def create_boms(self, input_item_names, variants):
