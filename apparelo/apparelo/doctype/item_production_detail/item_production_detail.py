@@ -5,11 +5,18 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-
+from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item_mapping
+from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
 class ItemProductionDetail(Document):
 
 	def on_submit(self):
-		self.create_process_details()
+		bom,index=self.create_process_details()
+		print("Hurry")
+		print(bom)
+		ipd_name=self.name
+		ipd_item_mapping(self.item,ipd_name,index)
+		ipd_bom_mapping(bom,ipd_name)
+
 
 	def create_process_details(self):
 		ipd = []
@@ -255,6 +262,7 @@ class ItemProductionDetail(Document):
 					print("#############")
 				continue
 			if process.process_name == 'Packing':
+				index=process.idx
 				process_variants['process'] = 'Packing'
 				process_variants['index']=process.idx
 				if process.input_item:
@@ -276,3 +284,4 @@ class ItemProductionDetail(Document):
 					print(ipd)
 					print("#############")
 				continue
+		return boms,index

@@ -33,8 +33,7 @@
    "reqd": 1
   }
  ],
- "in_create": 1,
- "modified": "2019-11-09 08:55:24.089972",
+ "modified": "2019-12-19 16:45:46.041808",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD Item Mapping",
@@ -54,7 +53,6 @@
   }
  ],
  "quick_entry": 1,
- "read_only": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1

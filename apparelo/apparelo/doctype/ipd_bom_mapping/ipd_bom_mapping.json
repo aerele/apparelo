@@ -21,8 +21,7 @@
    "options": "BOM"
   }
  ],
- "in_create": 1,
- "modified": "2019-11-09 08:55:46.810272",
+ "modified": "2019-12-19 16:04:04.160394",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD BOM Mapping",
@@ -42,7 +41,6 @@
   }
  ],
  "quick_entry": 1,
- "read_only": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
