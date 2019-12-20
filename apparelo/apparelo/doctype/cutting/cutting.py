@@ -5,11 +5,10 @@
 from __future__ import unicode_literals
 import frappe
 from frappe import _
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from frappe.model.document import Document
-from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
-
+from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()

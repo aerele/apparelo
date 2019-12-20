@@ -5,9 +5,9 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 
 class LabelFusing(Document):
 	def on_submit(self):
@@ -28,20 +28,21 @@ class LabelFusing(Document):
 				item_list.append({"item_code": additional_part.item,"qty":additional_part.qty,"uom": "Nos"})
 			for input_item in input_item_names:
 				item_list.append({"item_code": input_item,"uom": "Nos"})
-			existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
-			if not existing_bom:
-				bom = frappe.get_doc({
-					"doctype": "BOM",
-					"currency": get_default_currency(),
-					"item": variants[0],
-					"company": get_default_company(),
-					"items": item_list
-				})
-				bom.save()
-				bom.submit()
-				boms.append(bom.name)
-			else:
-				boms.append(existing_bom)
+			for variant in variants:
+				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom:
+					bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						"item": variant,
+						"company": get_default_company(),
+						"items": item_list
+					})
+					bom.save()
+					bom.submit()
+					boms.append(bom.name)
+				else:
+					boms.append(existing_bom)
 			return boms
 
 def create_item_template(self):
