@@ -28,6 +28,7 @@ class Packing(Document):
 			item_list.append({"item_code": input_item,"uom": "Nos"})
 		for item in self.additional_part:
 			item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+		# TODO : iterate variants if needed
 		existing_bom = frappe.db.get_value('BOM', {'item': variants[0]}, 'name')
 		if not existing_bom:
 			bom = frappe.get_doc({

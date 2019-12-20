@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
+from frappe import _
 
 class Dyeing(Document):
 	def on_submit(self):
@@ -144,7 +145,7 @@ def create_item_template():
 				},
 				{
 					"attribute" : "Dia" ,
-					"numeric_value": 1,
+					"numeric_values": 1,
 					"from_range": dia.from_range,
 					"to_range": dia.to_range,
 					"increment": dia.increment

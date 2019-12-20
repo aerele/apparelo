@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
+from frappe import _
 
 class Compacting(Document):
 	def on_submit(self):
@@ -16,13 +17,11 @@ class Compacting(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
-			print("@!W213213")
-			print(input_item_name)
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Compacted Cloth', attribute_set)
-		return list(set(variants))
+		return variants
 
 	def create_boms(self, input_item_names, variants):
 		input_items = []
@@ -99,7 +98,7 @@ def create_item_template():
 				},
 				{
 					"attribute" : "Dia",
-					"numeric_value": 1,
+					"numeric_values": 1,
 					"from_range": dia.from_range,
 					"to_range": dia.to_range,
 					"increment": dia.increment
