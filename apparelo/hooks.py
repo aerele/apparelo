@@ -55,7 +55,7 @@ app_license = "MIT"
 # ------------
 
 # before_install = "apparelo.install.before_install"
-# after_install = "apparelo.install.after_install"
+after_install = "apparelo.install.after_install"
 
 # Desk Notifications
 # ------------------
