@@ -74,7 +74,11 @@
   }
  ],
  "is_submittable": 1,
+<<<<<<< HEAD
  "modified": "2019-12-12 11:26:45.530493",
+=======
+ "modified": "2019-12-12 11:27:02.151901",
+>>>>>>> Updated ipd_bom_mapping
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",
