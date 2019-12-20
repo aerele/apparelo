@@ -3,8 +3,21 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
+import frappe
 from frappe.model.document import Document
+
 
 class IPDItemMapping(Document):
 	pass
+def ipd_item_mapping(ipd_list,ipd_name,item):
+	ipd_item=[]
+	for ipd in ipd_list:
+		for variant in ipd['variants']:
+			ipd_item.append({'item': variant,'ipd_process_index': ipd['index']})
+	frappe.get_doc({
+		'doctype': 'IPD Item Mapping', 
+		'item_production_details': ipd_name,
+		'item': item,
+		'item_mapping':ipd_item}).save()
+
+

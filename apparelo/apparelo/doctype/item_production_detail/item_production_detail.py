@@ -5,11 +5,14 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.model.document import Document
-
+from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item_mapping
+from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
 class ItemProductionDetail(Document):
 
 	def on_submit(self):
-		self.create_process_details()
+		ipd_list=self.create_process_details()
+		ipd_item_mapping(ipd_list,self.name,self.item)
+		ipd_bom_mapping(ipd_list,self.name,self.item)
 
 	def create_process_details(self):
 		ipd = []
@@ -23,13 +26,12 @@ class ItemProductionDetail(Document):
 					variants = knitting_doc.create_variants([process.input_item])
 					process_variants['variants'] = variants
 					boms=knitting_doc.create_boms([process.input_item], variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-				
+
 				elif process.input_index:
 					pass
-				print("#############")
-				print(ipd)
-				print("#############")
+				
 				continue
 
 			if process.process_name == 'Dyeing':
@@ -48,10 +50,8 @@ class ItemProductionDetail(Document):
 					variants = dyeing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = dyeing_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Steaming':
 				process_variants['process'] = 'Steaming'
@@ -70,10 +70,8 @@ class ItemProductionDetail(Document):
 					variants = steaming_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = steaming_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Compacting':
 				process_variants['process'] = 'Compacting'
@@ -92,10 +90,8 @@ class ItemProductionDetail(Document):
 					variants = compacting_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = compacting_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Bleaching':
 				process_variants['process'] = 'Bleaching'
@@ -114,10 +110,8 @@ class ItemProductionDetail(Document):
 					variants = bleaching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = bleaching_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(input_items)
-					print("#############")
 				continue
 			if process.process_name == 'Cutting':
 				process_variants['process'] = 'Cutting'
@@ -136,10 +130,8 @@ class ItemProductionDetail(Document):
 					variants = cutting_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = cutting_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(input_items)
-					print("#############")
 				continue
 			if process.process_name == 'Piece Printing':
 				process_variants['process'] = 'Piece Printing'
@@ -159,10 +151,8 @@ class ItemProductionDetail(Document):
 					variants = piece_printing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = piece_printing_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Stitching':
 				process_variants['process'] = 'Stitching'
@@ -183,10 +173,8 @@ class ItemProductionDetail(Document):
 					variants = stitching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = stitching_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Label Fusing':
 				process_variants['process'] = 'Label Fusing'
@@ -205,10 +193,8 @@ class ItemProductionDetail(Document):
 					variants = label_fusing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = label_fusing_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Checking':
 				process_variants['process'] = 'Checking'
@@ -227,10 +213,8 @@ class ItemProductionDetail(Document):
 					variants = checking_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = checking_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Ironing':
 				process_variants['process'] = 'Ironing'
@@ -249,12 +233,11 @@ class ItemProductionDetail(Document):
 					variants = ironing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = ironing_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
 			if process.process_name == 'Packing':
+				index=process.idx
 				process_variants['process'] = 'Packing'
 				process_variants['index']=process.idx
 				if process.input_item:
@@ -271,8 +254,7 @@ class ItemProductionDetail(Document):
 					variants = packing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
 					boms = packing_doc.create_boms(input_items, variants)
+					process_variants['BOM']=boms
 					ipd.append(process_variants)
-					print("#############")
-					print(ipd)
-					print("#############")
 				continue
+		return ipd
