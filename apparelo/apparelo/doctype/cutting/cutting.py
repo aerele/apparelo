@@ -137,7 +137,7 @@ def create_item_attribute():
 
 	items = []
 	for num in range(35,120,5):
-		items.append({"attribute_value" : num +" cm","abbr" : num+" cm"})
+		items.append({"attribute_value" : str(num) +" cm","abbr" : str(num)+" cm"})
 	if not frappe.db.exists("Item Attribute", "Apparelo Size"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -145,7 +145,7 @@ def create_item_attribute():
 			"item_attribute_values": items
 		}).save()
 
-def create_item_template(self):
+def create_item_template():
 	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
 		item = frappe.get_doc({
 			"doctype": "Item",

@@ -43,7 +43,7 @@ class Checking(Document):
 		return boms
 
 
-def create_item_template(self):
+def create_item_template():
 	if not frappe.bd.exists('Item',self.item+'Checked Cloth'):
 		frappe.get_doc({
 		"doctype": "Item",
