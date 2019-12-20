@@ -46,7 +46,7 @@ class Packing(Document):
 		return boms
 
 
-def create_item_template():
+def create_item_template(self):
 	if not frappe.db.exist("Item",self.item+" Packed Cloth"):
 		frappe.get_doc({
 		"doctype": "Item",

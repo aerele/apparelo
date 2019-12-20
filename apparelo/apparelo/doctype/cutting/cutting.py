@@ -145,7 +145,7 @@ def create_item_attribute():
 			"item_attribute_values": items
 		}).save()
 
-def create_item_template():
+def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
 		item = frappe.get_doc({
 			"doctype": "Item",

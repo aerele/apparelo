@@ -70,7 +70,7 @@ class Stitching(Document):
 			boms.append(existing_bom)
 		return boms
 
-def create_item_template():
+def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+" Stitched Cloth"):
 		item = frappe.get_doc({
 			"doctype": "Item",

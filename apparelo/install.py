@@ -33,11 +33,3 @@ def create_item_template():
     bleaching.create_item_template()
     compacting.create_item_template()
     steaming.create_item_template()
-    cutting.create_item_template()
-    piece_printing.create_item_template()
-    stitching.create_item_template()
-    label_fusing.create_item_template()
-    checking.create_item_template()
-    ironing.create_item_template()
-    packing.create_item_template()
-
