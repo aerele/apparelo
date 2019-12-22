@@ -18,6 +18,7 @@ class Packing(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		attribute_set.pop('Apparelo Colour')
 		variants = create_variants(self.item+" Packed Cloth", attribute_set)
 		return list(set(variants))
 
@@ -29,12 +30,12 @@ class Packing(Document):
 		for item in self.additional_part:
 			item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 		for variant in variants:
-			existing_bom = frappe.db.get_value('BOM', {'item': variants}, 'name')
+			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
 					"doctype": "BOM",
 					"currency": get_default_currency(),
-					"item": variants,
+					"item": variant,
 					"company": get_default_company(),
 					"items": item_list
 				})
