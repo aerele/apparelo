@@ -6,10 +6,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "name1",
   "item_production_detail",
   "section_break_3",
-  "item_list"
+  "item_list",
+  "amended_from"
  ],
  "fields": [
   {
@@ -17,11 +17,6 @@
    "fieldtype": "Link",
    "label": "Item Production Detail",
    "options": "Item Production Detail"
-  },
-  {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name"
   },
   {
    "fieldname": "section_break_3",
@@ -32,11 +27,20 @@
    "fieldtype": "Table",
    "label": "Item List",
    "options": "Lot Creation Item List"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Creation",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-24 11:00:51.527498",
+ "modified": "2019-12-24 11:06:51.058415",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
