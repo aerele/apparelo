@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "Prompt",
  "creation": "2019-12-18 14:37:21.355669",
  "doctype": "DocType",
@@ -8,25 +7,28 @@
  "field_order": [
   "item_production_detail",
   "section_break_3",
-  "item_list",
+  "po_items",
+  "get_items_for_mr",
+  "section_break_5",
+  "mr_items",
   "amended_from"
  ],
  "fields": [
   {
    "fieldname": "item_production_detail",
    "fieldtype": "Link",
+   "in_filter": 1,
    "label": "Item Production Detail",
    "options": "Item Production Detail"
   },
   {
    "fieldname": "section_break_3",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Select Items to Manufacture"
   },
   {
-   "fieldname": "item_list",
-   "fieldtype": "Table",
-   "label": "Item List",
-   "options": "Lot Creation Item List"
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "amended_from",
@@ -36,11 +38,26 @@
    "options": "Lot Creation",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "po_items",
+   "fieldtype": "Table",
+   "options": "Lot Creation Plan Item"
+  },
+  {
+   "fieldname": "mr_items",
+   "fieldtype": "Table",
+   "label": "Material Request Plan Item",
+   "options": "Material Request Plan Item"
+  },
+  {
+   "fieldname": "get_items_for_mr",
+   "fieldtype": "Button",
+   "label": "Get Raw Material for Production"
   }
  ],
  "is_submittable": 1,
- "links": [],
- "modified": "2019-12-24 11:06:51.058415",
+ "modified": "2019-12-24 14:46:58.389501",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
