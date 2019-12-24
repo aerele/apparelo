@@ -21,30 +21,34 @@ class LabelFusing(Document):
 		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants):
+	def create_boms(self, input_item_names, variants, attribute_set):
+		
+		boms = []
+
+		for variant in variants:
 			item_list = []
-			boms = []
+			for input_item in input_item_names:
+				for size in attribute_set["Apparelo Size"]:
+					for colour in attribute_set["Apparelo Colour"]:
+						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+							item_list.append({"item_code": input_item,"uom": "Nos"})
 			for additional_part in self.additional_parts:
 				item_list.append({"item_code": additional_part.item,"qty":additional_part.qty,"uom": "Nos"})
-			for input_item in input_item_names:
-				item_list.append({"item_code": input_item,"uom": "Nos"})
-			for variant in variants:
-				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
-				if not existing_bom:
-					bom = frappe.get_doc({
-						"doctype": "BOM",
-						"currency": get_default_currency(),
-						"item": variant,
-						"company": get_default_company(),
-						"items": item_list
-					})
-					bom.save()
-					bom.submit()
-					boms.append(bom.name)
-				else:
-					boms.append(existing_bom)
-			return boms
-
+			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+			if not existing_bom:
+				bom = frappe.get_doc({
+					"doctype": "BOM",
+					"currency": get_default_currency(),
+					"item": variant,
+					"company": get_default_company(),
+					"items": item_list
+				})
+				bom.save()
+				bom.submit()
+				boms.append(bom.name)
+			else:
+				boms.append(existing_bom)
+		return boms
 def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+"Labeled Cloth"):
 		frappe.get_doc({

@@ -14,8 +14,8 @@ class Stitching(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names):
-		bom=[]
+	def create_variants(self, input_item_names,colour):
+		colour.sort()
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -27,11 +27,17 @@ class Stitching(Document):
 				if colour_mapping.part==part:
 					if colour_mapping.part_colour in attribute_set["Apparelo Colour"]:
 						variant_attribute_set = {}
-						variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
+						piece_colour=self.get_attribute_values('Apparelo Colour', part)
+						piece_colour.sort()
+						if piece_colour==colour:
+							variant_attribute_set['Apparelo Colour'] = piece_colour
+						else:
+							frappe.throw(_("Item colour is not available"))
 						variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
 						variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
 					else:
 						frappe.throw(_("Part Colour is not available in the input"))
+		
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
@@ -49,14 +55,15 @@ class Stitching(Document):
 						attribute_value.add(colour_mapping.piece_colour)
 		return list(attribute_value)
 
-	def create_boms(self, input_item_names, variants):
+	def create_boms(self, input_item_names, variants,attribute_set):
 		boms = []
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
-				for colour_mapping in self.colour_mappings:
-					for piece_count in self.parts_per_piece:
-						if colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+				for size in attribute_set["Apparelo Size"]:
+					for colour_mapping in self.colour_mappings:
+						for piece_count in self.parts_per_piece:
+							if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 								if piece_count.part==colour_mapping.part:
 									item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
