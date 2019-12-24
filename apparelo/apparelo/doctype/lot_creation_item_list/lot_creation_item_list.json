@@ -1,0 +1,37 @@
+{
+ "actions": [],
+ "creation": "2019-12-24 10:12:04.619720",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "size",
+  "qty_for_production"
+ ],
+ "fields": [
+  {
+   "fieldname": "size",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Size"
+  },
+  {
+   "fieldname": "qty_for_production",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty for production",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2019-12-24 11:00:19.335692",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Creation Item List",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
