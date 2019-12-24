@@ -26,6 +26,48 @@
    "reqd": 1
   },
   {
+    "fieldname": "conversion_details_section",
+    "fieldtype": "Section Break",
+    "label": "Conversion Details"
+   },
+   {
+    "default": "1",
+    "fieldname": "input_qty",
+    "fieldtype": "Int",
+    "in_list_view": 1,
+    "label": "Input Qty",
+    "reqd": 1
+   },
+   {
+    "default": "1",
+    "fieldname": "output_qty",
+    "fieldtype": "Int",
+    "in_list_view": 1,
+    "label": "Output Qty",
+    "reqd": 1
+   },
+   {
+    "fieldname": "column_break_12",
+    "fieldtype": "Column Break"
+   },
+   {
+    "default": "Nos",
+    "fieldname": "input_uom",
+    "fieldtype": "Link",
+    "in_list_view": 1,
+    "label": "Input UOM",
+    "options": "UOM",
+    "reqd": 1
+   },
+   {
+    "default": "Box",
+    "fieldname": "output_uom",
+    "fieldtype": "Link",
+    "label": "Output UOM",
+    "options": "UOM",
+    "reqd": 1
+   }, 
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -36,7 +78,7 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 13:54:11.430615",
+ "modified": "2019-12-23 13:54:11.430631",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Packing",
