@@ -117,6 +117,28 @@ frappe.ui.form.on('Lot Creation', {
 
 		set_field_options("projected_qty_formula", projected_qty_formula);
 	},
+	get_items:function(frm) {
+		const set_fields =['item_code','bom_no'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.lot_creation.lot_creation.get_ipd_item",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('po_items', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('po_items');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('po_items');
+			}
+		});
+	},
 	get_items_for_mr: function(frm) {
 		const set_fields = ['actual_qty', 'item_code','item_name', 'description', 'uom', 
 			'min_order_qty', 'quantity', 'sales_order', 'warehouse', 'projected_qty', 'material_request_type'];
@@ -142,6 +164,7 @@ frappe.ui.form.on('Lot Creation', {
 	},
 });
 
+
 frappe.ui.form.on("Lot Creation Plan Item", {
 	item_code: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
@@ -160,6 +183,7 @@ frappe.ui.form.on("Lot Creation Plan Item", {
 		}
 	}
 });
+
 frappe.ui.form.on("Material Request Plan Item", {
 	warehouse: function(frm, cdt, cdn) {
 		const row = locals[cdt][cdn];
