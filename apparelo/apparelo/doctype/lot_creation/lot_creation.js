@@ -52,16 +52,6 @@ frappe.ui.form.on('Lot Creation', {
 		}
 	},
 	refresh: function(frm) {
-		if (frm.doc.docstatus === 1) {
-			frm.trigger("show_progress");
-		}
-
-		if (frm.doc.docstatus === 1 && frm.doc.po_items
-			&& frm.doc.status != 'Completed') {
-			frm.add_custom_button(__("Work Order"), ()=> {
-				frm.trigger("make_work_order");
-			}, __('Create'));
-		}
 
 		if (frm.doc.docstatus === 1 && frm.doc.mr_items
 			&& !in_list(['Material Requested', 'Completed'], frm.doc.status)) {
@@ -69,7 +59,7 @@ frappe.ui.form.on('Lot Creation', {
 				frm.trigger("make_material_request");
 			}, __('Create'));
 		}
-
+		frm.page.set_inner_btn_group_as_primary(__('Create'));
 		frm.trigger("material_requirement");
 
 		const projected_qty_formula = ` <table class="table table-bordered" style="background-color: #f9f9f9;">
@@ -117,6 +107,31 @@ frappe.ui.form.on('Lot Creation', {
 
 		set_field_options("projected_qty_formula", projected_qty_formula);
 	},
+	make_material_request: function(frm) {
+
+		frappe.confirm(__("Do you want to submit the material request"),
+			function() {
+				frm.events.create_material_request(frm, 1);
+			},
+			function() {
+				frm.events.create_material_request(frm, 0);
+			}
+		);
+	},
+
+	create_material_request: function(frm, submit) {
+		frm.doc.submit_material_request = submit;
+
+		frappe.call({
+			method: "make_material_request",
+			freeze: true,
+			doc: frm.doc,
+			callback: function(r) {
+				frm.reload_doc();
+			}
+		});
+	},
+
 	get_items:function(frm) {
 		const set_fields =['item_code','bom_no'];
 		frappe.call({
@@ -161,6 +176,11 @@ frappe.ui.form.on('Lot Creation', {
 				refresh_field('mr_items');
 			}
 		});
+	},
+	for_warehouse: function(frm) {
+		if (frm.doc.mr_items) {
+			frm.trigger("get_items_for_mr");
+		}
 	},
 });
 
