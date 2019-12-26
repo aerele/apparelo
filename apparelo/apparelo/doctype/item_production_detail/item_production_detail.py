@@ -48,9 +48,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					dyeing_doc = frappe.get_doc('Dyeing', process.process_record)
 					variants = dyeing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -66,9 +68,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					steaming_doc = frappe.get_doc('Steaming', process.process_record)
 					variants = steaming_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -84,9 +88,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					compacting_doc = frappe.get_doc('Compacting', process.process_record)
 					variants = compacting_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -102,9 +108,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					bleaching_doc = frappe.get_doc('Bleaching', process.process_record)
 					variants = bleaching_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -120,9 +128,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
 					variants,attribute_set = cutting_doc.create_variants(input_items,item_size)
 					process_variants['variants'] = variants
@@ -138,10 +148,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						index=self.processes[int(process.input_index) - 1]
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
 					variants = piece_printing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -177,9 +188,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
 					variants = label_fusing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -195,9 +208,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					checking_doc = frappe.get_doc('Checking', process.process_record)
 					variants = checking_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -213,9 +228,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					ironing_doc = frappe.get_doc('Ironing', process.process_record)
 					variants = ironing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
@@ -232,9 +249,11 @@ class ItemProductionDetail(Document):
 					pass
 				elif process.input_index:
 					input_items = []
+					input_indexs = process.input_index.split(',')
 					for pro in ipd:
-						if str(pro['index'])==process.input_index:
-							input_items.extend(pro['variants'])
+						for input_index in input_indexs:
+							if str(pro['index'])==input_index:
+								input_items.extend(pro['variants'])
 					packing_doc = frappe.get_doc('Packing', process.process_record)
 					variants,piece_count= packing_doc.create_variants(input_items,self.item)
 					process_variants['variants'] = variants
