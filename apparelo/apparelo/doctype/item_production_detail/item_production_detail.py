@@ -92,8 +92,6 @@ class ItemProductionDetail(Document):
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
-								print("**************")
-								print(input_index)
 								input_items.extend(pro['variants'])
 					compacting_doc = frappe.get_doc('Compacting', process.process_record)
 					variants = compacting_doc.create_variants(input_items)
@@ -263,6 +261,4 @@ class ItemProductionDetail(Document):
 					process_variants['BOM']=boms
 					ipd.append(process_variants)
 				continue
-		print("&&&&&&&&&&&&&&&&&&&&&")
-		print(ipd)	
 		return ipd
