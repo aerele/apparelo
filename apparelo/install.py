@@ -10,12 +10,6 @@ from apparelo.apparelo.doctype.bleaching import bleaching
 from apparelo.apparelo.doctype.compacting import compacting
 from apparelo.apparelo.doctype.steaming import steaming
 from apparelo.apparelo.doctype.cutting import cutting
-from apparelo.apparelo.doctype.piece_printing import piece_printing
-from apparelo.apparelo.doctype.stitching import stitching
-from apparelo.apparelo.doctype.label_fusing import label_fusing
-from apparelo.apparelo.doctype.checking import checking
-from apparelo.apparelo.doctype.ironing import ironing
-from apparelo.apparelo.doctype.packing import packing
 
 
 def after_install():
