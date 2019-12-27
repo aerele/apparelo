@@ -33,6 +33,11 @@ class Knitting(Document):
 		attribute_set.pop('Yarn Category')
 		if 'Plain' in attribute_set['Yarn Shade']:
 			attribute_set.pop('Yarn Shade')
+<<<<<<< HEAD
+=======
+		# for dia in attribute_set['Dia']:
+		# 	attribute_set['Dia']=str(dia)+ "Dia"
+>>>>>>> 3650a40... update template
 		variants = create_variants('Knitted Cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
@@ -60,6 +65,11 @@ class Knitting(Document):
 				attribute_values.pop('Yarn Category')
 				if 'Plain' in attribute_values['Yarn Shade']:
 					attribute_values.pop('Yarn Shade')
+<<<<<<< HEAD
+=======
+				# for dia in attribute_values['Dia']:
+				# 	attribute_values['Dia']=str(dia)+"Dia"
+>>>>>>> 3650a40... update template
 				variant = get_variant("Knitted Cloth", args=attribute_values)
 				if variant in variants:
 					bom_for_variant = frappe.get_doc({
