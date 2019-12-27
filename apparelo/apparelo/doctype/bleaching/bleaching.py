@@ -89,6 +89,7 @@ def create_item_template():
 		"stock_uom" : "Kg",
 		"has_variants" : "1",
 		"variant_based_on" : "Item Attribute",
+		"is_sub_contracted_item": "1",
 		"attributes" : [
 			{
 				"attribute" : "Yarn Shade"
