@@ -18,6 +18,7 @@ class Knitting(Document):
 
 	def create_variants(self, input_item_names):
 		input_items = []
+		new_variants=[]
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
@@ -26,10 +27,17 @@ class Knitting(Document):
 		attribute_set.pop('Yarn Category')
 		if 'Plain' in attribute_set['Yarn Shade']:
 			attribute_set.pop('Yarn Shade')
-		# for dia in attribute_set['Dia']:
-		# 	attribute_set['Dia']=str(dia)+ "Dia"
 		variants = create_variants('Knitted Cloth', attribute_set)
-		return variants
+		new_variants=variants
+		for dia in attribute_set["Dia"]:
+			for variant in variants:
+				if not str(dia)+" Dia" in variant:
+					new_variant=variant.replace(str(dia),str(dia)+" Dia")
+					variant=frappe.rename_doc("Item",variant,new_variant)
+					new_variants.append(variant)
+		print("^Y%HF")
+		print(new_variants)
+		return new_variants
 
 	def create_boms(self, input_item_names, variants):
 		input_items = []
