@@ -18,6 +18,7 @@ class DC(Document):
 		parent= "Supplier Warehouse"
 		create_parent_warehouse(parent,abbr)
 		create_warehouse(self,parent,abbr)
+<<<<<<< HEAD
 		new_po=create_purchase_order(self,abbr)
 		stock_entry_type="Material Receipt"
 		po=""
@@ -25,6 +26,10 @@ class DC(Document):
 		stock_entry_type="Send to Subcontractor"
 		create_purchase_receipt(self,new_po,abbr)
 		create_stock_entry(self,new_po,stock_entry_type,abbr)
+=======
+		po=create_purchase_order(self,abbr)
+		create_stock_entry(self,po,abbr)
+>>>>>>> f3ca782... Rename the variants
 def create_warehouse(self,parent,abbr):
 	if not frappe.db.exists("Warehouse",f"{self.supplier} - {abbr}"):
 		frappe.get_doc({
@@ -36,6 +41,7 @@ def create_warehouse(self,parent,abbr):
 def create_purchase_order(self,abbr):
 	dc_items=[]
 	supplied_items=[]
+<<<<<<< HEAD
 	# schedule_date=None
 	for item in self.items:
 		# item_doc = frappe.get_cached_doc('Item', item.item_code)
@@ -122,22 +128,34 @@ class DC(Document):
 		create stock_entry(self)
 def create purchase_order(self):
 	schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
+=======
+	schedule_date=None
+	for item in self.items:
+		item_doc = frappe.get_cached_doc('Item', item.item_code)
+		schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
+		dc_items.append({ "item_code": item.item_code,"qty": item.weight,"schedule_date": schedule_date })
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.weight, "reserve_warehouse": f'{self.lot} - {abbr}'})
+>>>>>>> f3ca782... Rename the variants
 	frappe.get_doc({
 		"doctype": "Purchase Order",
 		"docstatus": 1, 
 		"supplier": self.supplier, 
 		"schedule_date": schedule_date,
-		"set_warehouse": \"$ware - JPR\", 
+		"set_warehouse": f'{self.lot} - {abbr}', 
 		"is_subcontracted": "Yes", 
-		\"supplier_warehouse\": \"$sName - JPR\", 
-		"items": [ { "item_code": \"$variant-$iname\",
-		"qty": $qty } ], 
-		"supplied_items": [ { \"main_item_code\": \"$variant-$iname\", 
-		\"rm_item_code\": \"$variant-$iName\", 
-		\"required_qty\":$qty, 
-		\"reserve_warehouse\": \"$ware - JPR\"} ] }).save().submit()
-def create stock_entry(self):
-	frappe.get_doc().save().submit()
+		"supplier_warehouse": f'{self.supplier} - {abbr}', 
+		"items": dc_items, 
+		"supplied_items": supplied_items}).save()
+def create_stock_entry(self,po,abbr):
+	item_list=[]
+	for item in self.items:
+		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse": f'{self.lot} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.weight })
+	frappe.get_doc({ 
+		"docstatus": 1,
+		"stock_entry_type": "Send to Subcontractor",
+		"purchase_order": po,
+		"doctype": "Stock Entry", 
+		"items": item_list}).save()
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers=[]
 	all_supplier=frappe.db.get_all("Supplier")

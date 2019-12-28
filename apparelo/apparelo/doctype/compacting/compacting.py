@@ -23,6 +23,7 @@ class Compacting(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Compacted Cloth', attribute_set)
+<<<<<<< HEAD
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
 				if str(dia) in variant:
@@ -32,6 +33,15 @@ class Compacting(Document):
 						new_variants.append(r_variant)
 		if len(new_variants)==0:
 			new_variants=variants
+=======
+		new_variants=variants
+		for dia in attribute_set["Dia"]:
+			for variant in variants:
+				if not str(dia)+" Dia" in variant:
+					new_variant=variant.replace(str(dia),str(dia)+" Dia")
+					variant=frappe.rename_doc("Item",variant,new_variant)
+					new_variants.append(variant)
+>>>>>>> f3ca782... Rename the variants
 		return new_variants
 
 	def create_boms(self, input_item_names, variants):
