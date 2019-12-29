@@ -24,14 +24,14 @@ class Packing(Document):
 		variants=create_variants(item, attribute_set)
 		return list(set(variants)),piece_count
 
-	def create_boms(self, input_item_names, variants, attribute_set,piece_count):
+	def create_boms(self, input_item_names, variants, item_size,piece_count):
 		
 		boms = []
 		if piece_count==self.input_qty:
 			for variant in variants:
 				item_list = []
 				for input_item in input_item_names:
-					for size in attribute_set["Apparelo Size"]:
+					for size in item_size:
 						if size.upper() in input_item  and size.upper() in variant:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 				for item in self.additional_part:
@@ -76,4 +76,3 @@ def create_item_template(self):
 			}
 		]
 	}).save()
-
