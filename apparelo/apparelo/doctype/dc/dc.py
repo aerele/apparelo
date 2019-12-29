@@ -3,6 +3,7 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+<<<<<<< HEAD
 import frappe
 from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
@@ -99,3 +100,10 @@ def make_custom_fields(update=True):
 	]
 	}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
+=======
+# import frappe
+from frappe.model.document import Document
+
+class DC(Document):
+	pass
+>>>>>>> 6e84224... DC doctype creation:
