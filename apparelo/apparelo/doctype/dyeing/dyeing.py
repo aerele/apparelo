@@ -174,8 +174,4 @@ def create_item_template():
 					"attribute" : "Apparelo Colour"
 				}
 			]
-<<<<<<< HEAD
 		}).save()
-=======
-		}).save()
->>>>>>> custom script for supplier doctype

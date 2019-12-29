@@ -259,7 +259,3 @@ def create_item_template():
 				}
 			]
 		}).save()
-<<<<<<< HEAD
-	
-=======
->>>>>>> custom script for supplier doctype
