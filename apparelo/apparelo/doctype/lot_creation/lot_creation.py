@@ -98,12 +98,20 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 	warehouse = doc.get('for_warehouse')
 
 	if not ignore_existing_ordered_qty:
+<<<<<<< HEAD
 		ignore_existing_ordered_qty = doc.get('ignore_existing_ordered_qty')
+=======
+		ignore_existing_ordered_qty = 1
+>>>>>>> custom script for supplier doctype
 
 	so_item_details = frappe._dict()
 	for data in po_items:
 		planned_qty = data.get('required_qty') or data.get('planned_qty')
+<<<<<<< HEAD
 		ignore_existing_ordered_qty = data.get('ignore_existing_ordered_qty') or ignore_existing_ordered_qty
+=======
+		ignore_existing_ordered_qty = 1
+>>>>>>> custom script for supplier doctype
 		warehouse = data.get("warehouse") or warehouse
 
 		item_details = {}
@@ -111,6 +119,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 			if data.get('required_qty'):
 				bom_no = data.get('bom')
 				include_non_stock_items = 1
+<<<<<<< HEAD
 				include_subcontracted_items = 1 if data.get('include_exploded_items') else 0
 			else:
 				bom_no = data.get('bom_no')
@@ -119,6 +128,17 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 
 			if bom_no:
 				if data.get('include_exploded_items') and include_subcontracted_items:
+=======
+				include_subcontracted_items = 1 
+				# if data.get('include_exploded_items') else 0
+			else:
+				bom_no = data.get('bom_no')
+				include_subcontracted_items = 1
+				include_non_stock_items = 1
+
+			if bom_no:
+				if include_subcontracted_items:
+>>>>>>> custom script for supplier doctype
 					# fetch exploded items from BOM
 					item_details = get_exploded_items(item_details,
 						company, bom_no, include_non_stock_items, planned_qty=planned_qty)

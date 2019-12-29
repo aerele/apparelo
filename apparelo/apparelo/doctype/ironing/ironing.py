@@ -67,4 +67,8 @@ def create_item_template(self):
 				"attribute" : "Apparelo Size"
 			}
 		]
+<<<<<<< HEAD
 	}).save()
+=======
+	}).save()
+>>>>>>> custom script for supplier doctype

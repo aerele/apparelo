@@ -34,7 +34,14 @@ def create_warehouse(self,parent,abbr):
 def create_purchase_order(self,abbr):
 	dc_items=[]
 	supplied_items=[]
+<<<<<<< HEAD
 	for item in self.items:
+=======
+	# schedule_date=None
+	for item in self.items:
+		# item_doc = frappe.get_cached_doc('Item', item.item_code)
+		# schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
+>>>>>>> custom script for supplier doctype
 		dc_items.append({ "item_code": item.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item.weight})
 		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.weight, "reserve_warehouse": f'{self.lot} - {abbr}'})
 	po=frappe.get_doc({
@@ -98,4 +105,8 @@ def make_custom_fields(update=True):
 	}
 	]
 	}
+<<<<<<< HEAD
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
+=======
+	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
+>>>>>>> custom script for supplier doctype
