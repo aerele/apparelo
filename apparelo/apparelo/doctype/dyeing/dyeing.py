@@ -26,11 +26,10 @@ class Dyeing(Document):
 		variants = create_variants('Dyed cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
-					if not str(dia)+" Dia" in variant:
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
-						r_variant=frappe.rename_doc("Item",variant,new_variant)
-						new_variants.append(r_variant)
+				if not str(dia)+" Dia" in variant:
+					new_variant=variant.replace(str(dia),str(dia)+" Dia")
+					r_variant=frappe.rename_doc("Item",variant,new_variant)
+					new_variants.append(r_variant)
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
