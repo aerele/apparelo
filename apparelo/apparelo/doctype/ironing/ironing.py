@@ -21,14 +21,14 @@ class Ironing(Document):
 		variants = create_variants(self.item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants, attribute_set):
+	def create_boms(self, input_item_names, variants, item_size,colours):
 		
 		boms = []
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
-				for size in attribute_set["Apparelo Size"]:
-					for colour in attribute_set["Apparelo Colour"]:
+				for size in item_size:
+					for colour in colours:
 						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')

@@ -216,7 +216,7 @@ class ItemProductionDetail(Document):
 					checking_doc = frappe.get_doc('Checking', process.process_record)
 					variants = checking_doc.create_variants(input_items)
 					process_variants['variants'] = variants
-					boms = checking_doc.create_boms(input_items, variants,attribute_set)
+					boms = checking_doc.create_boms(input_items, variants,item_size,colour)
 					process_variants['BOM']=boms
 					ipd.append(process_variants)
 				continue
@@ -236,7 +236,7 @@ class ItemProductionDetail(Document):
 					ironing_doc = frappe.get_doc('Ironing', process.process_record)
 					variants = ironing_doc.create_variants(input_items)
 					process_variants['variants'] = variants
-					boms = ironing_doc.create_boms(input_items, variants, attribute_set)
+					boms = ironing_doc.create_boms(input_items, variants,item_size,colour)
 					process_variants['BOM']=boms
 					ipd.append(process_variants)
 				continue
@@ -257,7 +257,7 @@ class ItemProductionDetail(Document):
 					packing_doc = frappe.get_doc('Packing', process.process_record)
 					variants,piece_count= packing_doc.create_variants(input_items,self.item)
 					process_variants['variants'] = variants
-					boms = packing_doc.create_boms(input_items, variants, attribute_set,piece_count)
+					boms = packing_doc.create_boms(input_items, variants, item_size,piece_count)
 					process_variants['BOM']=boms
 					ipd.append(process_variants)
 				continue

@@ -10,11 +10,12 @@ from apparelo.apparelo.doctype.bleaching import bleaching
 from apparelo.apparelo.doctype.compacting import compacting
 from apparelo.apparelo.doctype.steaming import steaming
 from apparelo.apparelo.doctype.cutting import cutting
-
+from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 
 def after_install():
     create_item_attributes()
     create_item_template()
+    make_custom_fields()
 
 def create_item_attributes():
     knitting.create_item_attribute()
