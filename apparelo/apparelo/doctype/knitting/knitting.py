@@ -51,9 +51,9 @@ class Knitting(Document):
 			new_variants=variants
 =======
 		variants = create_variants('Knitted Cloth', attribute_set)
-		new_variants=variants
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
+<<<<<<< HEAD
 				if not str(dia)+" Dia" in variant:
 					new_variant=variant.replace(str(dia),str(dia)+" Dia")
 					variant=frappe.rename_doc("Item",variant,new_variant)
@@ -61,6 +61,15 @@ class Knitting(Document):
 		print("^Y%HF")
 		print(new_variants)
 >>>>>>> f3ca782... Rename the variants
+=======
+				if str(dia) in variant:
+					if not str(dia)+" Dia" in variant:
+						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						r_variant=frappe.rename_doc("Item",variant,new_variant)
+						new_variants.append(r_variant)
+		if len(new_variants)==0:
+			new_variants=variants
+>>>>>>> 5d8c3ae... Complete dc_grn app
 		return new_variants
 
 	def create_boms(self, input_item_names, variants):
@@ -79,10 +88,13 @@ class Knitting(Document):
 				if 'Plain' in attribute_values['Yarn Shade']:
 					attribute_values.pop('Yarn Shade')
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 				# for dia in attribute_values['Dia']:
 				# 	attribute_values['Dia']=str(dia)+"Dia"
 >>>>>>> 3650a40... update template
+=======
+>>>>>>> 5d8c3ae... Complete dc_grn app
 				variant = get_variant("Knitted Cloth", args=attribute_values)
 				if variant in variants:
 					bom_for_variant = frappe.get_doc({

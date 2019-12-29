@@ -24,6 +24,7 @@ class Steaming(Document):
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Steamed Cloth', attribute_set)
 <<<<<<< HEAD
+<<<<<<< HEAD
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
 				if str(dia) in variant:
@@ -42,6 +43,17 @@ class Steaming(Document):
 					variant=frappe.rename_doc("Item",variant,new_variant)
 					new_variants.append(variant)
 >>>>>>> f3ca782... Rename the variants
+=======
+		for dia in attribute_set["Dia"]:
+			for variant in variants:
+				if str(dia) in variant:
+					if not str(dia)+" Dia" in variant:
+						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						r_variant=frappe.rename_doc("Item",variant,new_variant)
+						new_variants.append(r_variant)
+		if len(new_variants)==0:
+			new_variants=variants
+>>>>>>> 5d8c3ae... Complete dc_grn app
 		return new_variants
 
 	def create_boms(self, input_item_names, variants):
