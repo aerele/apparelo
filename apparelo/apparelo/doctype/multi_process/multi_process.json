@@ -1,0 +1,50 @@
+{
+ "actions": [],
+ "autoname": "Prompt",
+ "creation": "2019-12-30 16:52:22.132247",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "from_process",
+  "to_process"
+ ],
+ "fields": [
+  {
+   "fieldname": "from_process",
+   "fieldtype": "Link",
+   "label": "From Process",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "to_process",
+   "fieldtype": "Link",
+   "label": "To Process",
+   "options": "DocType"
+  }
+ ],
+ "links": [],
+ "modified": "2019-12-30 16:54:28.241853",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Multi Process",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
