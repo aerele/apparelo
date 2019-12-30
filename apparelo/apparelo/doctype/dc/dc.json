@@ -1,14 +1,14 @@
 {
  "actions": [],
- "autoname": "Prompt",
  "creation": "2019-12-27 08:11:17.494280",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "lot",
   "process_1",
   "supplier",
-  "lot",
+  "get_items",
   "items",
   "amended_from"
  ],
@@ -18,25 +18,33 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Process",
-   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking"
+   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning & Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
+   "reqd": 1
   },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
    "label": "Supplier",
-   "options": "Supplier"
+   "options": "Supplier",
+   "reqd": 1
   },
   {
    "fieldname": "lot",
    "fieldtype": "Link",
    "label": "Lot",
-   "options": "Lot Creation"
+   "options": "Lot Creation",
+   "reqd": 1
   },
   {
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
    "options": "Items"
+  },
+  {
+   "fieldname": "get_items",
+   "fieldtype": "Button",
+   "label": "Get Items"
   },
   {
    "fieldname": "amended_from",
@@ -50,7 +58,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-27 08:14:19.629826",
+ "modified": "2019-12-30 13:18:49.229809",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

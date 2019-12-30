@@ -13,13 +13,13 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Process",
-   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking",
+   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning & Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
    "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2019-12-27 12:46:04.519874",
+ "modified": "2019-12-30 13:18:43.772101",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Supplier_Process",

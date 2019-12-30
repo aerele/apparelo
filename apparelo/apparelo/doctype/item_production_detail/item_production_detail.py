@@ -30,6 +30,7 @@ class ItemProductionDetail(Document):
 			if process.process_name == 'Knitting':
 				process_variants['process'] = 'Knitting'
 				process_variants['index']=process.idx
+				process_variants['input_index']=''
 				if process.input_item:
 					knitting_doc = frappe.get_doc('Knitting', process.process_record)
 					variants = knitting_doc.create_variants([process.input_item])
@@ -49,6 +50,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -69,6 +71,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -89,6 +92,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -109,6 +113,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -129,6 +134,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -149,6 +155,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -169,6 +176,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -189,6 +197,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -209,6 +218,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -229,6 +239,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -250,6 +261,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=input_indexs
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:

@@ -3,7 +3,8 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe ,json
+from six import string_types, iteritems
 from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
@@ -99,3 +100,19 @@ def make_custom_fields(update=True):
 	]
 	}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
+@frappe.whitelist()
+def get_ipd_item(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	doc['items'] = []
+	items=[]
+	lot=doc.get('lot')
+	process=doc.get('process_1')
+	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
+	ipd_items=frappe.db.get_all("IPD Item Mapping")
+	for ipd_item in ipd_items:
+		ipd=frappe.get_doc("IPD Item Mapping",ipd_item)
+		if ipd.item_production_details==item_production_detail:
+			for item in ipd.item_mapping:
+				items.append({"item_code":item.item})
+	return items

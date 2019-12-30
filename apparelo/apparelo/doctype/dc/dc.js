@@ -11,5 +11,27 @@ frappe.ui.form.on('DC', {
 				}
 			};
 		});
+	},
+	get_items:function(frm) {
+		const set_fields =['item_code'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.get_ipd_item",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('items', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('items');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('items');
+			}
+		});
 	}
 });
