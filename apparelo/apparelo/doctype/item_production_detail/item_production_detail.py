@@ -50,7 +50,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -71,7 +71,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -92,7 +92,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -113,7 +113,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -134,7 +134,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -155,7 +155,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -176,7 +176,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -197,7 +197,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -218,7 +218,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -239,7 +239,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
@@ -261,7 +261,7 @@ class ItemProductionDetail(Document):
 				elif process.input_index:
 					input_items = []
 					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=input_indexs
+					process_variants['input_index']=process.input_index
 					for pro in ipd:
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:

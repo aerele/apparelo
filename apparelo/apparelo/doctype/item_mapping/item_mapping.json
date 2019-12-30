@@ -1,11 +1,14 @@
 {
+ "actions": [],
  "creation": "2019-12-19 19:06:06.845421",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "ipd_process_index"
+  "ipd_process_index",
+  "input_index",
+  "process_1"
  ],
  "fields": [
   {
@@ -22,10 +25,23 @@
    "in_list_view": 1,
    "label": "IPD Process Index",
    "reqd": 1
+  },
+  {
+   "fieldname": "input_index",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Input Index"
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Process"
   }
  ],
  "istable": 1,
- "modified": "2019-12-19 19:06:09.184107",
+ "links": [],
+ "modified": "2019-12-30 15:17:29.359681",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Mapping",

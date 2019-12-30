@@ -13,7 +13,7 @@ def ipd_item_mapping(ipd_list,ipd_name,item):
 	ipd_item=[]
 	for ipd in ipd_list:
 		for variant in ipd['variants']:
-			ipd_item.append({'item': variant,'ipd_process_index': ipd['index'],'ipd_input_index': ipd['input_index']})
+			ipd_item.append({'item': variant,'process_1':ipd['process'],'ipd_process_index': ipd['index'],'input_index': ipd['input_index']})
 	frappe.get_doc({
 		'doctype': 'IPD Item Mapping', 
 		'item_production_details': ipd_name,

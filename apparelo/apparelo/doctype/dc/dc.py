@@ -108,11 +108,17 @@ def get_ipd_item(doc):
 	items=[]
 	lot=doc.get('lot')
 	process=doc.get('process_1')
+	process_index=None
 	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
-	ipd_items=frappe.db.get_all("IPD Item Mapping")
-	for ipd_item in ipd_items:
-		ipd=frappe.get_doc("IPD Item Mapping",ipd_item)
-		if ipd.item_production_details==item_production_detail:
-			for item in ipd.item_mapping:
+	ipd=frappe.db.get_value('IPD Item Mapping', {'item_production_details': item_production_detail}, 'name')
+	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
+	for item in ipd_item.item_mapping:
+		if process==item.process_1:
+			process_index=item.input_index
+			break
+	input_indexs = process_index.split(',')	
+	for item in ipd_item.item_mapping:
+		for index in input_indexs:
+			if str(item.ipd_process_index)==index:
 				items.append({"item_code":item.item})
 	return items
