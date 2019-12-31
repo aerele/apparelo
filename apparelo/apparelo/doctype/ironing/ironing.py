@@ -21,7 +21,7 @@ class Ironing(Document):
 		variants = create_variants(self.item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants, item_size,colours):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count):
 		
 		boms = []
 		for variant in variants:

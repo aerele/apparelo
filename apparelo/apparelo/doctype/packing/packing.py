@@ -24,7 +24,7 @@ class Packing(Document):
 		variants=create_variants(item, attribute_set)
 		return list(set(variants)),piece_count
 
-	def create_boms(self, input_item_names, variants, item_size,piece_count):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		
 		boms = []
 		if piece_count==self.input_qty:

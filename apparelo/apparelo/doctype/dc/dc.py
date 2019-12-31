@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe ,json
+from frappe import _
 from six import string_types, iteritems
 from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
@@ -108,7 +109,7 @@ def get_ipd_item(doc):
 	items=[]
 	lot=doc.get('lot')
 	process=doc.get('process_1')
-	process_index=None
+	process_index=''
 	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
 	ipd=frappe.db.get_value('IPD Item Mapping', {'item_production_details': item_production_detail}, 'name')
 	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
@@ -116,9 +117,14 @@ def get_ipd_item(doc):
 		if process==item.process_1:
 			process_index=item.input_index
 			break
-	input_indexs = process_index.split(',')	
-	for item in ipd_item.item_mapping:
-		for index in input_indexs:
-			if str(item.ipd_process_index)==index:
-				items.append({"item_code":item.item})
+	if process_index!='':
+		input_indexs = process_index.split(',')	
+		for item in ipd_item.item_mapping:
+			for index in input_indexs:
+				if str(item.ipd_process_index)==index:
+					items.append({"item_code":item.item})
+	else:
+		for item in ipd_item.item_mapping:
+			if item 
+			items.append({"item_code":item.item})
 	return items

@@ -21,7 +21,7 @@ class LabelFusing(Document):
 		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants, attribute_set):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		
 		boms = []
 

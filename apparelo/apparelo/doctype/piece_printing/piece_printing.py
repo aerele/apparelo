@@ -30,7 +30,7 @@ class PiecePrinting(Document):
 				variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
 		return variants
 
-	def create_boms(self, input_item_names, variants, attribute_set):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		
 		boms = []
 		for variant in variants:

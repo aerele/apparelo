@@ -39,8 +39,7 @@ class Knitting(Document):
 			new_variants=variants
 		return new_variants
 
-	def create_boms(self, input_item_names, variants):
-		print(variants)
+	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -212,7 +211,6 @@ def create_item_template():
 			"stock_uom" : "Kg",
 			"has_variants" : "1",
 			"variant_based_on" : "Item Attribute",
-			"is_sub_contracted_item": "1",
 			"attributes" : [
 				{
 					"attribute" : "Yarn Shade"

@@ -21,7 +21,7 @@ class Checking(Document):
 		variants = create_variants(self.item+" Checked Cloth", attribute_set)
 		return variants
 
-	def create_boms(self, input_item_names, variants, item_size,colours):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count):
 		
 		boms = []
 		for variant in variants:

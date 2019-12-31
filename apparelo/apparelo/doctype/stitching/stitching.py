@@ -55,7 +55,7 @@ class Stitching(Document):
 						attribute_value.add(colour_mapping.piece_colour)
 		return list(attribute_value)
 
-	def create_boms(self, input_item_names, variants,attribute_set):
+	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count):
 		boms = []
 		for variant in variants:
 			item_list = []

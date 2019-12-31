@@ -34,7 +34,7 @@ class Steaming(Document):
 			new_variants=variants
 		return new_variants
 
-	def create_boms(self, input_item_names, variants):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
