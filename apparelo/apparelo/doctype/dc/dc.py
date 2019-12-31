@@ -101,30 +101,30 @@ def make_custom_fields(update=True):
 	]
 	}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
-@frappe.whitelist()
-def get_ipd_item(doc):
-	if isinstance(doc, string_types):
-		doc = frappe._dict(json.loads(doc))
-	doc['items'] = []
-	items=[]
-	lot=doc.get('lot')
-	process=doc.get('process_1')
-	process_index=''
-	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
-	ipd=frappe.db.get_value('IPD Item Mapping', {'item_production_details': item_production_detail}, 'name')
-	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
-	for item in ipd_item.item_mapping:
-		if process==item.process_1:
-			process_index=item.input_index
-			break
-	if process_index!='':
-		input_indexs = process_index.split(',')	
-		for item in ipd_item.item_mapping:
-			for index in input_indexs:
-				if str(item.ipd_process_index)==index:
-					items.append({"item_code":item.item})
-	else:
-		for item in ipd_item.item_mapping:
-			if item 
-			items.append({"item_code":item.item})
-	return items
+# @frappe.whitelist()
+# def get_ipd_item(doc):
+# 	if isinstance(doc, string_types):
+# 		doc = frappe._dict(json.loads(doc))
+# 	doc['items'] = []
+# 	items=[]
+# 	lot=doc.get('lot')
+# 	process=doc.get('process_1')
+# 	process_index=''
+# 	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
+# 	ipd=frappe.db.get_value('IPD Item Mapping', {'item_production_details': item_production_detail}, 'name')
+# 	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
+# 	for item in ipd_item.item_mapping:
+# 		if process==item.process_1:
+# 			process_index=item.input_index
+# 			break
+# 	if process_index!='':
+# 		input_indexs = process_index.split(',')	
+# 		for item in ipd_item.item_mapping:
+# 			for index in input_indexs:
+# 				if str(item.ipd_process_index)==index:
+# 					items.append({"item_code":item.item})
+# 	else:
+# 		for item in ipd_item.item_mapping:
+# 			if item 
+# 			items.append({"item_code":item.item})
+# 	return items

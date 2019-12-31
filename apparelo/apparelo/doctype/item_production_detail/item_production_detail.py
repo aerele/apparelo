@@ -281,29 +281,32 @@ class ItemProductionDetail(Document):
 					process_variants['BOM']=boms
 					ipd.append(process_variants)
 				continue
-		for process in self.additional_flows:
-			input_index=''
+		# for process in self.additional_flows:
+		# 	input_index=''
 			process_variants={}
-			variants=[]
-			process_variants['index']='A'+str(process.idx)
-			process_variants['process']=process.process_1
-			process_=frappe.get_doc("Multi Process",process.process_1)
-			for ipd_ in ipd:
-				if ipd_['process']==process_.from_process:
-					print(process_.from_process)
-					input_index=ipd_['input_index']
-				if ipd_['process']==process_.to_process:
-					print(process_.to_process)
-					variants=ipd_['variants']
-			for ipd_ in ipd:
-				if str(ipd_['index'])==input_index:
-					process_variants['variants']=ipd_['variants']
-					for pro_ in self.processes:
-						if pro_.process_name==process_.to_process:
-							doc_ = frappe.get_doc(pro_.process_name, pro_.process_record)
-							boms = doc_.create_boms(ipd_['variants'], variants, attribute_set,item_size,colour,piece_count)
-							process_variants['BOM']=boms
-			ipd.append(process_variants)
-		print("dsfasdf")
-		print(ipd)
+		# 	variants=[]
+		# 	process_variants['index']='A'+str(process.idx)
+		# 	process_variants['process']=process.process_1
+		# 	process_=frappe.get_doc("Multi Process",process.process_1)
+		# 	for ipd_ in ipd:
+		# 		if ipd_['process']==process_.to_process:
+		# 		if ipd_['process']==process_.to_process:
+		# 			for bom in ipd_['bom']:
+
+						
+						
+
+
+				# if ipd_['process']==process_.to_process:
+				# 	variants=ipd_['variants']
+
+			# for ipd_ in ipd:
+			# 	if str(ipd_['index'])==input_index:
+			# 		process_variants['variants']=ipd_['variants']
+			# 		for pro_ in self.processes:
+			# 			if pro_.process_name==process_.to_process: 
+			# 				doc_ = frappe.get_doc(pro_.process_name, pro_.process_record)
+			# 				boms = doc_.create_boms(ipd_['variants'], variants, attribute_set,item_size,colour,piece_count)
+			# 				process_variants['BOM']=boms
+			# ipd.append(process_variants)
 		return ipd
