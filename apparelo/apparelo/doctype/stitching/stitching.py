@@ -20,6 +20,7 @@ class Stitching(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		print(attribute_set)
 		variants = []
 		parts = attribute_set["Part"]
 		for colour_mapping in self.colour_mappings:
@@ -60,9 +61,12 @@ class Stitching(Document):
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
+				print("vandhutta")
+				print(input_item)
 				for size in attribute_set["Apparelo Size"]:
 					for colour_mapping in self.colour_mappings:
 						for piece_count in self.parts_per_piece:
+							print(size,colour_mapping.piece_colour,piece_count,colour_mapping.part,colour_mapping.part_colour)
 							if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 								if piece_count.part==colour_mapping.part:
 									item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})

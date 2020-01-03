@@ -93,39 +93,39 @@ class Steaming(Document):
 
 def create_item_template():
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	if not frappe.db.exists("item","Steamd Cloth"):
+	if not frappe.db.exists("Item","Steamed Cloth"):
 		frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Steamed Cloth",
-		"item_name": "Steamed Cloth",
-		"description": "Steamed Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade"
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" ,
-				"numeric_value": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour"
-			}
-		]
-	}).save()
+			"doctype": "Item",
+			"item_code": "Steamed Cloth",
+			"item_name": "Steamed Cloth",
+			"description": "Steamed Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				},
+				{
+					"attribute" : "Dia",
+					"numeric_values": 1,
+					"from_range": dia.from_range,
+					"to_range": dia.to_range,
+					"increment": dia.increment
+				},
+				{
+					"attribute" : "Knitting Type"
+				},
+				{
+					"attribute" : "Apparelo Colour"
+				}
+			]
+		}).save()

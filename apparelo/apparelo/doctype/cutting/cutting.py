@@ -36,11 +36,15 @@ class Cutting(Document):
 					frappe.throw(_("Size is not available"))
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-		return variants,variant_attribute_set
+		return list(set(variants)),variant_attribute_set
 
 	def attribute_validate(self, attribute_name, input_attribute_values):
-		return set(self.get_attribute_values(attribute_name)).issubset(set(input_attribute_values))
-
+		if len(set(input_attribute_values))==len(set(self.get_attribute_values(attribute_name))):
+			return True
+		if len(set(input_attribute_values))<len(set(self.get_attribute_values(attribute_name))):
+			return set(input_attribute_values).issubset(set(self.get_attribute_values(attribute_name)))
+		if len(set(self.get_attribute_values(attribute_name)))<len(set(input_attribute_values)):
+			return set(self.get_attribute_values(attribute_name)).issubset((set(input_attribute_values)))
 
 	def get_matching_details(self, part, size):
 		# ToDo: Part Size combination may not be unique
@@ -59,28 +63,28 @@ class Cutting(Document):
 			attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
 			for input_item in input_items:
 				input_item_attr = get_attr_dict(input_item.attributes)
-				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"] and input_item_attr["Dia"] == attr["Dia"]:
-					break
-			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
-			if not existing_bom:
-				bom = frappe.get_doc({
-					"doctype": "BOM",
-					"currency": get_default_currency(),
-					"item": variant,
-					"company": get_default_company(),
-					"items": [
-						{
-							"item_code": input_item.name,
-							"qty": attr["Weight"],
-							"uom": 'Gram',
-						}
-					]
-				})
-				bom.save()
-				bom.submit()
-				boms.append(bom.name)
-			else:
-				boms.append(existing_bom)
+				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"]:
+					if input_item_attr["Dia"][0] == str(int(attr["Dia"])):
+						existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+						if not existing_bom:
+							bom = frappe.get_doc({
+								"doctype": "BOM",
+								"currency": get_default_currency(),
+								"item": variant,
+								"company": get_default_company(),
+								"items": [
+									{
+										"item_code": input_item.name,
+										"qty": attr["Weight"],
+										"uom": 'Gram',
+									}
+								]
+							})
+							bom.save()
+							bom.submit()
+							boms.append(bom.name)
+						else:
+							boms.append(existing_bom)
 		return boms
 
 	def get_attribute_values(self, attribute_name, part=None):
