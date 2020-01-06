@@ -10,7 +10,7 @@ from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.doctype.lot_creation.lot_creation import create_parent_warehouse
-
+from erpnext.stock.report.stock_balance.stock_balance import execute
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
@@ -19,12 +19,13 @@ class DC(Document):
 		create_parent_warehouse(parent,abbr)
 		create_warehouse(self,parent,abbr)
 		new_po=create_purchase_order(self,abbr)
-		stock_entry_type="Material Receipt"
+		stock_entry_type="Material Transfer"
 		po=""
 		create_stock_entry(self,po,stock_entry_type,abbr)
-		stock_entry_type="Send to Subcontractor"
-		create_purchase_receipt(self,new_po,abbr)
-		create_stock_entry(self,new_po,stock_entry_type,abbr)
+		# stock_entry_type="Send to Subcontractor"
+		# create_purchase_receipt(self,new_po,abbr)
+		# create_stock_entry(self,new_po,stock_entry_type,abbr)
+		pass
 def create_warehouse(self,parent,abbr):
 	if not frappe.db.exists("Warehouse",f"{self.supplier} - {abbr}"):
 		frappe.get_doc({
@@ -37,8 +38,8 @@ def create_purchase_order(self,abbr):
 	dc_items=[]
 	supplied_items=[]
 	for item in self.items:
-		dc_items.append({ "item_code": item.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item.weight})
-		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.weight, "reserve_warehouse": f'{self.lot} - {abbr}'})
+		dc_items.append({ "item_code": item.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item.quantity})
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": f'{self.lot} - {abbr}'})
 	po=frappe.get_doc({
 		"doctype": "Purchase Order",
 		"docstatus": 1, 
@@ -66,7 +67,7 @@ def create_purchase_receipt(self,po,abbr):
 def create_stock_entry(self,po,stock_entry_type,abbr):
 	item_list=[]
 	for item in self.items:
-		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse": f'{self.lot} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.weight })
+		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse": f'{self.lot} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.quantity })
 	if po=="":
 		frappe.get_doc({ 
 			"docstatus": 1,
@@ -103,6 +104,8 @@ def make_custom_fields(update=True):
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
 @frappe.whitelist()
 def get_ipd_item(doc):
+	default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
+	abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	doc['items'] = []
@@ -115,7 +118,10 @@ def get_ipd_item(doc):
 	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
 	for item in ipd_item.item_mapping:
 		if process=='Knitting':
-			items.append({"item_code":item.input_item})
+			col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
+							'from_date':frappe.utils.get_datetime('01-01-1970'),
+							'to_date':frappe.utils.get_datetime(nowdate()),'item_code':item.input_item}))
+			items.append({"item_code":item.input_item,"available_quantity":data[0]['bal_qty']})
 		if process==item.process_1:
 			if 'A' in item.ipd_process_index and item.input_index=='':
 				process_index=item.ipd_process_index
@@ -127,5 +133,8 @@ def get_ipd_item(doc):
 	for item in ipd_item.item_mapping:
 		for index in input_indexs:
 			if str(item.ipd_process_index)==index:
-				items.append({"item_code":item.item})
+				col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
+							'from_date':frappe.utils.get_datetime('01-01-1970'),
+							'to_date':frappe.utils.get_datetime(nowdate()),'item_code':item.item}))
+				items.append({"item_code":item.item,"available_quantity":data[0]['bal_qty']})				
 	return items

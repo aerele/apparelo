@@ -7,7 +7,8 @@
  "field_order": [
   "item_code",
   "roll",
-  "weight"
+  "available_quantity",
+  "quantity"
  ],
  "fields": [
   {
@@ -24,15 +25,21 @@
    "label": "Roll"
   },
   {
-   "fieldname": "weight",
+   "fieldname": "available_quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Weight"
+   "label": "Available Quantity"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Quantity"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2019-12-27 08:15:37.042705",
+ "modified": "2020-01-06 15:28:12.335327",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Items",
