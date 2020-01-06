@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from erpnext import get_default_company, get_default_currency
 from frappe.model.document import Document
 from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item_mapping
 from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
@@ -11,8 +12,8 @@ from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_ma
 class ItemProductionDetail(Document):
 	def on_submit(self):
 		ipd_list=self.create_process_details()
-		# ipd_item_mapping(ipd_list,self.name,self.item)
-		# ipd_bom_mapping(ipd_list,self.name,self.item)
+		ipd_item_mapping(ipd_list,self.name,self.item)
+		ipd_bom_mapping(ipd_list,self.name,self.item)
 
 	def create_process_details(self):
 		ipd = []
@@ -31,7 +32,7 @@ class ItemProductionDetail(Document):
 				process_variants['process'] = 'Knitting'
 				process_variants['index']=process.idx
 				process_variants['input_index']=''
-				process_variants['input_item']=process.input_item
+				process_variants['input_item']=[process.input_item]
 				if process.input_item:
 					knitting_doc = frappe.get_doc('Knitting', process.process_record)
 					variants = knitting_doc.create_variants([process.input_item])
@@ -249,7 +250,6 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
-				pr
 			if process.process_name == 'Checking':
 				process_variants['process'] = 'Checking'
 				process_variants['index']=process.idx
@@ -329,51 +329,92 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
-		# additional_process(ipd)
-		print(ipd)
+		ipd=additional_process(self,ipd)
 		return ipd
 
-def additional_process(ipd):
-	a=['Cutting to Packing']
-	items={}
-	for process in a:
+def additional_process(self,ipd):
+	items=[]
+	for process in self.additional_flows:
 			input_index=''
-			input_item=[]
 			process_variants={}
 			variants=[]
-			# process_variants['index']='A'+str(process.idx)
-			process_variants['process']='Cutting to Packing'
-			process_=frappe.get_doc("Multi Process",'Cutting to Packing')
+			process_variants['index']='A'+str(process.idx)
+			process_variants['process']=process.process_1
+			process_variants['input_index']=''
+			process_=frappe.get_doc("Multi Process",process.process_1)
 			for ipd_ in ipd:
-				if ipd_['process']=='Cutting':
+				if ipd_['process']==process_.from_process:
 					input_index=ipd_['input_index']
 			for ipd_ in ipd:
 				if str(ipd_['index'])==input_index:
 					input_item=ipd_['variants']
 
-				if ipd_['process']=='Packing':
+				if ipd_['process']==process_.to_process:
 					process_variants['variants']=ipd_['variants']
 					process_variants['BOM']=ipd_['BOM']
-			# print(input_item,process_variants['variants'],process_variants['BOM'])
 			for item in input_item:
-				items[item]=0
+				item_={}
+				item_['item']=item
+				item_['qty']=0
+				item_['uom']=''
+				items.append(item_)
+			boms=set()
+			input_=set()
 			for bom in process_variants['BOM']:
+				item_list=[]
 				bom_=frappe.get_doc("BOM",bom)
 				additional_item={}
-				for item in bom_.items:
-					if item.bom_no=='':
-						additional_item[item.item_code]=0
-				additional_item,items=bom_item(bom,additional_item,input_item,items)
-				print(additional_item,items)
+				for _item in bom_.items:
+					if _item.bom_no=='':
+						additional_item[_item.item_code]=0
+				qty=1
+				additional_item,items_=bom_item(qty,bom,additional_item,input_item,items)
+				for item in items_:
+					if item['qty']!=0:
+						input_.add(item['item'])
+						item_list.append({"item_code": item['item'],"qty":item['qty'] ,"uom": item['uom']})
+						item['qty']=0
+						item['uom']=''
+				for add_ in additional_item:
+					item_list.append({"item_code": add_,"qty":additional_item[add_] ,"uom": 'Nos'})
+				existing_bom = frappe.db.get_value('BOM', {'item': bom_.item,'process':process_variants['process']}, 'name')
+				if not existing_bom:
+					new_bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						'process': process_variants['process'],
+						"is_default":0,
+						"is_active":1,
+						"item": bom_.item,
+						"company": get_default_company(),
+						"items": item_list
+					})
+					new_bom.save()
+					new_bom.submit()
+					boms.add(new_bom.name)
+				else:
+					boms.add(existing_bom)
+			process_variants['input_item']=list(input_)
+			process_variants['BOM']=list(boms)
+			ipd.append(process_variants)
+	return ipd
 
-def bom_item(bom,additional_item,variants,items):
+def bom_item(qty,bom,additional_item,variants,items):
 	bom_=frappe.get_doc("BOM",bom)
 	for item in bom_.items:
+		if item.uom=='Nos' and item.qty>1:
+				qty=item.qty
 		if item.bom_no=='':
 			additional_item[item.item_code]+=item.qty
 		else:
 			if item.item_code in variants:
-				items[item.item_code]+=item.qty
+				for item_ in items:
+					if item.item_code==item_['item']:
+						item_['qty']+=item.qty*qty
+						item_['uom']=item.uom
+						qty=1
 			else:
-				bom_item(item.bom_no,additional_item,variants,items)
+				bom_item(qty,item.bom_no,additional_item,variants,items)
+				qty=1
+			
 	return additional_item,items

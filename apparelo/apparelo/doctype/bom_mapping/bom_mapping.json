@@ -1,11 +1,13 @@
 {
+ "actions": [],
  "creation": "2019-12-19 19:12:13.152816",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "bom",
-  "ipd_process_index"
+  "ipd_process_index",
+  "process_1"
  ],
  "fields": [
   {
@@ -22,10 +24,18 @@
    "in_list_view": 1,
    "label": "IPD Process Index",
    "reqd": 1
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Process",
+   "reqd": 1
   }
  ],
  "istable": 1,
- "modified": "2019-12-19 19:12:13.152816",
+ "links": [],
+ "modified": "2020-01-05 13:25:27.667814",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "BOM Mapping",

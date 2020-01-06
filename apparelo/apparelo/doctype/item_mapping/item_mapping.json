@@ -8,7 +8,8 @@
   "item",
   "ipd_process_index",
   "input_index",
-  "process_1"
+  "process_1",
+  "input_item"
  ],
  "fields": [
   {
@@ -20,7 +21,7 @@
   },
   {
    "fieldname": "ipd_process_index",
-   "fieldtype": "Int",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "IPD Process Index"
   },
@@ -35,11 +36,16 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Process"
+  },
+  {
+   "fieldname": "input_item",
+   "fieldtype": "Data",
+   "label": "Input Item"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2019-12-30 23:09:14.563647",
+ "modified": "2020-01-05 16:32:48.883608",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Mapping",
