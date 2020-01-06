@@ -13,7 +13,7 @@ frappe.ui.form.on('DC', {
 		});
 	},
 	get_items:function(frm) {
-		const set_fields =['item_code'];
+		const set_fields =['item_code','available_quantity'];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.get_ipd_item",
 			freeze: true,
