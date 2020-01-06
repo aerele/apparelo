@@ -10,7 +10,6 @@ from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.doctype.lot_creation.lot_creation import create_parent_warehouse
-
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
@@ -129,3 +128,25 @@ def get_ipd_item(doc):
 			if str(item.ipd_process_index)==index:
 				items.append({"item_code":item.item})
 	return items
+def item_return(doc):
+	process_bom=[]
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	doc['return_materials'] = []
+	items= doc.get('items') if doc.get('items') else doc.get('items')
+	if not items:
+		frappe.throw(_("Items are required to calculate return items"))
+	lot=doc.get('lot')
+	process=doc.get('process_1')
+	ipd=frappe.get_doc("Lot Creation",lot)
+	lot_ipd=ipd.item_production_detail
+	bom=frappe.get_all("IPD BOM Mapping")
+	for bom_ in bom:
+		ipd_bom=frappe.get_doc("IPD BOM Mapping",bom_.name)
+		if ipd_bom.item_production_details==lot_ipd:
+			for bom_map in ipd_bom.bom_mapping:
+				if bom_map.process_1==process:
+					process_bom.append(bom_map.bom)
+	print(process_bom)
+
+	
