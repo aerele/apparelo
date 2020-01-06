@@ -1,13 +1,16 @@
 {
  "actions": [],
+ "autoname": "naming_series:",
  "creation": "2020-01-06 12:24:37.801707",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "supplier",
   "lot",
-  "dc",
+  "against_type",
+  "against_document",
   "get_items",
   "items",
   "amended_from"
@@ -30,14 +33,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "dc",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "DC",
-   "options": "DC",
-   "reqd": 1
-  },
-  {
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items"
@@ -49,6 +44,18 @@
    "options": "Purchase Receipt Item"
   },
   {
+   "fieldname": "against_type",
+   "fieldtype": "Select",
+   "label": "Against Type",
+   "options": "DC\nPurchase Order"
+  },
+  {
+   "fieldname": "against_document",
+   "fieldtype": "Dynamic Link",
+   "label": "Against Document",
+   "options": "against_type"
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -56,11 +63,18 @@
    "options": "GRN",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "GRN-",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-06 12:24:37.801707",
+ "modified": "2020-01-06 15:14:40.138008",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

@@ -133,8 +133,35 @@ def get_ipd_item(doc):
 	for item in ipd_item.item_mapping:
 		for index in input_indexs:
 			if str(item.ipd_process_index)==index:
-				col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
+        col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
 							'from_date':frappe.utils.get_datetime('01-01-1970'),
 							'to_date':frappe.utils.get_datetime(nowdate()),'item_code':item.item}))
 				items.append({"item_code":item.item,"available_quantity":data[0]['bal_qty']})				
 	return items
+def item_return(doc):
+	process_bom=[]
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	doc['return_materials'] = []
+	items= doc.get('items')
+	if not items:
+		frappe.throw(_("Items are required to calculate return items"))
+	lot=doc.get('lot')
+	process=doc.get('process_1')
+	# lot='test-lot'
+	# process='Dyeing'
+	ipd=frappe.get_doc("Lot Creation",lot)
+	lot_ipd=ipd.item_production_detail
+	bom=frappe.get_all("IPD BOM Mapping")
+	for bom_ in bom:
+		ipd_bom=frappe.get_doc("IPD BOM Mapping",bom_.name)
+		if ipd_bom.item_production_details==lot_ipd:
+			for bom_map in ipd_bom.bom_mapping:
+				if bom_map.process_1==process:
+					process_bom.append(bom_map.bom)
+	for bom in process_bom:
+		bom_=frappe.get_doc("BOM",bom)
+		for item in bom_.items:
+			for data in items:
+				ordered_qunatity=data.get('quantity')
+				if 

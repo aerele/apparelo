@@ -33,5 +33,27 @@ frappe.ui.form.on('DC', {
 				refresh_field('items');
 			}
 		});
-	}
+	},
+	get_return_item: function(frm) {
+		const set_fields = ['item_code','uom','quantity'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.item_return",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('return_materials', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
+		});
+	},
 });
