@@ -1,0 +1,48 @@
+{
+ "actions": [],
+ "creation": "2019-12-19 19:12:13.152816",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "bom",
+  "ipd_process_index",
+  "process_1"
+ ],
+ "fields": [
+  {
+   "fieldname": "bom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "BOM",
+   "options": "BOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ipd_process_index",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "IPD Process Index",
+   "reqd": 1
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Process",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-01-05 13:25:27.667814",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "BOM Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

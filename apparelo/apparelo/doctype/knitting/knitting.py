@@ -6,25 +6,40 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from apparelo.apparelo.utils.utils import is_similar_bom
-from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from erpnext import get_default_company, get_default_currency
+from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 
 class Knitting(Document):
 	def on_submit(self):
 		create_item_template()
+		create_item_attribute()
 
 	def create_variants(self, input_item_names):
 		input_items = []
+		new_variants=[]
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		attribute_set.update(self.get_variant_values())
+		attribute_set.pop('Yarn Count')
+		attribute_set.pop('Yarn Category')
+		if 'Plain' in attribute_set['Yarn Shade']:
+			attribute_set.pop('Yarn Shade')
 		variants = create_variants('Knitted Cloth', attribute_set)
-		return variants
+		for dia in attribute_set["Dia"]:
+			for variant in variants:
+				if str(dia) in variant:
+					if not str(dia)+" Dia" in variant:
+						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						r_variant=frappe.rename_doc("Item",variant,new_variant)
+						new_variants.append(r_variant)
+		if len(new_variants)==0:
+			new_variants=variants
+		return new_variants
 
-	def create_boms(self, input_item_names, variants):
+	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -35,6 +50,10 @@ class Knitting(Document):
 			attr.update(doc_values)
 			args_set = generate_keyed_value_combinations(attr)
 			for attribute_values in args_set:
+				attribute_values.pop('Yarn Count')
+				attribute_values.pop('Yarn Category')
+				if 'Plain' in attribute_values['Yarn Shade']:
+					attribute_values.pop('Yarn Shade')
 				variant = get_variant("Knitted Cloth", args=attribute_values)
 				if variant in variants:
 					bom_for_variant = frappe.get_doc({
@@ -82,7 +101,7 @@ class Knitting(Document):
 		attribute_set['Dia'] = variant_dia
 		return attribute_set
 
-def create_item_template():
+def create_item_attribute():
 	if not frappe.db.exists("Item Attribute", "Yarn Shade"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -102,7 +121,7 @@ def create_item_template():
 				}
 			]
 		}).save()
-	
+
 	if not frappe.db.exists("Item Attribute", "Yarn Category"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -122,7 +141,7 @@ def create_item_template():
 				}
 			]
 		}).save()
-	
+
 	if not frappe.db.exists("Item Attribute", "Yarn Count"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -156,6 +175,7 @@ def create_item_template():
 			"to_range": 36.0,
 			"increment": 0.25
 		}).save()
+
 	if not frappe.db.exists("Item Attribute", "Knitting Type"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -180,60 +200,61 @@ def create_item_template():
 			]
 		}).save()
 
-	# todo: need to check if an item already exists with the same name
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Yarn",
-		"item_name": "Yarn",
-		"description": "Yarn",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			}
-		]
-	})
-	item.save()
+def create_item_template():
+	if not frappe.db.exists("Item", "Yarn"):
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": "Yarn",
+			"item_name": "Yarn",
+			"description": "Yarn",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				}
+			]
+		}).save()
 
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	item = frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Knitted Cloth",
-		"item_name": "Knitted Cloth",
-		"description": "Knitted Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade" 
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" ,
-				"numeric_values": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment
-			},
-			{
-				"attribute" : "Knitting Type"
-			}
-		]
-	})
-	item.save()
+	if not frappe.db.exists("Item", "Knitted Cloth"):
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": "Knitted Cloth",
+			"item_name": "Knitted Cloth",
+			"description": "Knitted Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				},
+				{
+					"attribute" : "Dia" ,
+					"numeric_values": 1,
+					"from_range": dia.from_range,
+					"to_range": dia.to_range,
+					"increment": dia.increment
+				},
+				{
+					"attribute" : "Knitting Type"
+				}
+			]
+		}).save()

@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "creation": "2019-12-27 08:11:17.494280",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lot",
+  "process_1",
+  "supplier",
+  "get_items",
+  "items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Process",
+   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "lot",
+   "fieldtype": "Link",
+   "label": "Lot",
+   "options": "Lot Creation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Items"
+  },
+  {
+   "fieldname": "get_items",
+   "fieldtype": "Button",
+   "label": "Get Items"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "DC",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2020-01-05 16:57:58.824245",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "DC",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

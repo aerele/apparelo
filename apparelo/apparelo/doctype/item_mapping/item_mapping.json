@@ -1,0 +1,58 @@
+{
+ "actions": [],
+ "creation": "2019-12-19 19:06:06.845421",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "ipd_process_index",
+  "input_index",
+  "process_1",
+  "input_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "ipd_process_index",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "IPD Process Index"
+  },
+  {
+   "fieldname": "input_index",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Input Index"
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Process"
+  },
+  {
+   "fieldname": "input_item",
+   "fieldtype": "Data",
+   "label": "Input Item"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-01-05 16:32:48.883608",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Item Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
