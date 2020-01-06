@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-10-04 12:52:18.223722",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -33,7 +34,8 @@
    "reqd": 1
   }
  ],
- "modified": "2019-12-19 20:39:23.986949",
+ "links": [],
+ "modified": "2020-01-06 11:51:04.149006",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD BOM Mapping",

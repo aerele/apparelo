@@ -329,7 +329,8 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
-		ipd=additional_process(self,ipd)
+		if self.additional_flows!=[]:
+			ipd=additional_process(self,ipd)
 		return ipd
 
 def additional_process(self,ipd):
