@@ -133,11 +133,13 @@ def item_return(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	doc['return_materials'] = []
-	items= doc.get('items') if doc.get('items') else doc.get('items')
+	items= doc.get('items')
 	if not items:
 		frappe.throw(_("Items are required to calculate return items"))
 	lot=doc.get('lot')
 	process=doc.get('process_1')
+	# lot='test-lot'
+	# process='Dyeing'
 	ipd=frappe.get_doc("Lot Creation",lot)
 	lot_ipd=ipd.item_production_detail
 	bom=frappe.get_all("IPD BOM Mapping")
@@ -147,6 +149,12 @@ def item_return(doc):
 			for bom_map in ipd_bom.bom_mapping:
 				if bom_map.process_1==process:
 					process_bom.append(bom_map.bom)
-	print(process_bom)
+	for bom in process_bom:
+		bom_=frappe.get_doc("BOM",bom)
+		for item in bom_.items:
+			for data in items:
+				ordered_qunatity=data.get('quantity')
+				if 
+
 
 	
