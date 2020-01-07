@@ -12,8 +12,9 @@
   "against_type",
   "against_document",
   "get_items",
-  "items",
-  "amended_from"
+  "return_materials",
+  "amended_from",
+  "po"
  ],
  "fields": [
   {
@@ -36,12 +37,6 @@
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items"
-  },
-  {
-   "fieldname": "items",
-   "fieldtype": "Table",
-   "label": "Items",
-   "options": "Purchase Receipt Item"
   },
   {
    "fieldname": "against_type",
@@ -70,11 +65,23 @@
    "label": "Series",
    "options": "GRN-",
    "reqd": 1
+  },
+  {
+   "fieldname": "return_materials",
+   "fieldtype": "Table",
+   "label": "Return Materials",
+   "options": "Return Materials"
+  },
+  {
+   "fieldname": "po",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Purchase_order"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-06 15:14:40.138008",
+ "modified": "2020-01-07 17:55:28.340793",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

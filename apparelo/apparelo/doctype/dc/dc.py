@@ -50,6 +50,7 @@ def create_purchase_order(self,abbr):
 		"docstatus": 1, 
 		"supplier": self.supplier,
 		"dc":self.name,
+		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
 		"set_warehouse": f'{self.lot} - {abbr}', 
 		"is_subcontracted": "Yes", 
