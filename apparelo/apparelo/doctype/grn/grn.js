@@ -3,14 +3,6 @@
 
 frappe.ui.form.on('GRN', {
 	onload: function(frm) {
-		// frm.set_field("po", function() {
-		// 	return {
-		// 		query: "apparelo.apparelo.doctype.grn.grn.get_po",
-		// 		filters: {
-		// 			"po": frm.doc.po
-		// 		}
-		// 	};
-		// });
 		frm.set_query("supplier", function() {
 			return {
 				query: "apparelo.apparelo.doctype.grn.grn.get_supplier",
@@ -57,5 +49,6 @@ frappe.ui.form.on('GRN', {
 			}
 		});
 	},
+
 });
 
