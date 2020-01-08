@@ -140,6 +140,14 @@ def create_item_attribute():
 				{
 					"attribute_value" : "Sleeve",
 					"abbr" : "Sleeve"
+				},
+				{
+					"attribute_value" : "Folding",
+					"abbr" : "Folding"
+				},
+				{
+					"attribute_value" : "Net Folding",
+					"abbr" : "Net Folding"
 				}
 			]
 		}).save()
