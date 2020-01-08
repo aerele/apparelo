@@ -15,7 +15,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Part",
-   "options": "\nFront\nBack\nPanel\nSleeve",
+   "options": "\nFront\nBack\nPanel\nSleeve\nFolding\nNet Folding",
    "reqd": 1
   },
   {

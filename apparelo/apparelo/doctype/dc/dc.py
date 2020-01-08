@@ -22,8 +22,8 @@ class DC(Document):
 		stock_entry_type="Material Receipt"
 		po=""
 		stock=create_stock_entry(self,po,stock_entry_type,abbr)
-		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Material Request/{0}">{1}</a>""".format(new_po.name, new_po.name))))
-		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Material Request/{0}">{1}</a>""".format(stock.name, stock.name))))
+		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
+		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock.name, stock.name))))
 		# msgprint(_([new_po.name]))
 		# msgprint(_([stock.name]))
 		# stock_entry_type="Send to Subcontractor"
@@ -50,6 +50,7 @@ def create_purchase_order(self,abbr):
 		"docstatus": 1, 
 		"supplier": self.supplier,
 		"dc":self.name,
+		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
 		"set_warehouse": f'{self.lot} - {abbr}', 
 		"is_subcontracted": "Yes", 
@@ -99,6 +100,7 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 			if process.processes==filters['supplier_process.processes']:
 				suppliers.append([supplier.name])
 	return suppliers
+
 def make_custom_fields(update=True):
 	custom_fields={'Supplier': [
 		{
@@ -108,6 +110,28 @@ def make_custom_fields(update=True):
 	"options": "Supplier_Process", 
 	"reqd": 1
 	}
+	],
+	'BOM': [
+		{
+	"fieldname": "process", 
+	"fieldtype": "Link", 
+	"label": "Process", 
+	"options": "Multi Process"
+		}
+	],
+	'Purchase Order': [
+		{
+	"fieldname": "dc", 
+	"fieldtype": "Link", 
+	"label": "DC", 
+	"options": "DC"
+		},
+		{
+	"fieldname": "lot", 
+	"fieldtype": "Link", 
+	"label": "Lot", 
+	"options": "Lot Creation"
+		}
 	]
 	}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)

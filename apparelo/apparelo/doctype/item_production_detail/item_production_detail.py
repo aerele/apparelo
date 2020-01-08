@@ -339,6 +339,7 @@ def additional_process(self,ipd):
 			input_index=''
 			process_variants={}
 			variants=[]
+			input_item=[]
 			process_variants['index']='A'+str(process.idx)
 			process_variants['process']=process.process_1
 			process_variants['input_index']=''
@@ -346,9 +347,12 @@ def additional_process(self,ipd):
 			for ipd_ in ipd:
 				if ipd_['process']==process_.from_process:
 					input_index=ipd_['input_index']
+			input_indexs = input_index.split(',')
 			for ipd_ in ipd:
-				if str(ipd_['index'])==input_index:
-					input_item=ipd_['variants']
+				for in_index in input_indexs:
+					if str(ipd_['index'])==in_index:
+						input_=ipd_['variants']
+						input_item.extend(input_)
 
 				if ipd_['process']==process_.to_process:
 					process_variants['variants']=ipd_['variants']
