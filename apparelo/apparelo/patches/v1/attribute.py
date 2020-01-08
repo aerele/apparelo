@@ -7,7 +7,6 @@ def execute():
 
 
 def create_attribute_value(attribute_value):
-    print("HI")
     item_attribute=frappe.get_doc("Item Attribute","Part")
     part=[]  
     for value in item_attribute.item_attribute_values:
