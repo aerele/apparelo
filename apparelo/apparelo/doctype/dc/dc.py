@@ -100,6 +100,7 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 			if process.processes==filters['supplier_process.processes']:
 				suppliers.append([supplier.name])
 	return suppliers
+
 def make_custom_fields(update=True):
 	custom_fields={'Supplier': [
 		{
@@ -109,6 +110,28 @@ def make_custom_fields(update=True):
 	"options": "Supplier_Process", 
 	"reqd": 1
 	}
+	],
+	'BOM': [
+		{
+	"fieldname": "process", 
+	"fieldtype": "Link", 
+	"label": "Process", 
+	"options": "Multi Process"
+		}
+	],
+	'Purchase Order': [
+		{
+	"fieldname": "dc", 
+	"fieldtype": "Link", 
+	"label": "DC", 
+	"options": "DC"
+		},
+		{
+	"fieldname": "lot", 
+	"fieldtype": "Link", 
+	"label": "Lot", 
+	"options": "Lot Creation"
+		}
 	]
 	}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)

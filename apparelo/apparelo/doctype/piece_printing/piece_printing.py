@@ -64,7 +64,7 @@ def create_item_template(self):
 		"item_name": self.item+" Printed Cloth",
 		"description":self.item+" Printed Cloth",
 		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
+		"stock_uom" : "Nos",
 		"has_variants" : "1",
 		"variant_based_on" : "Item Attribute",
 		"is_sub_contracted_item": "1",
