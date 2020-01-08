@@ -42,7 +42,7 @@
    "fieldname": "against_type",
    "fieldtype": "Select",
    "label": "Against Type",
-   "options": "DC\nPurchase Order"
+   "options": "\nDC\nPurchase Order"
   },
   {
    "fieldname": "against_document",
@@ -81,7 +81,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-07 17:55:28.340793",
+ "modified": "2020-01-08 12:51:35.931625",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

@@ -22,8 +22,8 @@ class DC(Document):
 		stock_entry_type="Material Receipt"
 		po=""
 		stock=create_stock_entry(self,po,stock_entry_type,abbr)
-		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Material Request/{0}">{1}</a>""".format(new_po.name, new_po.name))))
-		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Material Request/{0}">{1}</a>""".format(stock.name, stock.name))))
+		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
+		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock.name, stock.name))))
 		# msgprint(_([new_po.name]))
 		# msgprint(_([stock.name]))
 		# stock_entry_type="Send to Subcontractor"
