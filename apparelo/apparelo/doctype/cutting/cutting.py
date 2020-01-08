@@ -124,32 +124,7 @@ def create_item_attribute():
 		frappe.get_doc({
 			"doctype": "Item Attribute",
 			"attribute_name": "Part",
-			"item_attribute_values": [
-				{
-					"attribute_value" : "Front",
-					"abbr" : "Front"
-				},
-				{
-					"attribute_value" : "Back",
-					"abbr" : "Back"
-				},
-				{
-					"attribute_value" : "Panel",
-					"abbr" : "Panel"
-				},
-				{
-					"attribute_value" : "Sleeve",
-					"abbr" : "Sleeve"
-				},
-				{
-					"attribute_value" : "Folding",
-					"abbr" : "Folding"
-				},
-				{
-					"attribute_value" : "Net Folding",
-					"abbr" : "Net Folding"
-				}
-			]
+			"item_attribute_values": []
 		}).save()
 
 	items = []
