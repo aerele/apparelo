@@ -93,48 +93,7 @@ def create_item_attribute():
 		frappe.get_doc({
 			"doctype": "Item Attribute",
 			"attribute_name": "Apparelo Colour",
-			"item_attribute_values": [
-				{
-					"attribute_value" : "Red",
-					"abbr" : "Red"
-				},
-				{
-					"attribute_value" : "Blue",
-					"abbr" : "Blue"
-				},
-				{
-					"attribute_value" : "Green",
-					"abbr" : "Green"
-				},
-				{
-					"attribute_value" : "Black",
-					"abbr" : "Black"
-				},
-				{
-					"attribute_value" : "Navy",
-					"abbr" : "Navy"
-				},
-				{
-					"attribute_value" : "A.Mel",
-					"abbr" : "A.Mel"
-				},
-				{
-					"attribute_value" : "G.Mel",
-					"abbr" : "G.Mel"
-				},
-				{
-					"attribute_value" : "Grey",
-					"abbr" : "Grey"
-				},
-				{
-					"attribute_value" : "Brown",
-					"abbr" : "Brown"
-				},
-				{
-					"attribute_value" : "Maroon",
-					"abbr" : "Maroon"
-				}
-			]
+			"item_attribute_values": []
 		}).save()
 
 def create_item_template():
