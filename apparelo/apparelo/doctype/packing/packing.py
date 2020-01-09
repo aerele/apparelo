@@ -9,6 +9,7 @@ from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from itertools import combinations
 
 class Packing(Document):
 	def on_submit(self):
@@ -50,8 +51,10 @@ class Packing(Document):
 					boms.append(bom.name)
 				else:
 					boms.append(existing_bom)
-		else:
-			frappe.throw(_("Input Quantity is not available"))
+		if self.input_qty > piece_count:
+			frappe.throw(_("Input Quantity is not available in Packing"))
+		if self.input_qty < piece_count:
+			combo=list(combinations(input_item_names,self.input_qty))
 		return boms
 
 
