@@ -14,6 +14,7 @@ from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 
 def after_install():
     create_item_attributes()
+    create_attr_values()
     create_item_template()
     make_custom_fields()
 
@@ -28,3 +29,5 @@ def create_item_template():
     bleaching.create_item_template()
     compacting.create_item_template()
     steaming.create_item_template()
+def create_attr_values():
+    knitting.create_attr_values()

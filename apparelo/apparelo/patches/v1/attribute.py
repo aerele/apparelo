@@ -18,6 +18,3 @@ def create_attribute_value(attribute_value):
                 "abbr" : attribute_
             })
     item_attribute.save()
-
-
-

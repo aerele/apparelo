@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-10-03 13:31:34.529637",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -11,28 +12,29 @@
  "fields": [
   {
    "fieldname": "part",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Part",
-   "options": "\nFront\nBack\nSleeve\nPanel"
+   "options": "Apparelo Part"
   },
   {
    "fieldname": "piece_colour",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Piece Colour",
-   "options": "\nRed\nBlue\nGreen\nBlack\nNavy\nA.Mel\nG.Mel\nGrey\nBrown\nMaroon"
+   "options": "Apparelo Colour"
   },
   {
    "fieldname": "part_colour",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Part Colour",
-   "options": "\nRed\nBlue\nGreen\nBlack\nNavy\nA.Mel\nG.Mel\nGrey\nBrown\nMaroon"
+   "options": "Apparelo Colour"
   }
  ],
  "istable": 1,
- "modified": "2019-10-03 13:31:34.529637",
+ "links": [],
+ "modified": "2020-01-09 15:38:01.282379",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching Colour Mapping",

@@ -180,24 +180,7 @@ def create_item_attribute():
 		frappe.get_doc({
 			"doctype": "Item Attribute",
 			"attribute_name": "Knitting Type",
-			"item_attribute_values": [
-				{
-					"attribute_value" : "Single Rib",
-					"abbr" : "Single Rib"
-				},
-				{
-					"attribute_value" : "Fine",
-					"abbr" : "Fine"
-				},
-				{
-					"attribute_value" : "Single Rib (Fold)",
-					"abbr" : "Single Rib (Fold)"
-				},
-				{
-					"attribute_value" : "Fine (Fold)",
-					"abbr" : "Fine (Fold)"
-				}
-			]
+			"item_attribute_values": []
 		}).save()
 
 def create_item_template():
@@ -258,3 +241,31 @@ def create_item_template():
 				}
 			]
 		}).save()
+def create_attr_values():
+	colour=["Red","Blue","Green","Black","Navy","A.Mel","G.Mel","Grey","Brown","Maroon","magenta"]
+	part=["Front","Back","Panel","Sleeve","Folding","Net Folding"]
+	Knitting_type=["Single Rib","Fine","Single Rib (Fold)","Fine (Fold)"]
+	for attribute_ in Knitting_type:
+		existing_doc=frappe.db.get_value('Knitting Type', {'type': attribute_}, 'name')
+		if not existing_doc:
+			type_doc=frappe.new_doc("Knitting Type")
+			type_doc.type=attribute_
+			type_doc.save()
+	for attribute_ in colour:
+		existing_doc=frappe.db.get_value('Apparelo Colour', {'colour': attribute_}, 'name')
+		if not existing_doc:
+			color_doc=frappe.new_doc("Apparelo Colour")
+			color_doc.colour=attribute_
+			color_doc.save()
+	for attribute_ in part:
+		existing_doc=frappe.db.get_value('Apparelo Part', {'part_name': attribute_}, 'name')
+		if not existing_doc:
+			part_doc=frappe.new_doc("Apparelo Part")
+			part_doc.part_name=attribute_
+			part_doc.save()
+	for num in range(35,120,5):
+		existing_doc=frappe.db.get_value('Apparelo Size', {'size': str(num) +" cm"}, 'name')
+		if not existing_doc:
+			size_doc=frappe.new_doc("Apparelo Size")
+			size_doc.size= str(num) +" cm"
+			size_doc.save()

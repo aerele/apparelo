@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "size"
+  "size",
+  "disabled"
  ],
  "fields": [
   {
@@ -16,10 +17,16 @@
    "label": "Size",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "links": [],
- "modified": "2020-01-08 17:43:55.637656",
+ "modified": "2020-01-09 15:26:32.536145",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Size",

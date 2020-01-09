@@ -1,20 +1,20 @@
 {
  "actions": [],
- "autoname": "field:colour",
- "creation": "2020-01-08 17:41:52.843325",
+ "autoname": "field:type",
+ "creation": "2020-01-09 15:17:41.342233",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "colour",
+  "type",
   "disabled"
  ],
  "fields": [
   {
-   "fieldname": "colour",
+   "fieldname": "type",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Colour",
+   "label": "Type",
    "reqd": 1,
    "unique": 1
   },
@@ -26,10 +26,10 @@
   }
  ],
  "links": [],
- "modified": "2020-01-09 15:26:56.578561",
+ "modified": "2020-01-09 15:28:18.345765",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Apparelo Colour",
+ "name": "Knitting Type",
  "owner": "Administrator",
  "permissions": [
   {

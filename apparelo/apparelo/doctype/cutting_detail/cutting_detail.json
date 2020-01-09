@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2019-10-03 12:59:33.859798",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -12,10 +13,10 @@
  "fields": [
   {
    "fieldname": "part",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Part",
-   "options": "\nFront\nBack\nPanel\nSleeve\nFolding\nNet Folding",
+   "options": "Apparelo Part",
    "reqd": 1
   },
   {
@@ -28,10 +29,10 @@
   },
   {
    "fieldname": "size",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Size",
-   "options": "\n35 cm\n40 cm\n45 cm\n50 cm\n55 cm\n60 cm\n65 cm\n70 cm\n75 cm\n80 cm\n85 cm\n90 cm\n95 cm\n100 cm\n105 cm\n110 cm\n115 cm",
+   "options": "Apparelo Size",
    "reqd": 1
   },
   {
@@ -44,7 +45,8 @@
   }
  ],
  "istable": 1,
- "modified": "2019-10-03 14:07:18.830377",
+ "links": [],
+ "modified": "2020-01-09 15:02:13.348384",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting Detail",

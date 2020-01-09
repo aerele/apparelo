@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "part_name"
+  "part_name",
+  "disabled"
  ],
  "fields": [
   {
@@ -16,10 +17,16 @@
    "label": "Part Name",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "links": [],
- "modified": "2020-01-08 17:36:51.693677",
+ "modified": "2020-01-09 15:27:46.408166",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Part",
