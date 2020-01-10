@@ -10,9 +10,11 @@
   "get_items",
   "section_break_3",
   "po_items",
+  "percentage",
   "get_items_for_mr",
   "section_break_5",
-  "mr_items"
+  "mr_items",
+  "amended_from"
  ],
  "fields": [
   {
@@ -54,11 +56,25 @@
    "no_copy": 1,
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "percentage",
+   "fieldtype": "Data",
+   "label": "Percentage"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Creation",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2019-12-25 13:43:49.739328",
+ "modified": "2020-01-09 16:55:46.957291",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
