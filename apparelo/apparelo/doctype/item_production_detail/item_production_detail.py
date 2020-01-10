@@ -12,8 +12,8 @@ from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_ma
 class ItemProductionDetail(Document):
 	def on_submit(self):
 		ipd_list=self.create_process_details()
-		ipd_item_mapping(ipd_list,self.name,self.item)
-		ipd_bom_mapping(ipd_list,self.name,self.item)
+		# ipd_item_mapping(ipd_list,self.name,self.item)
+		# ipd_bom_mapping(ipd_list,self.name,self.item)
 
 	def create_process_details(self):
 		ipd = []

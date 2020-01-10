@@ -26,7 +26,7 @@ class Packing(Document):
 		return list(set(variants)),piece_count
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
-		
+		print("&&&&&&",input_item_names,"$$$$")
 		boms = []
 		if piece_count==self.input_qty:
 			for variant in variants:
@@ -54,7 +54,46 @@ class Packing(Document):
 		if self.input_qty > piece_count:
 			frappe.throw(_("Input Quantity is not available in Packing"))
 		if self.input_qty < piece_count:
-			combo=list(combinations(input_item_names,self.input_qty))
+			print("232")
+			for size in item_size:
+				for items in input_item_names:
+					items_=[]
+					if size.upper() in items:
+						print("111")
+						items_.extend(items)
+				print("ASD",items_,"ASDF")
+				combo=list(combinations(items_,self.input_qty))
+				print("indhu",self.input_qty,"indhu")
+				print("SDFG",combo,"QWER")
+				for variant in variants:
+					print("2407")
+					for combo_ in combo:
+						print("1912")
+						item_list_=[]
+						for item_ in combo_:
+							print("1306")
+							for size in item_size:
+								print("1233",variants,"1233",item_,"1232")
+								if size.upper() in item_  and size.upper() in variant:
+									print("#$%",item_,"@#@")
+									item_list_.append({"item_code": item_,"uom": "Nos"})
+						for item in self.additional_part:
+								item_list_.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+						print("$$$$$",item_list_,"$$$$$$")
+						bom = frappe.get_doc({
+							"doctype": "BOM",
+							"currency": get_default_currency(), 
+							"uom": "Nos",
+							"is_default":0,
+							"is_active":1,
+							"item": variant,
+							"company": get_default_company(),
+							"items": item_list_
+						})
+						bom.save()
+						bom.submit()
+						boms.append(bom.name)
+						print(bom.name)
 		return boms
 
 
