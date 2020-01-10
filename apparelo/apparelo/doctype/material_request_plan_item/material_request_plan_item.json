@@ -19,7 +19,8 @@
   "min_order_qty",
   "section_break_8",
   "sales_order",
-  "requested_qty"
+  "requested_qty",
+  "req_by_date"
  ],
  "fields": [
   {
@@ -114,11 +115,17 @@
    "fieldtype": "Float",
    "label": "Requested Qty",
    "read_only": 1
+  },
+  {
+   "fieldname": "req_by_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Req by date"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2019-12-29 01:05:33.249648",
+ "modified": "2020-01-09 16:56:38.190651",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Material Request Plan Item",
