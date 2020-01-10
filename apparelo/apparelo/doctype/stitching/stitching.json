@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "Prompt",
  "creation": "2019-10-03 13:22:36.708923",
  "doctype": "DocType",
@@ -6,6 +7,12 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
+  "section_break_2",
+  "parts",
+  "get_piece_colour",
+  "column_break_5",
+  "piece_colours",
+  "section_break_7",
   "colour_mappings",
   "parts_per_piece",
   "additional_parts",
@@ -48,10 +55,40 @@
    "label": "Item",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "parts",
+   "fieldtype": "Table MultiSelect",
+   "label": "Parts",
+   "options": "Cutting Part"
+  },
+  {
+   "fieldname": "get_piece_colour",
+   "fieldtype": "Button",
+   "label": "Get piece colour"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "piece_colours",
+   "fieldtype": "Table MultiSelect",
+   "label": "Piece Colours",
+   "options": "Cutting Colors"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-09 12:50:10.669812",
+ "links": [],
+ "modified": "2020-01-10 23:46:34.299142",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",
