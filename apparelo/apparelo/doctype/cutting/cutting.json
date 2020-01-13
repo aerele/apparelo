@@ -15,8 +15,10 @@
   "section_break_7",
   "details",
   "section_break_9",
-  "colours",
+  "colour_parts",
   "get_colour_combination",
+  "column_break_12",
+  "colours",
   "section_break_12",
   "colour_mapping",
   "amended_from"
@@ -78,7 +80,7 @@
   {
    "fieldname": "get_size_combination",
    "fieldtype": "Button",
-   "label": "Get size Combination"
+   "label": "Get size combination"
   },
   {
    "fieldname": "section_break_9",
@@ -98,11 +100,21 @@
   {
    "fieldname": "section_break_12",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "colour_parts",
+   "fieldtype": "Table MultiSelect",
+   "label": "Parts",
+   "options": "Cutting Part"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-10 23:30:46.830747",
+ "modified": "2020-01-13 11:07:16.589301",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",
