@@ -166,6 +166,9 @@ def get_part_size_combination(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	part_size_combination =[]
+	if doc.get('details') != None:
+		for item in doc.get('details'):
+			part_size_combination.append({'part':item['part'],'size':item['size']})
 	for size in doc.get('sizes'):
 		for part in doc.get('parts'):
 			part_size_combination.append({'part':part['parts'],'size':size['size']})
@@ -177,6 +180,9 @@ def get_part_colour_combination(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	part_colour_combination =[]
+	if doc.get('colour_mapping') != None:
+		for item in doc.get('colour_mapping'):
+			part_colour_combination.append({'part':item['part'],'colour':item['colour']})
 	for colour in doc.get('colours'):
 		for part in doc.get('colour_parts'):
 			part_colour_combination.append({'part':part['parts'],'colour':colour['colors']})
