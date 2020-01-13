@@ -4,10 +4,12 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from erpnext import get_default_company, get_default_currency
 from frappe.model.document import Document
 from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item_mapping
 from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
+from frappe.utils import comma_and
 
 class ItemProductionDetail(Document):
 	def on_submit(self):
@@ -35,12 +37,14 @@ class ItemProductionDetail(Document):
 				process_variants['input_item']=[process.input_item]
 				if process.input_item:
 					knitting_doc = frappe.get_doc('Knitting', process.process_record)
+					if knitting_doc.docstatus!=1:
+						frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 					variants = knitting_doc.create_variants([process.input_item])
 					process_variants['variants'] = list(set(variants))
 					boms=knitting_doc.create_boms([process.input_item], variants, attribute_set,item_size,colour,piece_count)
 					process_variants['BOM']=list(set(boms))
 					ipd.append(process_variants)
-				elif process.input_index:
+				elif process.input_index:					
 					pass
 				continue
 
@@ -62,6 +66,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								dyeing_doc = frappe.get_doc('Dyeing', process.process_record)
+								if dyeing_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(dyeing_doc.create_variants(input_items))
 								boms.extend(dyeing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -88,6 +94,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								steaming_doc = frappe.get_doc('Steaming', process.process_record)
+								if steaming_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(steaming_doc.create_variants(input_items))
 								boms.extend(steaming_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -114,6 +122,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								compacting_doc = frappe.get_doc('Compacting', process.process_record)
+								if compacting_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(compacting_doc.create_variants(input_items))
 								boms.extend(compacting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -140,6 +150,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								bleaching_doc = frappe.get_doc('Bleaching', process.process_record)
+								if bleaching_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(bleaching_doc.create_variants(input_items))
 								boms.extend(bleaching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -166,6 +178,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								cutting_doc = frappe.get_doc('Cutting', process.process_record)
+								if cutting_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants,attribute_set = cutting_doc.create_variants(input_items,item_size)
 								variants_.extend(variants)
 								boms.extend(cutting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -193,6 +207,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
+								if piece_printing_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(piece_printing_doc.create_variants(input_items))
 								boms.extend(piece_printing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -217,6 +233,8 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items.extend(pro['variants'])
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
+					if stitching_doc.docstatus!=1:
+						frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 					variants.extend(stitching_doc.create_variants(input_items,colour))
 					boms.extend(stitching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -243,6 +261,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
+								if label_fusing_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(label_fusing_doc.create_variants(input_items))
 								boms.extend(label_fusing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -268,6 +288,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								checking_doc = frappe.get_doc('Checking', process.process_record)
+								if checking_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(checking_doc.create_variants(input_items))
 								boms.extend(checking_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] =list(set(variants))
@@ -294,6 +316,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								ironing_doc = frappe.get_doc('Ironing', process.process_record)
+								if ironing_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants.extend(ironing_doc.create_variants(input_items))
 								boms.extend(ironing_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count))
 					process_variants['variants'] = list(set(variants))
@@ -321,6 +345,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								packing_doc = frappe.get_doc('Packing', process.process_record)
+								if packing_doc.docstatus!=1:
+									frappe.throw(_(f'The process {comma_and(f"""<a href="#Form/{process.process_name}/{process.process_record}">{process.process_record}</a>""")} is not submitted'))
 								variants,piece_count= packing_doc.create_variants(input_items,self.item)
 								variants_.extend(variants)
 								boms.extend(packing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
