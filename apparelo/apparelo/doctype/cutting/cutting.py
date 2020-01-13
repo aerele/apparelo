@@ -3,8 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe,json
 from frappe import _
+from six import string_types, iteritems
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
@@ -159,3 +160,24 @@ def create_item_template(self):
 			]
 		})
 		item.save()
+
+@frappe.whitelist()
+def get_part_size_combination(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	part_size_combination =[]
+	for size in doc.get('sizes'):
+		for part in doc.get('parts'):
+			part_size_combination.append({'part':part['parts'],'size':size['size']})
+	return part_size_combination
+
+
+@frappe.whitelist()
+def get_part_colour_combination(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	part_colour_combination =[]
+	for colour in doc.get('colours'):
+		for part in doc.get('colour_parts'):
+			part_colour_combination.append({'part':part['parts'],'colour':colour['colors']})
+	return(part_colour_combination)
