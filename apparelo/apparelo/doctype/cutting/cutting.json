@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "Prompt",
  "creation": "2019-10-03 13:01:29.281159",
  "doctype": "DocType",
@@ -6,9 +7,21 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
+  "section_break_3",
+  "parts",
+  "get_size_combination",
+  "column_break_4",
+  "sizes",
+  "section_break_7",
   "details",
-  "amended_from",
-  "colour_mapping"
+  "section_break_9",
+  "colour_parts",
+  "get_colour_combination",
+  "column_break_12",
+  "colours",
+  "section_break_12",
+  "colour_mapping",
+  "amended_from"
  ],
  "fields": [
   {
@@ -39,10 +52,75 @@
    "fieldtype": "Table",
    "label": "Colour Mapping",
    "options": "Cutting colour details"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.__islocal",
+   "depends_on": "eval: doc.docstatus == 0",
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "parts",
+   "fieldtype": "Table MultiSelect",
+   "label": "Parts",
+   "options": "Cutting Part"
+  },
+  {
+   "fieldname": "sizes",
+   "fieldtype": "Table MultiSelect",
+   "label": "Sizes",
+   "options": "Cutting Size"
+  },
+  {
+   "fieldname": "get_size_combination",
+   "fieldtype": "Button",
+   "label": "Get size combination"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.__islocal",
+   "depends_on": "eval: doc.docstatus == 0",
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "colours",
+   "fieldtype": "Table MultiSelect",
+   "label": "Colours",
+   "options": "Cutting Colors"
+  },
+  {
+   "fieldname": "get_colour_combination",
+   "fieldtype": "Button",
+   "label": "Get colour combination"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "colour_parts",
+   "fieldtype": "Table MultiSelect",
+   "label": "Parts",
+   "options": "Cutting Part"
+  },
+  {
+   "fieldname": "column_break_12",
+   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-12-06 10:09:06.442399",
+ "links": [],
+ "modified": "2020-01-13 11:48:48.333062",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",
@@ -61,7 +139,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
