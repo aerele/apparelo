@@ -73,40 +73,46 @@ class Packing(Document):
 								item_list_.append({"item_code": items,"uom": "Nos"})
 				for item in self.additional_part:
 						item_list_.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
-				new_bom = frappe.get_doc({
-					"doctype": "BOM",
-					"currency": get_default_currency(), 
-					"uom": "Nos",
-					"is_default":0,
-					"is_active":1,
-					"item": variant,
-					"company": get_default_company(),
-					"items": item_list_
-				})
-				new_bom.save()
-				new_bom.submit()
-				boms.append(new_bom.name)
+				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom:
+					new_bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(), 
+						"uom": "Nos",
+						"is_default":0,
+						"is_active":1,
+						"item": variant,
+						"company": get_default_company(),
+						"items": item_list_
+					})
+					new_bom.save()
+					new_bom.submit()
+					boms.append(new_bom.name)
+				else:
+					boms.append(existing_bom)
 			for variant in variants:
 				items_=[]
 				for variant_ in combo_variants:
 					for size in item_size:
 						if size.upper() in variant and size.upper() in variant_:
 							items_.append({"item_code": variant_,"uom": "Nos","bom_no":get_item_details(variant_).get("bom_no")})
-				for item in self.additional_part:
-						items_.append({"item_code": item.item,"uom": "Nos","qty":item.qty*len(combo_variants)/len(item_size)})
-				bom = frappe.get_doc({
-						"doctype": "BOM",
-						"currency": get_default_currency(), 
-						"uom": "Nos",
-						"is_default":1,
-						"item": variant,
-						"company": get_default_company(),
-						"items": items_
-					})
+				existing_bom_ = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom_:
+					bom = frappe.get_doc({
+							"doctype": "BOM",
+							"currency": get_default_currency(), 
+							"uom": "Nos",
+							"is_default":1,
+							"item": variant,
+							"company": get_default_company(),
+							"items": items_
+						})
 
-				bom.save()
-				bom.submit()
-				boms.append(bom.name)
+					bom.save()
+					bom.submit()
+					boms.append(bom.name)
+				else:
+					boms.append(existing_bom_)
 		return boms
 
 def create_combo_variant(final_item,colours,size):
