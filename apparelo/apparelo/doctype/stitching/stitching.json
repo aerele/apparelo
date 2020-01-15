@@ -12,6 +12,7 @@
   "get_piece_colour",
   "column_break_5",
   "piece_colours",
+  "is_part_colour_same_as_piece_colour",
   "section_break_7",
   "colour_mappings",
   "parts_per_piece",
@@ -87,11 +88,17 @@
   {
    "fieldname": "section_break_7",
    "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_part_colour_same_as_piece_colour",
+   "fieldtype": "Check",
+   "label": "is part colour same as piece colour"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-13 16:14:13.797444",
+ "modified": "2020-01-14 17:04:33.248371",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",

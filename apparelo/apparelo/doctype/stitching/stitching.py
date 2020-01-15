@@ -111,12 +111,26 @@ def get_piece_colour_combination(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	piece_colour_combination =[]
-	if doc.get('colour_mappings') != None:
-		for item in doc.get('colour_mappings'):
-			piece_colour_combination.append({'part':item['part'],'piece_colour':item['piece_colour']})
-	for colour in doc.get('piece_colours'):
-		for part in doc.get('parts'):
-			piece_colour_combination.append({'part':part['parts'],'piece_colour':colour['colors']})
+	if doc.get('is_part_colour_same_as_piece_colour'):
+		if doc.get('colour_mappings') != None:
+			for item in doc.get('colour_mappings'):
+				if 'part' in item:
+					piece_colour_combination.append({'part':item['part'],'piece_colour':item['piece_colour'],'part_colour':item['part_colour']})
+				else:
+					break
+		for colour in doc.get('piece_colours'):
+			for part in doc.get('parts'):
+				piece_colour_combination.append({'part':part['parts'],'piece_colour':colour['colors'],'part_colour':colour['colors']})
+	else:
+		if doc.get('colour_mappings') != None:
+			for item in doc.get('colour_mappings'):
+				if 'part' in item:
+					piece_colour_combination.append({'part':item['part'],'piece_colour':item['piece_colour'],'part_colour':item['part_colour']})
+				else:
+					break
+		for colour in doc.get('piece_colours'):
+			for part in doc.get('parts'):
+				piece_colour_combination.append({'part':part['parts'],'piece_colour':colour['colors'],'part_colour':' '})
 	return(piece_colour_combination)
 
 @frappe.whitelist()
