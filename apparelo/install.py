@@ -11,11 +11,13 @@ from apparelo.apparelo.doctype.compacting import compacting
 from apparelo.apparelo.doctype.steaming import steaming
 from apparelo.apparelo.doctype.cutting import cutting
 from apparelo.apparelo.doctype.dc.dc import make_custom_fields
+from apparelo.apparelo.doctype.dc.dc import make_item_fields
 
 def after_install():
     create_item_attributes()
     create_attr_values()
     create_item_template()
+    make_item_fields
     make_custom_fields()
 
 def create_item_attributes():

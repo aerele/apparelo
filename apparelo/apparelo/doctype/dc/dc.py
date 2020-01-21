@@ -100,7 +100,15 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 			if process.processes==filters['supplier_process.processes']:
 				suppliers.append([supplier.name])
 	return suppliers
-
+def make_item_fields(update=True):
+	custom_fields={'Item': [
+		{
+	"fieldname": "print_code", 
+	"fieldtype": "Data", 
+	"label": "PF Item Code", 
+		}
+	]}
+	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
 def make_custom_fields(update=True):
 	custom_fields={'Supplier': [
 		{
