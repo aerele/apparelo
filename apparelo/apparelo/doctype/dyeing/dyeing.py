@@ -10,7 +10,7 @@ from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
-
+import hashlib
 class Dyeing(Document):
 	def on_submit(self):
 		create_item_template()
@@ -28,7 +28,12 @@ class Dyeing(Document):
 			for variant in variants:
 				if str(dia) in variant:
 					if not str(dia)+" Dia" in variant:
+						hash_=hashlib.sha256(variant.replace('Dyed Cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						doc=frappe.get_doc("Item",variant)
+						doc.print_code=new_variant
+						doc.save()
+						new_variant=new_variant+" "+hash_[0:7]
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
 		if len(new_variants)==0:
