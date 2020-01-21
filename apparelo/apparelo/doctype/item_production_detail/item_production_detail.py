@@ -85,7 +85,32 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
-
+			
+			if process.process_name == 'Roll Printing':
+				process_variants['process'] = 'Roll Printing'
+				process_variants['index']=process.idx
+				if process.input_item:
+					pass
+				elif process.input_index:
+					variants=[]
+					boms=[]
+					input_items_= []
+					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=process.input_index
+					for pro in ipd:
+						for input_index in input_indexs:
+							input_items=[]
+							if str(pro['index'])==input_index:
+								input_items=pro['variants']
+								input_items_.extend(input_items)
+								roll_printing_doc = frappe.get_doc('Roll Printing', process.process_record)
+								variants.extend(roll_printing_doc.create_variants(input_items))
+								boms.extend(roll_printing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+					process_variants['variants'] = list(set(variants))
+					process_variants['BOM']=list(set(boms))
+					process_variants['input_item']=list(set(input_items_))
+					ipd.append(process_variants)
+				continue
 			if process.process_name == 'Steaming':
 				process_variants['process'] = 'Steaming'
 				process_variants['index']=process.idx

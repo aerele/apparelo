@@ -269,3 +269,17 @@ def create_attr_values():
 			size_doc=frappe.new_doc("Apparelo Size")
 			size_doc.size= str(num) +" cm"
 			size_doc.save()
+def create_additional_attribute():
+	if not frappe.db.exists("Item Attribute", "Print Type"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Print Type",
+			"item_attribute_values": []
+		}).save()
+	Print_type=["Plain","Roll Printing"]
+	for attribute_ in Print_type:
+		existing_doc=frappe.db.get_value('Print Type', {'type': attribute_}, 'name')
+		if not existing_doc:
+			type_doc=frappe.new_doc("Print Type")
+			type_doc.type=attribute_
+			type_doc.save()
