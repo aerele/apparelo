@@ -87,9 +87,8 @@ class Packing(Document):
 					})
 					new_bom.save()
 					new_bom.submit()
-					boms.append(new_bom.name)
 				else:
-					boms.append(existing_bom)
+					continue
 			for variant in variants:
 				items_=[]
 				for variant_ in combo_variants:

@@ -410,6 +410,8 @@ def bom_item(qty,bom,additional_item,variants,items):
 		if item.uom=='Nos' and item.qty>1:
 				qty=item.qty
 		if item.bom_no=='':
+			if not item.item_code in additional_item:
+				additional_item[item.item_code]=0
 			additional_item[item.item_code]+=item.qty
 		else:
 			if item.item_code in variants:

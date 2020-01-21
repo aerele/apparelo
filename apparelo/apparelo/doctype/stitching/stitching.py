@@ -67,6 +67,8 @@ class Stitching(Document):
 							if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 								if piece_count.part==colour_mapping.part:
 									item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
+			for item in self.additional_parts:
+					item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
