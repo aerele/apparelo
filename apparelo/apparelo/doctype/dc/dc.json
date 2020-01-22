@@ -10,11 +10,14 @@
   "lot",
   "process_1",
   "supplier",
+  "address",
   "get_items",
   "items",
   "get_return_item",
   "section_break_5",
   "return_materials",
+  "r_total",
+  "q_total",
   "amended_from"
  ],
  "fields": [
@@ -84,11 +87,28 @@
    "options": "DC",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "r_total",
+   "fieldtype": "Float",
+   "label": "R_Total"
+  },
+  {
+   "fieldname": "q_total",
+   "fieldtype": "Float",
+   "label": "Q_Total"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-19 18:37:53.921079",
+ "modified": "2020-01-22 16:07:14.053169",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
