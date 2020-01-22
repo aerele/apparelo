@@ -276,8 +276,8 @@ def create_additional_attribute():
 			"attribute_name": "Print Type",
 			"item_attribute_values": []
 		}).save()
-	Print_type=["Plain","Roll Printing"]
-	for attribute_ in Print_type:
+	print_type=["Plain","Roll Printing"]
+	for attribute_ in print_type:
 		existing_doc=frappe.db.get_value('Print Type', {'type': attribute_}, 'name')
 		if not existing_doc:
 			type_doc=frappe.new_doc("Print Type")

@@ -126,9 +126,6 @@ def create_item_template():
 				},
 				{
 					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Print Type"
 				}
 			]
 		}).save()

@@ -1,5 +1,4 @@
 {
- "actions": [],
  "autoname": "Prompt",
  "creation": "2019-10-03 12:51:33.533042",
  "doctype": "DocType",
@@ -77,7 +76,6 @@
   }
  ],
  "is_submittable": 1,
- "links": [],
  "modified": "2020-01-21 18:09:28.772347",
  "modified_by": "Administrator",
  "module": "Apparelo",
