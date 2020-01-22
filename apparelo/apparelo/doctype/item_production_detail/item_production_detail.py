@@ -37,6 +37,7 @@ class ItemProductionDetail(Document):
 		piece_count=None
 		item_size=[]
 		colour=[]
+		final_process=self.final_process
 		for final_size in self.size:
 			item_size.append(final_size.size)
 		for final_colour in self.colour:
@@ -233,8 +234,8 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items.extend(pro['variants'])
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
-					variants.extend(stitching_doc.create_variants(input_items,colour))
-					boms.extend(stitching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+					variants.extend(stitching_doc.create_variants(input_items,colour,self.item,final_process))
+					boms.extend(stitching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count,final_process))
 					process_variants['variants'] = list(set(variants))
 					process_variants['BOM']=list(set(boms))
 					process_variants['input_item']=list(set(input_items_))
@@ -284,8 +285,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								checking_doc = frappe.get_doc('Checking', process.process_record)
-								variants.extend(checking_doc.create_variants(input_items))
-								boms.extend(checking_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count))
+								variants.extend(checking_doc.create_variants(input_items,self.item,final_process))
+								boms.extend(checking_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count,final_process))
 					process_variants['variants'] =list(set(variants))
 					process_variants['BOM']=list(set(boms))
 					process_variants['input_item']=list(set(input_items_))
@@ -310,8 +311,8 @@ class ItemProductionDetail(Document):
 								input_items=pro['variants']
 								input_items_.extend(input_items)
 								ironing_doc = frappe.get_doc('Ironing', process.process_record)
-								variants.extend(ironing_doc.create_variants(input_items))
-								boms.extend(ironing_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count))
+								variants.extend(ironing_doc.create_variants(input_items,self.item,final_process))
+								boms.extend(ironing_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count,final_process))
 					process_variants['variants'] = list(set(variants))
 					process_variants['BOM']=list(set(boms))
 					process_variants['input_item']=list(set(input_items_))
