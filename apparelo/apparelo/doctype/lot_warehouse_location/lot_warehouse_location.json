@@ -1,28 +1,28 @@
 {
  "actions": [],
- "creation": "2020-01-10 16:11:30.386607",
+ "creation": "2020-01-23 13:52:43.581149",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "size"
+  "location"
  ],
  "fields": [
   {
-   "fieldname": "size",
+   "fieldname": "location",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Size",
-   "options": "Apparelo Size",
+   "label": "Location",
+   "options": "Location",
    "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-23 16:04:05.826434",
+ "modified": "2020-01-23 15:59:06.030293",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Cutting Size",
+ "name": "Lot Warehouse Location",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
