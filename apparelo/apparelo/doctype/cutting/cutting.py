@@ -28,6 +28,9 @@ class Cutting(Document):
 				variant_attribute_set['Part'] = [part]
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 				cutting_size=self.get_attribute_values('Apparelo Size', part)
+				if self.based_on_style==1:
+					style=self.get_attribute_values('Apparelo Style',part)
+					variant_attribute_set['Apparelo Style'] = style
 				size.sort()
 				cutting_size.sort()
 				if cutting_size==size:
@@ -90,6 +93,14 @@ class Cutting(Document):
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
+		if attribute_name=="Apparelo Style":
+			if part == None:
+				for colour_mapping in self.colour_mapping:
+					attribute_value.add(colour_mapping.style)
+			elif part:
+				for colour_mapping in self.colour_mapping:
+					if colour_mapping.part == part:
+						attribute_value.add(colour_mapping.style)
 		if attribute_name == "Apparelo Colour":
 			if part == None:
 				for colour_mapping in self.colour_mapping:
@@ -136,30 +147,60 @@ def create_item_attribute():
 		}).save()
 
 def create_item_template(self):
-	if not frappe.db.exists("Item", self.item+" Cut Cloth"):
-		item = frappe.get_doc({
-			"doctype": "Item",
-			"item_code": self.item+" Cut Cloth",
-			"item_name": self.item+" Cut Cloth",
-			"description":self.item+" Cut Cloth",
-			"item_group": "Sub Assemblies",
-			"stock_uom" : "Nos",
-			"has_variants" : "1",
-			"variant_based_on" : "Item Attribute",
-			"is_sub_contracted_item": "1",
-			"attributes" : [
-				{
-					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Part"
-				},
-				{
-					"attribute" : "Apparelo Size"
-				}
-			]
-		})
-		item.save()
+	if self.based_on_style==0:
+		if not frappe.db.exists("Item", self.item+" Cut Cloth"):
+			item = frappe.get_doc({
+				"doctype": "Item",
+				"item_code": self.item+" Cut Cloth",
+				"item_name": self.item+" Cut Cloth",
+				"description":self.item+" Cut Cloth",
+				"item_group": "Sub Assemblies",
+				"stock_uom" : "Nos",
+				"has_variants" : "1",
+				"variant_based_on" : "Item Attribute",
+				"is_sub_contracted_item": "1",
+				"attributes" : [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					}
+				]
+			})
+			item.save()
+	else:
+		if not frappe.db.exists("Item", self.item+" Cut Cloth"):
+			item = frappe.get_doc({
+				"doctype": "Item",
+				"item_code": self.item+" Cut Cloth",
+				"item_name": self.item+" Cut Cloth",
+				"description":self.item+" Cut Cloth",
+				"item_group": "Sub Assemblies",
+				"stock_uom" : "Nos",
+				"has_variants" : "1",
+				"variant_based_on" : "Item Attribute",
+				"is_sub_contracted_item": "1",
+				"attributes" : [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					},
+					{
+						"attribute" : "Apparelo Style"
+					}
+				]
+			})
+			item.save()
+
 
 @frappe.whitelist()
 def get_part_size_combination(doc):
@@ -180,10 +221,19 @@ def get_part_colour_combination(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	part_colour_combination =[]
-	if doc.get('colour_mapping') != None:
-		for item in doc.get('colour_mapping'):
-			part_colour_combination.append({'part':item['part'],'colour':item['colour']})
-	for colour in doc.get('colours'):
-		for part in doc.get('colour_parts'):
-			part_colour_combination.append({'part':part['parts'],'colour':colour['colors']})
+	if doc.get("based_on_style")==0:
+		if doc.get('colour_mapping') != None:
+			for item in doc.get('colour_mapping'):
+				part_colour_combination.append({'part':item['part'],'colour':item['colour']})
+		for colour in doc.get('colours'):
+			for part in doc.get('colour_parts'):
+				part_colour_combination.append({'part':part['parts'],'colour':colour['colors']})
+	else:
+		if doc.get('colour_mapping') != None:
+			for item in doc.get('colour_mapping'):
+				part_colour_combination.append({'part':item['part'],'colour':item['colour']})
+		for colour in doc.get('colours'):
+			for part in doc.get('colour_parts'):
+				for style in doc.get('styles'):
+					part_colour_combination.append({'part':part['parts'],'colour':colour['colors'],'style':style['styles']})
 	return(part_colour_combination)

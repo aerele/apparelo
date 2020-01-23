@@ -48,7 +48,7 @@ class Ironing(Document):
 		return boms
 
 def create_item_template(self):
-	if not frappe.db.exists("Item",self.item+"Ironed Cloth"):
+	if not frappe.db.exists("Item",self.item+" Ironed Cloth"):
 		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Ironed Cloth",
