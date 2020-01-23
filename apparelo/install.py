@@ -17,7 +17,7 @@ def after_install():
     create_item_attributes()
     create_attr_values()
     create_item_template()
-    make_item_fields
+    make_item_fields()
     make_custom_fields()
 
 def create_item_attributes():
