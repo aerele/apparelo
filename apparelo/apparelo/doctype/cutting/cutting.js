@@ -28,7 +28,7 @@ frappe.ui.form.on('Cutting', {
 	},
 
 	get_colour_combination:function(frm){
-		const set_fields =['part','colour'];
+		const set_fields =['part','colour','style'];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.cutting.cutting.get_part_colour_combination",
 			freeze: true,
