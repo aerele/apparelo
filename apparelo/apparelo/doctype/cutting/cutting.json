@@ -19,6 +19,8 @@
   "get_colour_combination",
   "column_break_12",
   "colours",
+  "based_on_style",
+  "styles",
   "section_break_12",
   "colour_mapping",
   "amended_from"
@@ -29,15 +31,6 @@
    "fieldtype": "Table",
    "label": "Details",
    "options": "Cutting Detail"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Cutting",
-   "print_hide": 1,
-   "read_only": 1
   },
   {
    "fieldname": "item",
@@ -116,11 +109,33 @@
   {
    "fieldname": "column_break_12",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "based_on_style",
+   "fieldtype": "Check",
+   "label": "Based on style"
+  },
+  {
+   "depends_on": "based_on_style",
+   "fieldname": "styles",
+   "fieldtype": "Table MultiSelect",
+   "label": "Styles",
+   "options": "Cutting Styles"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Cutting",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-13 11:48:48.333062",
+ "modified": "2020-01-22 16:21:01.121031",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",
