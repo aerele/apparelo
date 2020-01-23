@@ -9,6 +9,8 @@ from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from itertools import combinations
+from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 
 class Packing(Document):
 	def on_submit(self):
@@ -24,8 +26,7 @@ class Packing(Document):
 		variants=create_variants(item, attribute_set)
 		return list(set(variants)),piece_count
 
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
-		
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count,final_item):
 		boms = []
 		if piece_count==self.input_qty:
 			for variant in variants:
@@ -50,10 +51,122 @@ class Packing(Document):
 					boms.append(bom.name)
 				else:
 					boms.append(existing_bom)
-		else:
-			frappe.throw(_("Input Quantity is not available"))
+		if self.input_qty > piece_count:
+			frappe.throw(_("Input Quantity is not available in Packing"))
+		if self.input_qty < piece_count:
+			colours=list(combinations(colour,self.input_qty))
+			create_item_combo_attribute(colours)
+			create_item_combo_template(final_item)
+			combo_variants=create_combo_variant(final_item,colours,item_size)
+			for variant in combo_variants:
+				variant_attribute=frappe.get_doc("Item",variant)
+				for attribute_ in variant_attribute.attributes:
+					if attribute_.attribute=="Apparelo Size":
+						size=attribute_.attribute_value
+					if attribute_.attribute=="Combo":
+						combo=attribute_.attribute_value
+				item_list_=[]
+				for items in input_item_names:
+					if size.upper() in variant and size.upper() in items:
+						for color in combo.split(","):
+							if color.upper() in items:
+								item_list_.append({"item_code": items,"uom": "Nos"})
+				for item in self.additional_part:
+						item_list_.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom:
+					new_bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(), 
+						"uom": "Nos",
+						"is_default":0,
+						"is_active":1,
+						"item": variant,
+						"company": get_default_company(),
+						"items": item_list_
+					})
+					new_bom.save()
+					new_bom.submit()
+				else:
+					continue
+			for variant in variants:
+				items_=[]
+				for variant_ in combo_variants:
+					for size in item_size:
+						if size.upper() in variant and size.upper() in variant_:
+							items_.append({"item_code": variant_,"uom": "Nos","bom_no":get_item_details(variant_).get("bom_no")})
+				existing_bom_ = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom_:
+					bom = frappe.get_doc({
+							"doctype": "BOM",
+							"currency": get_default_currency(), 
+							"uom": "Nos",
+							"is_default":1,
+							"item": variant,
+							"company": get_default_company(),
+							"items": items_
+						})
+
+					bom.save()
+					bom.submit()
+					boms.append(bom.name)
+				else:
+					boms.append(existing_bom_)
 		return boms
 
+def create_combo_variant(final_item,colours,size):
+	combo_variants=[]
+	item_attribute=frappe.get_doc("Item Attribute","Combo")
+	count=0
+	for size_ in size:
+		for attribute_ in colours:
+			attr=''
+			for color in attribute_:
+				attr+=color+","
+			count+=1
+			combo=[]  
+			for value in item_attribute.item_attribute_values:
+				combo.append(value.attribute_value)
+			if not attr[:-1] in combo:
+				item_attribute.append('item_attribute_values',{
+					"attribute_value" : attr[:-1],
+					"abbr" : "Combo "+str(count)
+					})
+				item_attribute.save()
+			attribute={"Apparelo Size":[size_],"Combo":[attr[:-1]]}
+			combo_variants.extend(create_variants(final_item+" Combo Cloth", attribute))
+	return combo_variants
+
+	
+
+def create_item_combo_attribute(colours):
+	if not frappe.db.exists("Item Attribute", "Combo"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Combo",
+			"item_attribute_values": []
+		}).save()
+def create_item_combo_template(final_item):
+	if not frappe.db.exists("Item",final_item+" Combo Cloth"):
+		frappe.get_doc({
+		"doctype": "Item",
+		"item_code": final_item+" Combo Cloth",
+		"item_name": final_item+" Combo Cloth",
+		"description": final_item+" Combo Cloth",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Nos",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"is_sub_contracted_item": "1",
+		"attributes" : [
+			{
+				"attribute" : "Combo"
+			},
+			{
+				"attribute" : "Apparelo Size"
+			}
+		]
+	}).save()
 
 def create_item_template(self):
 	if not frappe.db.exists("Item",self.item+" Packed Cloth"):

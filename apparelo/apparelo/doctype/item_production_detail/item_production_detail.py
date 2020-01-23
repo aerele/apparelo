@@ -364,7 +364,7 @@ class ItemProductionDetail(Document):
 								packing_doc = frappe.get_doc('Packing', process.process_record)
 								variants,piece_count= packing_doc.create_variants(input_items,self.item)
 								variants_.extend(variants)
-								boms.extend(packing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+								boms.extend(packing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count,self.item))
 					process_variants['variants'] = list(set(variants_))
 					process_variants['BOM']=list(set(boms))
 					process_variants['input_item']=list(set(input_items_))
@@ -451,6 +451,8 @@ def bom_item(qty,bom,additional_item,variants,items):
 		if item.uom=='Nos' and item.qty>1:
 				qty=item.qty
 		if item.bom_no=='':
+			if not item.item_code in additional_item:
+				additional_item[item.item_code]=0
 			additional_item[item.item_code]+=item.qty
 		else:
 			if item.item_code in variants:

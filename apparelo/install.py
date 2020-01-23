@@ -14,10 +14,12 @@ from apparelo.apparelo.doctype.roll_printing import roll_printing
 from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 
 def after_install():
+    remove_defaults()
     create_item_attributes()
     create_attr_values()
     create_item_template()
     make_custom_fields()
+
 
 def create_item_attributes():
     knitting.create_item_attribute()
@@ -35,3 +37,7 @@ def create_item_template():
 def create_attr_values():
     knitting.create_attr_values()
     knitting.create_additional_attribute()
+def remove_defaults():
+    stock_setting=frappe.get_doc("Stock Settings")
+    stock_setting.stock_uom=None
+    stock_setting.save()
