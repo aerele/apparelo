@@ -4,16 +4,32 @@
 
 from __future__ import unicode_literals
 import frappe
+from frappe import _
 from erpnext import get_default_company, get_default_currency
 from frappe.model.document import Document
 from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item_mapping
 from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
+from frappe.utils import comma_and,get_link_to_form
 
 class ItemProductionDetail(Document):
 	def on_submit(self):
+		self.validate_process_records()
 		ipd_list=self.create_process_details()
 		ipd_item_mapping(ipd_list,self.name,self.item)
 		ipd_bom_mapping(ipd_list,self.name,self.item)
+
+	def validate_process_records(self):
+		count = 0
+		link =''
+		for process in self.processes:
+			doc_type= frappe.get_doc(process.process_name, process.process_record)
+			if not doc_type.docstatus:
+				link += f'{get_link_to_form(process.process_name,process.process_record)} , '
+				count +=1
+		if count != 0:
+			frappe.throw(_(f"The process {link} is not submitted"))
+				
+
 
 	def create_process_details(self):
 		ipd = []
@@ -40,7 +56,7 @@ class ItemProductionDetail(Document):
 					boms=knitting_doc.create_boms([process.input_item], variants, attribute_set,item_size,colour,piece_count)
 					process_variants['BOM']=list(set(boms))
 					ipd.append(process_variants)
-				elif process.input_index:
+				elif process.input_index:					
 					pass
 				continue
 
@@ -69,7 +85,32 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
-
+			
+			if process.process_name == 'Roll Printing':
+				process_variants['process'] = 'Roll Printing'
+				process_variants['index']=process.idx
+				if process.input_item:
+					pass
+				elif process.input_index:
+					variants=[]
+					boms=[]
+					input_items_= []
+					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=process.input_index
+					for pro in ipd:
+						for input_index in input_indexs:
+							input_items=[]
+							if str(pro['index'])==input_index:
+								input_items=pro['variants']
+								input_items_.extend(input_items)
+								roll_printing_doc = frappe.get_doc('Roll Printing', process.process_record)
+								variants.extend(roll_printing_doc.create_variants(input_items))
+								boms.extend(roll_printing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+					process_variants['variants'] = list(set(variants))
+					process_variants['BOM']=list(set(boms))
+					process_variants['input_item']=list(set(input_items_))
+					ipd.append(process_variants)
+				continue
 			if process.process_name == 'Steaming':
 				process_variants['process'] = 'Steaming'
 				process_variants['index']=process.idx

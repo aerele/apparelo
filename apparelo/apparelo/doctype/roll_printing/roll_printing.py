@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2019, Aerele Technologies Private Limited and contributors
+# Copyright (c) 2020, Aerele Technologies Private Limited and contributors
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -10,12 +10,11 @@ from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
-import hashlib
 
-class Bleaching(Document):
+class RollPrinting(Document):
 	def on_submit(self):
 		create_item_template()
-
+		create_item_attribute()
 	def create_variants(self, input_item_names):
 		new_variants=[]
 		input_items = []
@@ -23,22 +22,19 @@ class Bleaching(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
-		variants = create_variants('Bleached cloth', attribute_set)
+		print("{{{{{{}}}}}}",attribute_set)
+		variants = create_variants('Roll Printed cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
 				if str(dia) in variant:
 					if not str(dia)+" Dia" in variant:
-						hash_=hashlib.sha256(variant.replace('Bleached Cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(str(dia),str(dia)+" Dia")
-						doc=frappe.get_doc("Item",variant)
-						doc.print_code=new_variant
-						doc.save()
-						new_variant=new_variant+" "+hash_[0:7]
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
+
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -50,20 +46,20 @@ class Bleaching(Document):
 			attr.update(doc_values)
 			args_set = generate_keyed_value_combinations(attr)
 			for attribute_values in args_set:
-				variant = get_variant('Bleached cloth',args=attribute_values)
+				variant = get_variant('Roll Printed cloth',args=attribute_values)
 				if variant in variants:
 					bom_for_variant = frappe.get_doc({
 						"doctype": "BOM",
 						"currency": get_default_currency(),
 						"item": variant,
 						"company": get_default_company(),
-						"quantity": self.output_qty,
-						"uom": self.output_uom,
+						"quantity": 1,
+						"uom": "Kg",
 						"items": [
 							{
 								"item_code": item.name,
-								"qty": self.input_qty,
-								"uom": self.input_uom,
+								"qty": 1,
+								"uom": "Kg",
 								"rate": 0.0,
 							}
 						]
@@ -83,50 +79,58 @@ class Bleaching(Document):
 				else:
 					frappe.throw(_("Unexpected error while creating BOM. Expected variant not found in list of supplied variants"))
 		return boms
-
 	def get_variant_values(self):
 		attribute_set = {}
-		variant_colour = []
-		for colour in self.types:
-			variant_colour.append(colour.colour)
-		attribute_set['Apparelo Colour'] = variant_colour
+		print_type = []
+		print_type.append(self.print_type)
+		attribute_set['Print Type'] = print_type
 		return attribute_set
 
+def create_item_attribute():
+	if not frappe.db.exists("Item Attribute", "Print Type"):
+		frappe.get_doc({
+			"doctype": "Item Attribute",
+			"attribute_name": "Print Type",
+			"item_attribute_values": []
+		}).save()
 def create_item_template():
 	dia = frappe.get_doc('Item Attribute', 'Dia')
-	if not frappe.db.exists("Item","Bleached Cloth"):
+	if not frappe.db.exists('Item','Roll Printed Cloth'):
 		frappe.get_doc({
-		"doctype": "Item",
-		"item_code": "Bleached Cloth",
-		"item_name": "Bleached Cloth",
-		"description": "Bleached Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Kg",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes" : [
-			{
-				"attribute" : "Yarn Shade"
-			},
-			{
-				"attribute" : "Yarn Category"
-			},
-			{
-				"attribute" : "Yarn Count"
-			},
-			{
-				"attribute" : "Dia" ,
-				"numeric_values": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment
-			},
-			{
-				"attribute" : "Knitting Type"
-			},
-			{
-				"attribute" : "Apparelo Colour"
-			}
-		]
-	}).save()
+			"doctype": "Item",
+			"item_code": "Roll Printed Cloth",
+			"item_name": "Roll Printed Cloth",
+			"description": "Roll Printed Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Kg",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes" : [
+				{
+					"attribute" : "Yarn Shade"
+				},
+				{
+					"attribute" : "Yarn Category"
+				},
+				{
+					"attribute" : "Yarn Count"
+				},
+				{
+					"attribute" : "Dia" ,
+					"numeric_values": 1,
+					"from_range": dia.from_range,
+					"to_range": dia.to_range,
+					"increment": dia.increment
+				},
+				{
+					"attribute" : "Knitting Type"
+				},
+				{
+					"attribute" : "Apparelo Colour"
+				},
+				{
+					"attribute" : "Print Type"
+				}
+			]
+		}).save()
