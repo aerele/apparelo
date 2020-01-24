@@ -6,6 +6,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "is_combined",
+  "combined_parts",
+  "get_combined_parts",
   "part_name",
   "disabled"
  ],
@@ -23,10 +26,29 @@
    "fieldname": "disabled",
    "fieldtype": "Check",
    "label": "Disabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_combined",
+   "fieldtype": "Check",
+   "label": "Is Combined"
+  },
+  {
+   "depends_on": "is_combined",
+   "fieldname": "combined_parts",
+   "fieldtype": "Table MultiSelect",
+   "label": "Combined Parts",
+   "options": "Cutting Part"
+  },
+  {
+   "depends_on": "is_combined",
+   "fieldname": "get_combined_parts",
+   "fieldtype": "Button",
+   "label": "Get Combined Parts"
   }
  ],
  "links": [],
- "modified": "2020-01-09 15:27:46.408166",
+ "modified": "2020-01-24 10:27:18.385385",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Part",
