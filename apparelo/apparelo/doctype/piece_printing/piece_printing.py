@@ -57,7 +57,7 @@ class PiecePrinting(Document):
 		return boms
 
 def create_item_template(self):
-	if not frappe.db.exists("Item",self.item+"Printed Cloth"):
+	if not frappe.db.exists("Item",self.item+" Printed Cloth"):
 		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Printed Cloth",

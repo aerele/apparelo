@@ -15,7 +15,7 @@ class Stitching(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names,colour):
+	def create_variants(self, input_item_names,colour,item,final_process):
 		colour.sort()
 		input_items = []
 		for input_item_name in input_item_names:
@@ -30,12 +30,22 @@ class Stitching(Document):
 						variant_attribute_set = {}
 						piece_colour=self.get_attribute_values('Apparelo Colour', part)
 						piece_colour.sort()
-						if piece_colour==colour:
-							variant_attribute_set['Apparelo Colour'] = piece_colour
-						else:
-							frappe.throw(_("Item colour is not available"))
+						if len(piece_colour)<len(colour):
+							variant_attribute_set['Apparelo Colour']=[]
+							for color_ in piece_colour:
+								if color_ in colour:
+									variant_attribute_set['Apparelo Colour'].append(color_)
+						else: 
+							if piece_colour==colour:
+								variant_attribute_set['Apparelo Colour'] = piece_colour
+							else:
+								frappe.throw(_("Item colour is not available"))
 						variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-						variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
+						if final_process=="Stitching":
+							variant_attribute_set.pop('Apparelo Colour')
+							variants.extend(create_variants(item, variant_attribute_set))
+						else:
+							variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
 					else:
 						frappe.throw(_("Part Colour is not available in the input"))
 		
@@ -56,19 +66,24 @@ class Stitching(Document):
 						attribute_value.add(colour_mapping.piece_colour)
 		return list(attribute_value)
 
-	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count):
+	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count,final_process):
 		boms = []
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
 				for size in attribute_set["Apparelo Size"]:
-					for colour_mapping in self.colour_mappings:
-						for piece_count in self.parts_per_piece:
-							if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
-								if piece_count.part==colour_mapping.part:
-									item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
-			for item in self.additional_parts:
-					item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+					if final_process=="Stitching":
+						if size.upper() in input_item  and size.upper() in variant:
+							item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
+					else:
+						for colour_mapping in self.colour_mappings:
+							for piece_count in self.parts_per_piece:
+								if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+									if piece_count.part==colour_mapping.part:
+										item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
+			if not self.additional_parts==[]:
+				for item in self.additional_parts:
+						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
