@@ -2,3 +2,4 @@ apparelo.apparelo.patches.v1.custom_field
 apparelo.apparelo.patches.v1.item_custom_field
 apparelo.apparelo.patches.v1.attribute
 apparelo.apparelo.patches.v1.attribute_value
+apparelo.apparelo.patches.v1.roll_printing_attribute
