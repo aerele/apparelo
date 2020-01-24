@@ -26,3 +26,21 @@ class AppareloStyle(Document):
 				"abbr" : self.style
 			})
 		item_attribute.save()
+		if not frappe.db.exists("Item Attribute", "Apparelo Colour"):
+			frappe.get_doc({
+				"doctype": "Item Attribute",
+				"attribute_name": "Apparelo Colour",
+				"item_attribute_values": []
+			}).save()
+		color_attribute=frappe.get_doc("Item Attribute","Apparelo Colour")
+		if not self.style in styles:
+			color_attribute.append('item_attribute_values',{
+				"attribute_value" : self.style,
+				"abbr" : self.style
+			})
+		color_attribute.save()
+		existing_doc=frappe.db.get_value('Apparelo Colour', {'colour': self.style}, 'name')
+		if not existing_doc:
+			color_doc=frappe.new_doc("Apparelo Colour")
+			color_doc.colour=self.style
+			color_doc.save()
