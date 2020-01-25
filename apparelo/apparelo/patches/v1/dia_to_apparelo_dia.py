@@ -6,7 +6,6 @@ def execute():
 
 def modify_dia_item_attribute():
 	frappe.reload_doc('Apparelo', 'doctype', 'Apparelo Dia', force=True)
-	# frappe.reload_doc('Stock', 'doctype', 'Item Attribute')
 	dia_item_attribute = frappe.get_doc("Item Attribute", "Dia")
 	dia_item_attribute.numeric_values = 0
 	dia_item_attribute.from_range = None
@@ -16,8 +15,6 @@ def modify_dia_item_attribute():
 		i = i * 0.25
 		if int(str(i).split('.')[1]) == 0:
 			i = str(i).split('.')[0]
-		# elif int(str(i).split('.')[1]) == 5:
-		# 		i = str(i) + '0'
 		dia_item_attribute.append('item_attribute_values',{
 			"attribute_value" : str(i),
 			"abbr" : str(i)
@@ -28,8 +25,6 @@ def modify_dia_item_attribute():
 		i = i * 0.25
 		if int(str(i).split('.')[1]) == 0:
 			i = str(i).split('.')[0]
-		# elif int(str(i).split('.')[1]) == 5:
-		# 	i = str(i) + '0'
 		apparelo_dia = frappe.new_doc("Apparelo Dia")
 		apparelo_dia.dia = str(i)
 		apparelo_dia.save()
