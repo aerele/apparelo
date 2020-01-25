@@ -21,6 +21,7 @@ def after_install():
     create_item_template()
     make_item_fields()
     make_custom_fields()
+    create_lot_warehouse()
 
 
 def create_item_attributes():
@@ -36,10 +37,25 @@ def create_item_template():
     compacting.create_item_template()
     steaming.create_item_template()
     roll_printing.create_item_template()
+
 def create_attr_values():
     knitting.create_attr_values()
     knitting.create_additional_attribute()
+
 def remove_defaults():
     stock_setting=frappe.get_doc("Stock Settings")
     stock_setting.stock_uom=None
     stock_setting.save()
+
+def create_lot_warehouse():
+    default_company = frappe.db.get_single_value(
+		    'Global Defaults', 'default_company')
+		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
+		name = "Lot Warehouse"
+        if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
+		frappe.get_doc({
+			"doctype": "Warehouse",
+			"warehouse_name": name,
+			"is_group": 1,
+			"parent_warehouse": f"All Warehouses - {abbr}"
+			}).save()
