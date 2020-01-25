@@ -9,6 +9,7 @@
   "item",
   "part",
   "additional_parts",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -42,11 +43,17 @@
    "label": "Item",
    "options": "Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-09 15:39:06.331167",
+ "modified": "2020-01-24 15:53:33.570394",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Label Fusing",

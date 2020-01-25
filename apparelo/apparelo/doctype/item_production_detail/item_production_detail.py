@@ -28,8 +28,6 @@ class ItemProductionDetail(Document):
 				count +=1
 		if count != 0:
 			frappe.throw(_(f"The process {link} is not submitted"))
-				
-
 
 	def create_process_details(self):
 		ipd = []
@@ -51,13 +49,14 @@ class ItemProductionDetail(Document):
 				process_variants['input_index']=''
 				process_variants['input_item']=[process.input_item]
 				if process.input_item:
+					process_variants['process_record'] = process.process_record
 					knitting_doc = frappe.get_doc('Knitting', process.process_record)
 					variants = knitting_doc.create_variants([process.input_item])
 					process_variants['variants'] = list(set(variants))
 					boms=knitting_doc.create_boms([process.input_item], variants, attribute_set,item_size,colour,piece_count)
 					process_variants['BOM']=list(set(boms))
 					ipd.append(process_variants)
-				elif process.input_index:					
+				elif process.input_index:
 					pass
 				continue
 
@@ -78,6 +77,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								dyeing_doc = frappe.get_doc('Dyeing', process.process_record)
 								variants.extend(dyeing_doc.create_variants(input_items))
 								boms.extend(dyeing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -104,6 +104,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								roll_printing_doc = frappe.get_doc('Roll Printing', process.process_record)
 								variants.extend(roll_printing_doc.create_variants(input_items))
 								boms.extend(roll_printing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -129,6 +130,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								steaming_doc = frappe.get_doc('Steaming', process.process_record)
 								variants.extend(steaming_doc.create_variants(input_items))
 								boms.extend(steaming_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -155,6 +157,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								compacting_doc = frappe.get_doc('Compacting', process.process_record)
 								variants.extend(compacting_doc.create_variants(input_items))
 								boms.extend(compacting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -181,6 +184,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								bleaching_doc = frappe.get_doc('Bleaching', process.process_record)
 								variants.extend(bleaching_doc.create_variants(input_items))
 								boms.extend(bleaching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -207,6 +211,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								cutting_doc = frappe.get_doc('Cutting', process.process_record)
 								variants,attribute_set = cutting_doc.create_variants(input_items,item_size)
 								variants_.extend(variants)
@@ -234,6 +239,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
 								variants.extend(piece_printing_doc.create_variants(input_items))
 								boms.extend(piece_printing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -258,6 +264,7 @@ class ItemProductionDetail(Document):
 						for input_index in input_indexs:
 							if str(pro['index'])==input_index:
 								input_items.extend(pro['variants'])
+					process_variants['process_record'] = process.process_record
 					stitching_doc = frappe.get_doc('Stitching', process.process_record)
 					variants.extend(stitching_doc.create_variants(input_items,colour,self.item,final_process))
 					boms.extend(stitching_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count,final_process))
@@ -284,6 +291,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
 								variants.extend(label_fusing_doc.create_variants(input_items))
 								boms.extend(label_fusing_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
@@ -309,6 +317,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								checking_doc = frappe.get_doc('Checking', process.process_record)
 								variants.extend(checking_doc.create_variants(input_items,self.item,final_process))
 								boms.extend(checking_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count,final_process))
@@ -335,6 +344,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								ironing_doc = frappe.get_doc('Ironing', process.process_record)
 								variants.extend(ironing_doc.create_variants(input_items,self.item,final_process))
 								boms.extend(ironing_doc.create_boms(input_items, variants,attribute_set,item_size,colour,piece_count,final_process))
@@ -362,6 +372,7 @@ class ItemProductionDetail(Document):
 							if str(pro['index'])==input_index:
 								input_items=pro['variants']
 								input_items_.extend(input_items)
+								process_variants['process_record'] = process.process_record
 								packing_doc = frappe.get_doc('Packing', process.process_record)
 								variants,piece_count= packing_doc.create_variants(input_items,self.item)
 								variants_.extend(variants)

@@ -8,6 +8,7 @@
  "field_order": [
   "item",
   "additional_part",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -33,11 +34,17 @@
    "options": "Ironing",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-22 12:19:56.611733",
+ "modified": "2020-01-24 15:50:22.451326",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Ironing",

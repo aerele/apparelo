@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "Prompt",
  "creation": "2019-10-03 12:51:33.533042",
  "doctype": "DocType",
@@ -6,7 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "dia_conversions",
-  "target_gsm",
+  "additional_information",
   "conversion_details_section",
   "input_qty",
   "output_qty",
@@ -21,13 +22,8 @@
    "fieldname": "dia_conversions",
    "fieldtype": "Table",
    "label": "Dia Conversions",
-   "options": "Steaming Dia Conversion"
-  },
-  {
-   "allow_in_quick_entry": 1,
-   "fieldname": "target_gsm",
-   "fieldtype": "Data",
-   "label": "Target GSM "
+   "options": "Steaming Dia Conversion",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -73,10 +69,18 @@
    "options": "Compacting",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
- "modified": "2020-01-21 18:09:28.772347",
+ "links": [],
+ "modified": "2020-01-24 15:35:23.865728",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Compacting",
