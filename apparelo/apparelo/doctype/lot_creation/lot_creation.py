@@ -215,7 +215,7 @@ def create_parent_warehouse(self,abbr):
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
 			"is_group": 1,
-			"parent_warehouse": f"{name} - {abbr}"
+			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
 
 def create_warehouse(self, abbr):
