@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "field:dia",
  "creation": "2020-01-25 10:59:05.554368",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -14,7 +15,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Dia",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "default": "0",
@@ -24,7 +26,7 @@
   }
  ],
  "links": [],
- "modified": "2020-01-25 10:59:05.554368",
+ "modified": "2020-01-25 16:49:07.229884",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Dia",
