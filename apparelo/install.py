@@ -51,14 +51,13 @@ def remove_defaults():
     stock_setting.save()
 
 def create_lot_warehouse():
-    default_company = frappe.db.get_single_value(
-		    'Global Defaults', 'default_company')
-		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
-		name = "Lot Warehouse"
-        if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
-		frappe.get_doc({
+    default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
+    abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
+    name = "Lot Warehouse"
+    if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
+        frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": name,
 			"is_group": 1,
 			"parent_warehouse": f"All Warehouses - {abbr}"
-			}).save()
+		}).save()
