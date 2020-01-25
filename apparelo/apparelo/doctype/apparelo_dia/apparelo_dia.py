@@ -15,7 +15,7 @@ class AppareloDia(Document):
 		dias=[]
 
 		for value in item_attribute.item_attribute_values:
-			types.append(value.attribute_value)
+			dias.append(value.attribute_value)
 		
 		if not self.dia in dias:
 			item_attribute.append('item_attribute_values',{
@@ -35,13 +35,16 @@ def populate():
 			i = i * 0.25
 			if int(str(i).split('.')[1]) == 0:
 				i = str(i).split('.')[0]
-			elif int(str(i).split('.')[1]) == 5:
-					i = str(i) + '0'
-			apparelo_dia = frappe.new_doc("Apparelo Dia")
-			apparelo_dia.dia = str(i)
-			apparelo_dia.save()
 			item_attribute.append('item_attribute_values',{
 				"attribute_value" : str(i),
 				"abbr" : str(i)
 			})
 		item_attribute.save()
+
+		for i in range(40, 165, 1):
+			i = i * 0.25
+			if int(str(i).split('.')[1]) == 0:
+				i = str(i).split('.')[0]
+			apparelo_dia = frappe.new_doc("Apparelo Dia")
+			apparelo_dia.dia = str(i)
+			apparelo_dia.save()
