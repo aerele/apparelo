@@ -19,4 +19,4 @@ class AppareloColour(Document):
 				"attribute_value" : self.colour,
 				"abbr" : self.colour
 			})
-		item_attribute.save()
+			item_attribute.save()

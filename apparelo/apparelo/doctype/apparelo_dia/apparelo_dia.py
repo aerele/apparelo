@@ -22,7 +22,7 @@ class AppareloDia(Document):
 				"attribute_value" : self.dia,
 				"abbr" : self.dia
 			})
-		item_attribute.save()
+			item_attribute.save()
 
 def populate():
 	if not frappe.db.exists("Item Attribute", "Dia"):
