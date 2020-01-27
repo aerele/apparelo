@@ -25,10 +25,10 @@ class Steaming(Document):
 		variants = create_variants('Steamed Cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
-					if not str(dia)+" Dia" in variant:
+				if dia in variant:
+					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Steamed Cloth',"").encode()).hexdigest()
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						new_variant=variant.replace(dia,dia+" Dia")
 						doc=frappe.get_doc("Item",variant)
 						doc.print_code=new_variant
 						doc.save()
@@ -88,16 +88,12 @@ class Steaming(Document):
 		attribute_set = {}
 		variant_to_dia = []
 		for to_dia in self.dia_conversions:
-			if int(str(float(to_dia.to_dia)).split('.')[1]) > 0:
-				variant_to_dia.append(to_dia.to_dia)
-			else:
-				variant_to_dia.append(int(str(to_dia.to_dia).split('.')[0]))
+			variant_to_dia.append(to_dia.to_dia)
 		attribute_set['Dia']=variant_to_dia
 		return attribute_set
 
 
 def create_item_template():
-	dia = frappe.get_doc('Item Attribute', 'Dia')
 	if not frappe.db.exists("Item","Steamed Cloth"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -120,11 +116,7 @@ def create_item_template():
 					"attribute" : "Yarn Count"
 				},
 				{
-					"attribute" : "Dia",
-					"numeric_values": 1,
-					"from_range": dia.from_range,
-					"to_range": dia.to_range,
-					"increment": dia.increment
+					"attribute" : "Dia"
 				},
 				{
 					"attribute" : "Knitting Type"
