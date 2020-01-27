@@ -19,4 +19,4 @@ class AppareloSize(Document):
 				"attribute_value" : self.size,
 				"abbr" : self.size
 			})
-		item_attribute.save()
+			item_attribute.save()
