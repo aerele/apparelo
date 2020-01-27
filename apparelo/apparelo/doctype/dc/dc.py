@@ -216,5 +216,4 @@ def item_return(doc):
 						else:
 							break
 					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty,"description":description})
-	print(return_materials)
 	return return_materials

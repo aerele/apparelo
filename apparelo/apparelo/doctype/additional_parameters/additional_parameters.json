@@ -6,7 +6,8 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "parameter"
+  "parameter",
+  "disabled"
  ],
  "fields": [
   {
@@ -15,10 +16,16 @@
    "fieldtype": "Data",
    "label": "Parameter",
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
   }
  ],
  "links": [],
- "modified": "2020-01-27 10:52:57.451943",
+ "modified": "2020-01-27 12:05:08.453136",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Additional Parameters",

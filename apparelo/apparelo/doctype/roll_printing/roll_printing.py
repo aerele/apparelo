@@ -22,7 +22,6 @@ class RollPrinting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
-		print("{{{{{{}}}}}}",attribute_set)
 		variants = create_variants('Roll Printed cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
