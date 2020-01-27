@@ -44,5 +44,3 @@ def modify_dia_item_attribute():
 
 	frappe.db.sql("""update `tabSteaming Dia Conversion` set to_dia = trim(trailing '0' from to_dia);""")
 	frappe.db.sql("""update `tabSteaming Dia Conversion` set to_dia = trim(trailing '.' from to_dia);""")
-
-	frappe.db.commit()
