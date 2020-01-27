@@ -26,10 +26,10 @@ class Dyeing(Document):
 		variants = create_variants('Dyed cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
-					if not str(dia)+" Dia" in variant:
+				if dia in variant:
+					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Dyed Cloth',"").encode()).hexdigest()
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						new_variant=variant.replace(dia,dia+" Dia")
 						doc=frappe.get_doc("Item",variant)
 						doc.print_code=new_variant
 						doc.save()
@@ -102,7 +102,7 @@ def create_item_attribute():
 		}).save()
 
 def create_item_template():
-	dia = frappe.get_doc('Item Attribute', 'Dia')
+
 	if not frappe.db.exists('Item','Dyed Cloth'):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -125,11 +125,7 @@ def create_item_template():
 					"attribute" : "Yarn Count"
 				},
 				{
-					"attribute" : "Dia" ,
-					"numeric_values": 1,
-					"from_range": dia.from_range,
-					"to_range": dia.to_range,
-					"increment": dia.increment
+					"attribute" : "Dia"
 				},
 				{
 					"attribute" : "Knitting Type"

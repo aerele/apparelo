@@ -31,10 +31,10 @@ class Knitting(Document):
 		variants = create_variants('Knitted Cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
-					if not str(dia)+" Dia" in variant:
+				if dia in variant:
+					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Knitted Cloth',"").encode()).hexdigest()
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+						new_variant=variant.replace(dia,dia+" Dia")
 						doc=frappe.get_doc("Item",variant)
 						doc.print_code=new_variant
 						doc.save()
@@ -99,11 +99,7 @@ class Knitting(Document):
 		attribute_set['Knitting Type'] = [self.type]
 		variant_dia = []
 		for dia in self.dia:
-			# Happend to use whole number if the decimal is zero
-			if int(str(float(dia.dia)).split('.')[1]) > 0:
-				variant_dia.append(dia.dia)
-			else:
-				variant_dia.append(int(str(dia.dia).split('.')[0]))
+			variant_dia.append(dia.dia)
 		attribute_set['Dia'] = variant_dia
 		return attribute_set
 
@@ -172,16 +168,6 @@ def create_item_attribute():
 			]
 		}).save()
 
-	if not frappe.db.exists("Item Attribute", "Dia"):
-		frappe.get_doc({
-			"doctype": "Item Attribute",
-			"attribute_name": "Dia",
-			"numeric_values": 1,
-			"from_range": 18.0,
-			"to_range": 36.0,
-			"increment": 0.25
-		}).save()
-
 	if not frappe.db.exists("Item Attribute", "Knitting Type"):
 		frappe.get_doc({
 			"doctype": "Item Attribute",
@@ -213,7 +199,6 @@ def create_item_template():
 			]
 		}).save()
 
-	dia = frappe.get_doc('Item Attribute', 'Dia')
 	if not frappe.db.exists("Item", "Knitted Cloth"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -236,11 +221,7 @@ def create_item_template():
 					"attribute" : "Yarn Count"
 				},
 				{
-					"attribute" : "Dia" ,
-					"numeric_values": 1,
-					"from_range": dia.from_range,
-					"to_range": dia.to_range,
-					"increment": dia.increment
+					"attribute" : "Dia"
 				},
 				{
 					"attribute" : "Knitting Type"

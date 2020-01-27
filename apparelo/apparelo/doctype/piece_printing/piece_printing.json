@@ -20,6 +20,13 @@
    "reqd": 1
   },
   {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -27,18 +34,11 @@
    "options": "Piece Printing",
    "print_hide": 1,
    "read_only": 1
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-09 15:43:13.255174",
+ "modified": "2020-01-22 12:35:50.092906",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Piece Printing",

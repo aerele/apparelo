@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "location",
   "item_production_detail",
   "get_items",
   "section_break_3",
@@ -70,11 +71,17 @@
    "options": "Lot Creation",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Table MultiSelect",
+   "label": "Location",
+   "options": "Lot Warehouse Location"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-09 16:55:46.957291",
+ "modified": "2020-01-23 15:25:19.152127",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",

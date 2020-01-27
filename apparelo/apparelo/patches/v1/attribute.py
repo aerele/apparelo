@@ -17,4 +17,4 @@ def create_attribute_value(attribute_value):
                 "attribute_value" : attribute_,
                 "abbr" : attribute_
             })
-    item_attribute.save()
+            item_attribute.save()
