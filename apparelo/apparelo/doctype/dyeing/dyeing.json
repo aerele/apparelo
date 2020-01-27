@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "autoname": "Prompt",
  "creation": "2019-10-02 14:10:43.917330",
  "doctype": "DocType",
@@ -6,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "colours",
+  "additional_information",
   "conversion_details_section",
   "input_qty",
   "output_qty",
@@ -20,7 +22,8 @@
    "fieldname": "colours",
    "fieldtype": "Table",
    "label": "Colours",
-   "options": "Item Production Detail Colour"
+   "options": "Item Production Detail Colour",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -32,13 +35,17 @@
    "default": "1",
    "fieldname": "input_qty",
    "fieldtype": "Float",
-   "label": "Input Qty"
+   "in_list_view": 1,
+   "label": "Input Qty",
+   "reqd": 1
   },
   {
    "default": "1",
    "fieldname": "output_qty",
    "fieldtype": "Float",
-   "label": "Output Qty"
+   "in_list_view": 1,
+   "label": "Output Qty",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_5",
@@ -48,15 +55,19 @@
    "default": "Kg",
    "fieldname": "input_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Input UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Output UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -66,10 +77,17 @@
    "options": "Dyeing",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
- "modified": "2019-10-03 13:10:07.049515",
+ "links": [],
+ "modified": "2020-01-24 15:36:33.501867",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Dyeing",

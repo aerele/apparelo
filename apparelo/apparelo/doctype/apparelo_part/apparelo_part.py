@@ -3,7 +3,8 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe,json
+from six import string_types, iteritems
 from frappe.model.document import Document
 
 class AppareloPart(Document):
@@ -19,4 +20,12 @@ class AppareloPart(Document):
 				"attribute_value" : self.part_name,
 				"abbr" : self.part_name
 			})
-		item_attribute.save()
+			item_attribute.save()
+@frappe.whitelist()
+def get_combined_parts(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	final_part=""
+	for part_ in doc.combined_parts:
+		final_part+=part_['parts']+","
+	return {"final_part":final_part[:-1]}

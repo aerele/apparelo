@@ -23,6 +23,7 @@
   "styles",
   "section_break_12",
   "colour_mapping",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -131,11 +132,17 @@
    "options": "Cutting",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-22 16:21:01.121031",
+ "modified": "2020-01-24 15:42:03.250926",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",

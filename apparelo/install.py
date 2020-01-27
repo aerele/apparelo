@@ -13,6 +13,8 @@ from apparelo.apparelo.doctype.cutting import cutting
 from apparelo.apparelo.doctype.roll_printing import roll_printing
 from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 from apparelo.apparelo.doctype.dc.dc import make_item_fields
+from apparelo.apparelo.doctype.additional_parameters import additional_parameters
+from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
 
 def after_install():
     remove_defaults()
@@ -21,7 +23,6 @@ def after_install():
     create_item_template()
     make_item_fields()
     make_custom_fields()
-
 
 def create_item_attributes():
     knitting.create_item_attribute()
@@ -36,9 +37,13 @@ def create_item_template():
     compacting.create_item_template()
     steaming.create_item_template()
     roll_printing.create_item_template()
+
 def create_attr_values():
     knitting.create_attr_values()
     knitting.create_additional_attribute()
+    additional_parameters.create_parameter()
+    apparelo_dia.populate()
+
 def remove_defaults():
     stock_setting=frappe.get_doc("Stock Settings")
     stock_setting.stock_uom=None

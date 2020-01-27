@@ -22,13 +22,12 @@ class RollPrinting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
-		print("{{{{{{}}}}}}",attribute_set)
 		variants = create_variants('Roll Printed cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
-					if not str(dia)+" Dia" in variant:
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
+				if dia in variant:
+					if not dia+" Dia" in variant:
+						new_variant=variant.replace(dia,dia+" Dia")
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
 		if len(new_variants)==0:
@@ -94,7 +93,6 @@ def create_item_attribute():
 			"item_attribute_values": []
 		}).save()
 def create_item_template():
-	dia = frappe.get_doc('Item Attribute', 'Dia')
 	if not frappe.db.exists('Item','Roll Printed Cloth'):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -117,11 +115,7 @@ def create_item_template():
 					"attribute" : "Yarn Count"
 				},
 				{
-					"attribute" : "Dia" ,
-					"numeric_values": 1,
-					"from_range": dia.from_range,
-					"to_range": dia.to_range,
-					"increment": dia.increment
+					"attribute" : "Dia"
 				},
 				{
 					"attribute" : "Knitting Type"
