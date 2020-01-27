@@ -103,7 +103,7 @@ class Cutting(Document):
 						attribute_value.add(colour_mapping.colour)
 		elif attribute_name == "Dia":
 			for detail in self.details:
-				attribute_value.add(str(detail.dia))
+				attribute_value.add(detail.dia)
 		elif attribute_name == "Apparelo Size":
 			if part == None:
 				for detail in self.details:
