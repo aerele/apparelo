@@ -28,5 +28,4 @@ def get_combined_parts(doc):
 	final_part=""
 	for part_ in doc.combined_parts:
 		final_part+=part_['parts']+","
-	frappe.db.set_value("Apparelo Part","Part Name", final_part[:-1])
-	return final_part[:-1]
+	return {"final_part":final_part[:-1]}

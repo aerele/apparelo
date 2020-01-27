@@ -8,9 +8,8 @@ frappe.ui.form.on('Apparelo Part', {
 			freeze: true,
 			args: {doc: frm.doc},
 			callback: function(r) {
-				let{final_part}=r.message;
 				if(r.message) {
-					frm.set_value('part_name',final_part);
+					frm.set_value('part_name',r.message.final_part);
 				}
 			}
 		})
