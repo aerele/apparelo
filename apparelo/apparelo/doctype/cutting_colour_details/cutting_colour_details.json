@@ -6,7 +6,8 @@
  "engine": "InnoDB",
  "field_order": [
   "part",
-  "colour"
+  "colour",
+  "style"
  ],
  "fields": [
   {
@@ -24,11 +25,17 @@
    "label": "Colour",
    "options": "Apparelo Colour",
    "reqd": 1
+  },
+  {
+   "fieldname": "style",
+   "fieldtype": "Link",
+   "label": "Style",
+   "options": "Apparelo Style"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-09 14:02:10.814720",
+ "modified": "2020-01-22 16:54:51.585834",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting colour details",

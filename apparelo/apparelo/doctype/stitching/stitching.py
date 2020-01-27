@@ -30,24 +30,51 @@ class Stitching(Document):
 						variant_attribute_set = {}
 						piece_colour=self.get_attribute_values('Apparelo Colour', part)
 						piece_colour.sort()
-						if len(piece_colour)<len(colour):
-							variant_attribute_set['Apparelo Colour']=[]
-							for color_ in piece_colour:
-								if color_ in colour:
-									variant_attribute_set['Apparelo Colour'].append(color_)
-						else: 
-							if piece_colour==colour:
-								variant_attribute_set['Apparelo Colour'] = piece_colour
+						if "Apparelo Style" in attribute_set:
+							if len(piece_colour)<len(colour):
+								variant_attribute_set['Apparelo Colour']=[]
+								variant_attribute_set['Apparelo Style']=[]
+								for style_ in attribute_set["Apparelo Style"]:
+									for color_ in piece_colour:
+										if color_ in colour and style_ in colour:
+											variant_attribute_set["Apparelo Style"].append(style_)
+											variant_attribute_set['Apparelo Colour'].append(color_)
 							else:
-								frappe.throw(_("Item colour is not available"))
-						variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-						if final_process=="Stitching":
-							variant_attribute_set.pop('Apparelo Colour')
-							variants.extend(create_variants(item, variant_attribute_set))
+								if "Apparelo Style" in attribute_set:
+									if attribute_set["Apparelo Style"][0] in piece_colour and piece_colour==colour:
+										variant_attribute_set['Apparelo Style'] = attribute_set["Apparelo Style"]
+										variant_attribute_set['Apparelo Colour'] = piece_colour
+								else:
+									if piece_colour==colour:
+										variant_attribute_set['Apparelo Colour'] = piece_colour
+									else:
+										frappe.throw(_("Item colour is not available"))
 						else:
-							variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
+							if len(piece_colour)<len(colour):
+								variant_attribute_set['Apparelo Colour']=[]
+								for color_ in piece_colour:
+									if color_ in colour:
+										variant_attribute_set['Apparelo Colour'].append(color_)
+							else:
+								if "Apparelo Style" in attribute_set:
+									if attribute_set["Apparelo Style"][0] in piece_colour and piece_colour==colour:
+										variant_attribute_set['Apparelo Style'] = attribute_set["Apparelo Style"]
+										variant_attribute_set['Apparelo Colour'] = piece_colour
+								else:
+									if piece_colour==colour:
+										variant_attribute_set['Apparelo Colour'] = piece_colour
+									else:
+										frappe.throw(_("Item colour is not available"))
+						variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
 					else:
 						frappe.throw(_("Part Colour is not available in the input"))
+		if final_process=="Stitching":
+			if "Apparelo Style" in variant_attribute_set:
+				variant_attribute_set.pop("Apparelo Style")
+			variant_attribute_set.pop('Apparelo Colour')
+			variants.extend(create_variants(item, variant_attribute_set))
+		else:
+			variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
 		
 		return list(set(variants))
 
@@ -76,11 +103,19 @@ class Stitching(Document):
 						if size.upper() in input_item  and size.upper() in variant:
 							item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 					else:
-						for colour_mapping in self.colour_mappings:
-							for piece_count in self.parts_per_piece:
-								if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
-									if piece_count.part==colour_mapping.part:
-										item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
+						if "Apparelo Style" in attribute_set:
+							for style in attribute_set["Apparelo Style"]:
+								for colour_mapping in self.colour_mappings:
+									for piece_count in self.parts_per_piece:
+										if style.upper() in input_item and style.upper() in variant and size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+											if piece_count.part==colour_mapping.part:
+												item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
+						else:
+							for colour_mapping in self.colour_mappings:
+								for piece_count in self.parts_per_piece:
+									if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+										if piece_count.part==colour_mapping.part:
+											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 			if not self.additional_parts==[]:
 				for item in self.additional_parts:
 						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
