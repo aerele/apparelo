@@ -191,8 +191,6 @@ def item_return(doc):
 		frappe.throw(_("Items are required to calculate return items"))
 	lot=doc.get('lot')
 	process=doc.get('process_1')
-	# lot='test-lot'
-	# process='Dyeing'
 	ipd=frappe.get_doc("Lot Creation",lot)
 	lot_ipd=ipd.item_production_detail
 	bom=frappe.get_all("IPD BOM Mapping")
@@ -210,5 +208,12 @@ def item_return(doc):
 				ordered_qunatity=data.get('quantity')
 				per_item=ordered_qunatity/total_bom
 				if data.get('item_code')==item.item_code:
-					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty})
+					ipd_name = frappe.db.get_value("Lot Creation",{'name': doc.lot},'item_production_detail')
+					ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': ipd_name})
+					for ipd_item in ipd_item_map.item_mapping:
+						if ipd_item.item == bom_.item:
+							description = ipd_item.description
+						else:
+							break
+					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty,"description":description})
 	return return_materials

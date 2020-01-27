@@ -21,6 +21,7 @@
   "colours",
   "section_break_12",
   "colour_mapping",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -116,11 +117,17 @@
   {
    "fieldname": "column_break_12",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-13 11:48:48.333062",
+ "modified": "2020-01-24 15:42:03.250926",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",

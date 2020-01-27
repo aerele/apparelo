@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "dia_conversions",
+  "additional_information",
   "conversion_details_section",
   "input_qty",
   "output_qty",
@@ -21,7 +22,8 @@
    "fieldname": "dia_conversions",
    "fieldtype": "Table",
    "label": "Dia Conversions",
-   "options": "Steaming Dia Conversion"
+   "options": "Steaming Dia Conversion",
+   "reqd": 1
   },
   {
    "allow_in_quick_entry": 1,
@@ -33,13 +35,17 @@
    "default": "1",
    "fieldname": "input_qty",
    "fieldtype": "Float",
-   "label": "Input Qty"
+   "in_list_view": 1,
+   "label": "Input Qty",
+   "reqd": 1
   },
   {
    "default": "1",
    "fieldname": "output_qty",
    "fieldtype": "Float",
-   "label": "Output Qty"
+   "in_list_view": 1,
+   "label": "Output Qty",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_5",
@@ -49,15 +55,19 @@
    "default": "Kg",
    "fieldname": "input_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Input UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "default": "Kg",
    "fieldname": "output_uom",
    "fieldtype": "Link",
+   "in_list_view": 1,
    "label": "Output UOM",
-   "options": "UOM"
+   "options": "UOM",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -67,6 +77,12 @@
    "options": "Steaming",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,

@@ -9,7 +9,8 @@
   "ipd_process_index",
   "input_index",
   "process_1",
-  "input_item"
+  "input_item",
+  "description"
  ],
  "fields": [
   {
@@ -41,11 +42,16 @@
    "fieldname": "input_item",
    "fieldtype": "Data",
    "label": "Input Item"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-05 16:32:48.883608",
+ "modified": "2020-01-25 10:37:55.281843",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Mapping",

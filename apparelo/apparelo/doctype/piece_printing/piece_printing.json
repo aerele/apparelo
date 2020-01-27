@@ -8,6 +8,7 @@
  "field_order": [
   "item",
   "part",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -34,11 +35,17 @@
    "options": "Piece Printing",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-22 12:35:50.092906",
+ "modified": "2020-01-24 15:54:23.280192",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Piece Printing",

@@ -13,6 +13,7 @@ from apparelo.apparelo.doctype.cutting import cutting
 from apparelo.apparelo.doctype.roll_printing import roll_printing
 from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 from apparelo.apparelo.doctype.dc.dc import make_item_fields
+from apparelo.apparelo.doctype.additional_parameters import additional_parameters
 from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
 
 def after_install():
@@ -40,6 +41,7 @@ def create_item_template():
 def create_attr_values():
     knitting.create_attr_values()
     knitting.create_additional_attribute()
+    additional_parameters.create_parameter()
     apparelo_dia.populate()
 
 def remove_defaults():

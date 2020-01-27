@@ -17,6 +17,7 @@
   "colour_mappings",
   "parts_per_piece",
   "additional_parts",
+  "additional_information",
   "amended_from"
  ],
  "fields": [
@@ -94,11 +95,17 @@
    "fieldname": "is_part_colour_same_as_piece_colour",
    "fieldtype": "Check",
    "label": "is part colour same as piece colour"
+  },
+  {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-14 17:04:33.248371",
+ "modified": "2020-01-24 15:46:28.899265",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",
