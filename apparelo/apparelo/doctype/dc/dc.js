@@ -15,6 +15,17 @@ frappe.ui.form.on('DC', {
 	get_items:function(frm) {
 		const set_fields =['item_code','available_quantity','uom'];
 		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.get_supplier_address",
+			freeze: false,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('address', r.message);
+				}
+				refresh_field('address');
+			}
+		});
+		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.get_ipd_item",
 			freeze: true,
 			args: {doc: frm.doc},

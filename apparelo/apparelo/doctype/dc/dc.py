@@ -212,3 +212,16 @@ def item_return(doc):
 				if data.get('item_code')==item.item_code:
 					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty})
 	return return_materials
+
+@ frappe.whitelist()
+def get_supplier_address(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Supplier' and link_name = %s and parenttype = 'Address')""", doc.supplier, as_dict=1)
+	address = address[0]
+	if not address.address_line2:
+		supplier_address =f'{address.address_line1},\n{address.city},\n{address.state}\nGSTIN : {address.gstin}'
+	else:
+		supplier_address =f'{address.address_line1},\n{address.address_line2},\n{address.city},\n{address.state}'
+	print(supplier_address)
+	return supplier_address
