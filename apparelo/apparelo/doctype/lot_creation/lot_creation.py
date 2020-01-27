@@ -18,8 +18,7 @@ class LotCreation(Document):
 		default_company = frappe.db.get_single_value(
 		    'Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
-		parent = "Lot Warehouse"
-		create_parent_warehouse(self,parent, abbr)
+		create_parent_warehouse(self, abbr)
 		create_warehouse(self, abbr)
 
 	def make_material_request(self):
@@ -209,21 +208,16 @@ def get_ipd_item(doc):
 		po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(
 		    item.get("item_code")).get("bom_no")})
 	return po_items
-def create_parent_warehouse(self, name, abbr):
-	if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
-		frappe.get_doc({
-			"doctype": "Warehouse",
-			"warehouse_name": name,
-			"is_group": 1,
-			"parent_warehouse": f"All Warehouses - {abbr}"
-			}).save()
+
+def create_parent_warehouse(self,abbr):
 	if not frappe.db.exists("Warehouse", f'{self.name} - {abbr}'):
 		frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
 			"is_group": 1,
-			"parent_warehouse": f"{name} - {abbr}"
+			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
+
 def create_warehouse(self, abbr):
 	for location in self.location:
 		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} - {abbr}"):
