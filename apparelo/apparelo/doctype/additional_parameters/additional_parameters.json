@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "field:parameter",
- "creation": "2020-01-23 11:28:46.842716",
+ "creation": "2020-01-27 10:47:53.296820",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -18,10 +18,10 @@
   }
  ],
  "links": [],
- "modified": "2020-01-23 11:32:15.563968",
+ "modified": "2020-01-27 10:52:57.451943",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Additional Information",
+ "name": "Additional Parameters",
  "owner": "Administrator",
  "permissions": [
   {

@@ -8,6 +8,10 @@
  "field_order": [
   "dia",
   "type",
+  "gsm",
+  "texture",
+  "gauge",
+  "loop_length",
   "additional_information",
   "conversion_details_section",
   "input_qty",
@@ -90,11 +94,31 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
+  },
+  {
+   "fieldname": "gsm",
+   "fieldtype": "Data",
+   "label": "GSM"
+  },
+  {
+   "fieldname": "texture",
+   "fieldtype": "Data",
+   "label": "Texture"
+  },
+  {
+   "fieldname": "gauge",
+   "fieldtype": "Data",
+   "label": "Gauge"
+  },
+  {
+   "fieldname": "loop_length",
+   "fieldtype": "Data",
+   "label": "Loop Length"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-23 11:31:11.897399",
+ "modified": "2020-01-27 11:23:43.819378",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Knitting",
