@@ -13,24 +13,35 @@ class Checking(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names):
+	def create_variants(self, input_item_names,item,final_process):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		variants = create_variants(self.item+" Checked Cloth", attribute_set)
+		if final_process=="Checking":
+			attribute_set.pop("Apparelo Colour")
+			variants = create_variants(item, attribute_set)
+		else:
+			variants = create_variants(self.item+" Checked Cloth", attribute_set)
 		return variants
 
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count,final_process):
 		
 		boms = []
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
 				for size in item_size:
-					for colour in colours:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+					if final_process=="Checking":
+						if size.upper() in input_item  and size.upper() in variant:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
+					else:
+						for colour in colours:
+							if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+								item_list.append({"item_code": input_item,"uom": "Nos"})
+			if not self.additional_part==[]:
+				for item in self.additional_part:
+						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
@@ -49,7 +60,7 @@ class Checking(Document):
 
 
 def create_item_template(self):
-	if not frappe.db.exists('Item',self.item+'Checked Cloth'):
+	if not frappe.db.exists('Item',self.item+' Checked Cloth'):
 		frappe.get_doc({
 		"doctype": "Item",
 		"item_code": self.item+" Checked Cloth",

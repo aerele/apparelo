@@ -19,5 +19,5 @@ class PrintType(Document):
 				"attribute_value" : self.type,
 				"abbr" : self.type
 			})
-		item_attribute.save()
+			item_attribute.save()
 

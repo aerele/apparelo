@@ -10,6 +10,7 @@ from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from erpnext.stock.get_item_details import get_conversion_factor
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
@@ -65,9 +66,10 @@ class Cutting(Document):
 			for input_item in input_items:
 				input_item_attr = get_attr_dict(input_item.attributes)
 				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"]:
-					if input_item_attr["Dia"][0] == str(int(attr["Dia"])):
+					if input_item_attr["Dia"][0] == attr["Dia"]:
 						existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 						if not existing_bom:
+							conversion_factor=get_conversion_factor(input_item.name,'Gram')
 							bom = frappe.get_doc({
 								"doctype": "BOM",
 								"currency": get_default_currency(),
@@ -78,6 +80,7 @@ class Cutting(Document):
 										"item_code": input_item.name,
 										"qty": attr["Weight"],
 										"uom": 'Gram',
+										"conversion_factor":conversion_factor["conversion_factor"]
 									}
 								]
 							})
@@ -100,10 +103,7 @@ class Cutting(Document):
 						attribute_value.add(colour_mapping.colour)
 		elif attribute_name == "Dia":
 			for detail in self.details:
-				if int(str(float(detail.dia)).split('.')[1]) > 0:
-					attribute_value.add(str(detail.dia))
-				else:
-					attribute_value.add(str(detail.dia).split('.')[0])
+				attribute_value.add(detail.dia)
 		elif attribute_name == "Apparelo Size":
 			if part == None:
 				for detail in self.details:

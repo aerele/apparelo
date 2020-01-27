@@ -20,7 +20,7 @@ class AppareloPart(Document):
 				"attribute_value" : self.part_name,
 				"abbr" : self.part_name
 			})
-		item_attribute.save()
+			item_attribute.save()
 @frappe.whitelist()
 def get_combined_parts(doc):
 	if isinstance(doc, string_types):
