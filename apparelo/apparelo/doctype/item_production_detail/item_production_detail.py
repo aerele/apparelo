@@ -224,8 +224,9 @@ class ItemProductionDetail(Document):
 								cutting_attribute=dict(counter_attr)
 								for value in cutting_attribute:
 									cutting_attribute[value]=list(set(cutting_attribute[value]))
-					process_variants['variants'] = list(set(variants_))
-					process_variants['BOM']=list(set(boms))
+					
+					process_variants['variants'] = list(set([var for var in variants_ if not ',' in var] ))
+					process_variants['BOM']=boms
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
