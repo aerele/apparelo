@@ -46,11 +46,13 @@
    "options": "Material Request Plan Item"
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_items_for_mr",
    "fieldtype": "Button",
    "label": "Get Raw Material for Production"
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items",
@@ -81,7 +83,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-23 15:25:19.152127",
+ "modified": "2020-01-28 11:06:33.878455",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",

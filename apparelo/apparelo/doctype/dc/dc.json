@@ -47,6 +47,7 @@
    "options": "DC Item"
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items"
@@ -62,6 +63,7 @@
    "set_only_once": 1
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_return_item",
    "fieldtype": "Button",
    "label": "Get Return Item"
@@ -88,7 +90,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-19 18:37:53.921079",
+ "modified": "2020-01-28 11:51:55.726338",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
