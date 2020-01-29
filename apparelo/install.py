@@ -49,6 +49,7 @@ def remove_defaults():
     stock_setting.stock_uom=None
     stock_setting.save()
 def create_new_uom():
-    uom=frappe.new_doc("UOM")
-    uom.uom_name= 'Combined Part'
-    uom.save()
+    if not frappe.get_doc("UOM","Combined Part"):
+        uom=frappe.new_doc("UOM")
+        uom.uom_name= 'Combined Part'
+        uom.save()
