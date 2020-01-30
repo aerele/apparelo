@@ -12,6 +12,7 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 from apparelo.apparelo.doctype.lot_creation.lot_creation import create_parent_warehouse
 from erpnext.stock.report.stock_balance.stock_balance import execute
 class DC(Document):
+	
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
@@ -183,6 +184,9 @@ def get_ipd_item(doc):
 def item_return(doc):
 	process_bom=[]
 	return_materials=[]
+	roll=0
+	total_ordered_qty=0
+	total_received_qty=0
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	doc['return_materials'] = []
@@ -203,9 +207,17 @@ def item_return(doc):
 	total_bom=len(process_bom)
 	for bom in process_bom:
 		bom_=frappe.get_doc("BOM",bom)
+		print(bom_.items)
+		print("+++++++++++++++++++++++++++++")
 		for item in bom_.items:
+			print(item)
+			print("0000000000000000000000000000000000")
 			for data in items:
 				ordered_qunatity=data.get('quantity')
+				total_ordered_qty+=ordered_qunatity
+				roll+=data.get('roll')
+				print(roll)
+				print("11111111111111111111111111111111")
 				per_item=ordered_qunatity/total_bom
 				if data.get('item_code')==item.item_code:
 					ipd_name = frappe.db.get_value("Lot Creation",{'name': doc.lot},'item_production_detail')
@@ -215,5 +227,76 @@ def item_return(doc):
 							description = ipd_item.description
 						else:
 							break
+					total_received_qty+=(per_item/item.qty)
 					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty,"description":description})
-	return return_materials
+	print({"roll":roll,"total_ordered_qty":total_ordered_qty,"total_recived_qty":total_received_qty})
+	print("111111111111111111111111111111111111111111111111")
+	return return_materials ,{"roll":roll},{"total_received_qty":total_received_qty},{"total_ordered_qty":total_ordered_qty}
+
+
+@ frappe.whitelist()
+def get_supplier_address(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Supplier' and link_name = %s and parenttype = 'Address')""", doc.supplier, as_dict=1)
+	address = address[0]
+	if not address.address_line2:
+		supplier_address =f'{address.address_line1},<br>{address.city},<br>{address.state},<br>GSTIN : {address.gstin}'
+	else:
+		supplier_address =f'{address.address_line1},<br>{address.address_line2},<br> {address.city},<br> GSTIN : {address.state}'
+	print(supplier_address)
+	get_company_address(doc)
+	return supplier_address
+
+@ frappe.whitelist()
+def get_company_address(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
+	print(default_company)
+	print("////////////////////////////////////////////////////////////////")
+	address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Company' and link_name = %s and parenttype = 'Address')""",default_company , as_dict=1)
+	print(address)
+	print("////////////////////////////////////////////////////////////////")
+	address = address[0]
+	if not address.address_line2:
+	 	company_address =f'{default_company},<br>{address.address_line1},<br>{address.city},<br>{address.state},<br>GSTIN : {address.gstin}'
+	else:
+		company_address =f'<strong>{default_company}</strong><br>{address.address_line1},<br>{address.address_line2},<br> {address.city},<br> GSTIN : {address.state}'
+	print(company_address)
+	print("////////////////////////////////////////////////////////////////")
+	return company_address
+
+@ frappe.whitelist()
+def get_html_code(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	html="""<!DOCTYPE html><html><body><table class="table table-bordered" style="float:right">
+            <tbody>
+                <tr>
+                    <th>Outward</th>
+                </tr>
+                <tr>
+                    <th>Sr</th>
+                    <th>lot Num</th>
+                    <th>Item Code</th>
+                    <th>Roll</th>
+                    <th>Orderd Qts</th>
+                </tr>
+                <tr>
+                    <td style="width: 3%;"></td>
+                    <td style="width: 3%;"></td>
+                    <td style="width: 3%;"></td>
+                    <td style="width: 3%;"></td>
+                    <td style="width: 3%;"></td>
+                </tr>
+                <tr>
+                    <th>Total:</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table></body></html>"""
+	return html

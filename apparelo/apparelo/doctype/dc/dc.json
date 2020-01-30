@@ -11,11 +11,17 @@
   "process_1",
   "supplier",
   "get_items",
+  "address",
+  "company_address",
   "items",
   "get_return_item",
+  "roll_total",
+  "received_qty",
+  "ordered_qty",
   "section_break_5",
   "return_materials",
-  "amended_from"
+  "amended_from",
+  "table"
  ],
  "fields": [
   {
@@ -84,11 +90,48 @@
    "options": "DC",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Address"
+  },
+  {
+   "fieldname": "roll_total",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Roll Total"
+  },
+  {
+   "fieldname": "received_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Received Qty"
+  },
+  {
+   "fieldname": "ordered_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Ordered Qty"
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Company Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "table",
+   "fieldtype": "HTML Editor",
+   "label": "Table",
+   "print_width": "50"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-19 18:37:53.921079",
+ "modified": "2020-01-29 16:20:40.271216",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

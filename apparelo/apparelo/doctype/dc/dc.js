@@ -12,8 +12,44 @@ frappe.ui.form.on('DC', {
 			};
 		});
 	},
+
+	
 	get_items:function(frm) {
 		const set_fields =['item_code','available_quantity','uom'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.get_supplier_address",
+			freeze: false,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('address', r.message);
+				}
+				refresh_field('address');
+			}
+		});
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.get_company_address ",
+			freeze: false,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('company_address', r.message);
+				}
+				refresh_field('company_address');
+			}
+		}); 
+
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.get_html_code ",
+			freeze: false,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('table', r.message);
+				}
+				refresh_field('table');
+			}
+		}); 
 		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.get_ipd_item",
 			freeze: true,
@@ -41,9 +77,13 @@ frappe.ui.form.on('DC', {
 			freeze: true,
 			args: {doc: frm.doc},
 			callback: function(r) {
+				
+				frm.set_value('roll_total',r.message[1].roll)
+				frm.set_value('received_qty',r.message[2].total_received_qty)
+				frm.set_value('ordered_qty',r.message[3].total_ordered_qty)
 				if(r.message) {
 					frm.set_value('return_materials', []);
-					$.each(r.message, function(i, d) {
+					$.each(r.message[0], function(i, d) {
 						var item = frm.add_child('return_materials');
 						for (let key in d) {
 							if (d[key] && in_list(set_fields, key)) {
@@ -53,6 +93,9 @@ frappe.ui.form.on('DC', {
 					});
 				}
 				refresh_field('return_materials');
+				refresh_field('roll_total');
+				refresh_field('ordered_qty');
+				refresh_field('received_qty');
 			}
 		});
 	},
