@@ -207,17 +207,11 @@ def item_return(doc):
 	total_bom=len(process_bom)
 	for bom in process_bom:
 		bom_=frappe.get_doc("BOM",bom)
-		print(bom_.items)
-		print("+++++++++++++++++++++++++++++")
 		for item in bom_.items:
-			print(item)
-			print("0000000000000000000000000000000000")
 			for data in items:
 				ordered_qunatity=data.get('quantity')
 				total_ordered_qty+=ordered_qunatity
 				roll+=data.get('roll')
-				print(roll)
-				print("11111111111111111111111111111111")
 				per_item=ordered_qunatity/total_bom
 				if data.get('item_code')==item.item_code:
 					ipd_name = frappe.db.get_value("Lot Creation",{'name': doc.lot},'item_production_detail')
@@ -229,8 +223,7 @@ def item_return(doc):
 							break
 					total_received_qty+=(per_item/item.qty)
 					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty,"description":description})
-	print({"roll":roll,"total_ordered_qty":total_ordered_qty,"total_recived_qty":total_received_qty})
-	print("111111111111111111111111111111111111111111111111")
+
 	return return_materials ,{"roll":roll},{"total_received_qty":total_received_qty},{"total_ordered_qty":total_ordered_qty}
 
 
@@ -253,18 +246,13 @@ def get_company_address(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
-	print(default_company)
-	print("////////////////////////////////////////////////////////////////")
 	address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Company' and link_name = %s and parenttype = 'Address')""",default_company , as_dict=1)
-	print(address)
-	print("////////////////////////////////////////////////////////////////")
 	address = address[0]
 	if not address.address_line2:
 	 	company_address =f'{default_company},<br>{address.address_line1},<br>{address.city},<br>{address.state},<br>GSTIN : {address.gstin}'
 	else:
 		company_address =f'<strong>{default_company}</strong><br>{address.address_line1},<br>{address.address_line2},<br> {address.city},<br> GSTIN : {address.state}'
-	print(company_address)
-	print("////////////////////////////////////////////////////////////////")
+	
 	return company_address
 
 @ frappe.whitelist()
