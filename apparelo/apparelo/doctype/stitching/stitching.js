@@ -43,5 +43,112 @@ frappe.ui.form.on('Stitching', {
 				refresh_field('parts_per_piece');
 			}
 		});
+	},
+	onload: function(frm) {
+		frm.set_query("items", function() {
+			return {
+				filters: {
+					"item_group":"Raw Material",
+					"has_variants":1
+				}
+			};
+		});
+		frm.set_query("additional_items", function() {
+			return {
+				filters: {
+					"item_group":"Raw Material",
+					"has_variants":1
+				}
+			};
+		});
+		frm.set_query("item", "additional_parts", function() {
+			return {
+				filters: {
+					"item_group":"Raw Material",
+					"has_variants":1
+				}
+			};
+		});
+		frm.set_query("item", "additional_parts", function() {
+			return {
+				filters: {
+					"item_group":"Raw Material",
+					"has_variants":1
+				}
+			};
+		});
+		frm.set_query("item", "additional_parts", function() {
+			return {
+				filters: {
+					"item_group":"Raw Material",
+					"has_variants":1
+				}
+			};
+		});
+	},
+	get_piece_color:function(frm){
+		const set_fields_color =['item','piece_colour','part_colour'];
+		const set_fields_item =['item']
+		frappe.call({
+			method: "apparelo.apparelo.doctype.stitching.stitching.get_additional_item_piece_colour",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('additional_parts_colour', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('additional_parts_colour');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields_color, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('additional_parts_colour');
+			}
+		});
+		frappe.call({
+			method: "apparelo.apparelo.doctype.stitching.stitching.get_items",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('additional_parts', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('additional_parts');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields_item, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('additional_parts');
+			}
+		});
+	},
+	get_piece_size:function(frm){
+		const set_fields_size =['item','piece_size','part_size'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.stitching.stitching.get_additional_item_size",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('additional_parts_size', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('additional_parts_size');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields_size, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('additional_parts_size');
+			}
+		});
 	}
+	
 });

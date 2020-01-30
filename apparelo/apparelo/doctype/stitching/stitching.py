@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from six import string_types, iteritems
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts
 
 class Stitching(Document):
 	def on_submit(self):
@@ -117,6 +117,7 @@ class Stitching(Document):
 										if piece_count.part==colour_mapping.part:
 											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 			if not self.additional_parts==[]:
+				# create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 				for item in self.additional_parts:
 						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
@@ -193,3 +194,67 @@ def get_parts(doc):
 	for part in doc.get('parts'):
 		parts.append({'part':part['parts']})
 	return(parts)
+
+
+@frappe.whitelist()
+def get_additional_item_piece_colour(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	piece_colour_combination =[]
+	if doc.get('is_part_color_same_as_piece_color'):
+		if doc.get('additional_parts_colour') != None:
+			for item in doc.get('additional_parts_colour'):
+				if 'item' in item:
+					piece_colour_combination.append({'item':item['item'],'piece_colour':item['piece_colour'],'part_colour':item['part_colour']})
+				else:
+					break
+		for colour in doc.get('piece_colors'):
+			for item in doc.get('items'):
+				piece_colour_combination.append({'item':item['items'],'piece_colour':colour['colors'],'part_colour':colour['colors']})
+	else:
+		if doc.get('additional_parts_colour') != None:
+			for item in doc.get('additional_parts_colour'):
+				if 'item' in item:
+					piece_colour_combination.append({'item':item['item'],'piece_colour':item['piece_colour'],'part_colour':item['part_colour']})
+				else:
+					break
+		for colour in doc.get('piece_colors'):
+			for item in doc.get('items'):
+				piece_colour_combination.append({'item':item['items'],'piece_colour':colour['colors'],'part_colour':' '})
+	return(piece_colour_combination)
+
+@frappe.whitelist()
+def get_items(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	items =[]
+	for item in doc.get('items'):
+		items.append({'item':item['items']})
+	return(items)
+
+@frappe.whitelist()
+def get_additional_item_size(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	size_combination =[]
+	if doc.get('is_part_size_same_as_piece_size'):
+		if doc.get('additional_parts_size') != None:
+			for item in doc.get('additional_parts_size'):
+				if 'item' in item:
+					size_combination.append({'item':item['item'],'piece_size':item['piece_size'],'part_size':item['part_size']})
+				else:
+					break
+		for size in doc.get('piece_sizes'):
+			for item in doc.get('additional_items'):
+				size_combination.append({'item':item['items'],'piece_size':size['size'],'part_size':size['size']})
+	else:
+		if doc.get('additional_parts_size') != None:
+			for item in doc.get('additional_parts_size'):
+				if 'item' in item:
+					size_combination.append({'item':item['item'],'piece_size':item['piece_size'],'part_size':item['part_size']})
+				else:
+					break
+		for size in doc.get('piece_sizes'):
+			for item in doc.get('additional_items'):
+				size_combination.append({'item':item['items'],'piece_size':size['size'],'part_size':' '})
+	return(size_combination)

@@ -7,7 +7,6 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "additional_part",
   "additional_information",
   "amended_from"
  ],
@@ -19,12 +18,6 @@
    "label": "Item",
    "options": "Item",
    "reqd": 1
-  },
-  {
-   "fieldname": "additional_part",
-   "fieldtype": "Table",
-   "label": "Additional Part",
-   "options": "Stitching Additional Part"
   },
   {
    "fieldname": "amended_from",
@@ -44,7 +37,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-24 15:49:34.197662",
+ "modified": "2020-01-29 11:55:41.686146",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Checking",

@@ -98,3 +98,27 @@ def get_bom_diff(bom1, bom2):
 					out.removed.append([df.fieldname, d.as_dict()])
 
 	return out
+
+def create_additional_parts(colors,sizes,items):
+	additioanl_parts=[]
+	attribute_set={"Apparelo Colour":[],"Apparelo Size":[]}
+	colors_=[]
+	sizes_=[]
+	if colors and sizes and items:
+		for item in items:
+			for size in sizes:
+				for color in colors:
+					if item.item == size.item and item.item == color.item:
+						if not color in colors_:
+							colors_.append(color)
+						if not size  in sizes_:
+							sizes_.append(size)
+			attribute_set["Apparelo Colour"]=colors_
+			attribute_set["Apparelo Size"]=sizes_
+			additioanl_parts.extend(create_variants(item.item,attribute_set))
+	print(additional_parts)
+	ee
+	return additioanl_parts
+
+			
+			
