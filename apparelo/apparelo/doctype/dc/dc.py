@@ -145,75 +145,55 @@ def make_custom_fields(update=True):
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
 @frappe.whitelist()
 def get_ipd_item(doc):
-	default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
-	abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
+
 	doc['items'] = []
 	items=[]
+
 	lot=doc.get('lot')
-	process=doc.get('process_1')
-	process_index=''
-	item_production_detail=frappe.db.get_value("Lot Creation",{'name': lot},"item_production_detail")
-	ipd=frappe.db.get_value('IPD Item Mapping', {'item_production_details': item_production_detail}, 'name')
-	ipd_item=frappe.get_doc('IPD Item Mapping',ipd)
-	for item in ipd_item.item_mapping:
-		if process=='Knitting':
-			col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
-							'from_date':frappe.utils.get_datetime('01-01-1970'),
-							'to_date':frappe.utils.get_datetime(nowdate()),'item_code':item.input_item}))
-			items.append({"item_code":item.input_item,"available_quantity":data[0]['bal_qty'],'uom':data[0]['stock_uom']})
-		if process==item.process_1:
-			if 'A' in item.ipd_process_index and item.input_index=='':
-				process_index=item.ipd_process_index
-				break
-			else:
-				process_index=item.input_index
-				break
-	input_indexs = process_index.split(',')	
-	for item in ipd_item.item_mapping:
-		for index in input_indexs:
-			if str(item.ipd_process_index)==index:
-				col, data = execute(filters=frappe._dict({'warehouse':f'{lot} - {abbr}',
-							'from_date':frappe.utils.get_datetime('01-01-1970'),
-							'to_date':frappe.utils.get_datetime(nowdate()),'item_code':item.item}))
-				items.append({"item_code":item.item,"available_quantity":data[0]['bal_qty'],'uom':data[0]['stock_uom']})				
-	return items
+	if not frappe.get_doc('Lot Creation', lot).docstatus:
+		frappe.throw(_(f'Lot {lot} is not yet submitted'))
+
+	dc_process=doc.get('process_1')
+	location = doc.get('location')
+
+	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
+	ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': lot_ipd})
+	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
+
+	items_to_be_sent = frappe.get_list("BOM Item", filters={'parent': ['in',boms]}, group_by='item_code', fields='item_code')
+
+	from erpnext.stock.dashboard import item_dashboard
+	dc_warehouse = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{location}'}, 'name')
+	for item in items_to_be_sent:
+		data = item_dashboard.get_data(item_code = item.item_code, warehouse = dc_warehouse)
+		if len(data):
+			item['available_quantity'] = data[0]['actual_qty']
+			item_detail = frappe.get_doc('Item', item.item_code)
+			item['uom'] = item_detail.stock_uom
+			item['pf_item_code'] = item_detail.print_code
+
+	return items_to_be_sent
+
+
 @frappe.whitelist()
 def item_return(doc):
-	process_bom=[]
-	return_materials=[]
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
+
 	doc['return_materials'] = []
-	items= doc.get('items')
+
+	items = doc.get('items')
 	if not items:
 		frappe.throw(_("Items are required to calculate return items"))
-	lot=doc.get('lot')
-	process=doc.get('process_1')
-	ipd=frappe.get_doc("Lot Creation",lot)
-	lot_ipd=ipd.item_production_detail
-	bom=frappe.get_all("IPD BOM Mapping")
-	for bom_ in bom:
-		ipd_bom=frappe.get_doc("IPD BOM Mapping",bom_.name)
-		if ipd_bom.item_production_details==lot_ipd:
-			for bom_map in ipd_bom.bom_mapping:
-				if bom_map.process_1==process:
-					process_bom.append(bom_map.bom)
-	total_bom=len(process_bom)
-	for bom in process_bom:
-		bom_=frappe.get_doc("BOM",bom)
-		for item in bom_.items:
-			for data in items:
-				ordered_qunatity=data.get('quantity')
-				per_item=ordered_qunatity/total_bom
-				if data.get('item_code')==item.item_code:
-					ipd_name = frappe.db.get_value("Lot Creation",{'name': doc.lot},'item_production_detail')
-					ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': ipd_name})
-					for ipd_item in ipd_item_map.item_mapping:
-						if ipd_item.item == bom_.item:
-							description = ipd_item.description
-						else:
-							break
-					return_materials.append({"item_code":bom_.item,"uom":bom_.uom,"quantity":per_item/item.qty,"description":description})
-	return return_materials
+
+	lot = doc.get('lot')
+	dc_process = doc.get('process_1')
+
+	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
+	ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': lot_ipd})
+	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
+
+	expected_items_in_return = frappe.get_list('BOM', filters={'name': ['in', boms]}, fields='item,uom,description') 
+	return expected_items_in_return
