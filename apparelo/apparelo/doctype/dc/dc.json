@@ -10,6 +10,7 @@
   "lot",
   "process_1",
   "supplier",
+  "location",
   "get_items",
   "items",
   "get_return_item",
@@ -18,14 +19,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "process_1",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Process",
-   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
-   "reqd": 1
-  },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
@@ -84,11 +77,26 @@
    "options": "DC",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Process",
+   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-19 18:37:53.921079",
+ "modified": "2020-01-29 15:31:35.506419",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
