@@ -186,14 +186,14 @@
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.__islocal",
-   "depends_on": "eval:(doc.docstatus == 0 && enable_additional_parts)",
+   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts==1",
    "fieldname": "section_break_24",
    "fieldtype": "Section Break"
   },
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.__islocal",
-   "depends_on": "eval: (doc.docstatus == 0 && enable_additional_parts)\n",
+   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts == 1\n",
    "fieldname": "section_break_23",
    "fieldtype": "Section Break"
   },
@@ -237,7 +237,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-30 18:04:26.553459",
+ "modified": "2020-01-30 20:38:30.577172",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",

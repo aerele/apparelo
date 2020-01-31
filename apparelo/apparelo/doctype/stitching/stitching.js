@@ -88,7 +88,6 @@ frappe.ui.form.on('Stitching', {
 	},
 	get_piece_color:function(frm){
 		const set_fields_color =['item','piece_colour','part_colour'];
-		const set_fields_item =['item']
 		frappe.call({
 			method: "apparelo.apparelo.doctype.stitching.stitching.get_additional_item_piece_colour",
 			freeze: true,
@@ -106,25 +105,6 @@ frappe.ui.form.on('Stitching', {
 					});
 				}
 				refresh_field('additional_parts_colour');
-			}
-		});
-		frappe.call({
-			method: "apparelo.apparelo.doctype.stitching.stitching.get_items",
-			freeze: true,
-			args: {doc: frm.doc},
-			callback: function(r) {
-				if(r.message) {
-					frm.set_value('additional_parts', []);
-					$.each(r.message, function(i, d) {
-						var item = frm.add_child('additional_parts');
-						for (let key in d) {
-							if (d[key] && in_list(set_fields_item, key)) {
-								item[key] = d[key];
-							}
-						}
-					});
-				}
-				refresh_field('additional_parts');
 			}
 		});
 	},

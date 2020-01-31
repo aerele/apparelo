@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from six import string_types, iteritems
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
 
 class Stitching(Document):
 	def on_submit(self):
@@ -95,6 +95,8 @@ class Stitching(Document):
 
 	def create_boms(self, input_item_names, variants,attribute_set,item_size,colour,piece_count,final_process):
 		boms = []
+		if self.enable_additional_parts:
+			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
@@ -116,10 +118,11 @@ class Stitching(Document):
 									if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 										if piece_count.part==colour_mapping.part:
 											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
-			if not self.additional_parts==[]:
-				# create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
-				for item in self.additional_parts:
-						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+			matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+			item_list.extend(matched_part)
+			print(item_list,"!@$@#$@%")
+			print("               jkegfhlx")
+			print(variant)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
@@ -222,15 +225,6 @@ def get_additional_item_piece_colour(doc):
 			for item in doc.get('items'):
 				piece_colour_combination.append({'item':item['items'],'piece_colour':colour['colors'],'part_colour':' '})
 	return(piece_colour_combination)
-
-@frappe.whitelist()
-def get_items(doc):
-	if isinstance(doc, string_types):
-		doc = frappe._dict(json.loads(doc))
-	items =[]
-	for item in doc.get('items'):
-		items.append({'item':item['items']})
-	return(items)
 
 @frappe.whitelist()
 def get_additional_item_size(doc):

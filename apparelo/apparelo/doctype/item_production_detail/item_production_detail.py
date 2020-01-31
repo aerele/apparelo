@@ -280,6 +280,7 @@ class ItemProductionDetail(Document):
 					process_variants['BOM']=list(set(boms))
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
+					ee
 				continue
 
 			if process.process_name == 'Label Fusing':
