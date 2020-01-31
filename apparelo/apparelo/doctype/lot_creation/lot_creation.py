@@ -204,14 +204,13 @@ def get_ipd_item(doc):
 	                                  'name': item_production_detail}, "item")
 	ipd_sizes =[]
 	for _size in frappe.get_doc('Item Production Detail',item_production_detail).size:
-		ipd_sizes.append(int(_size.size[:-3]))
+		ipd_sizes.append(_size.size)
 	item_code=frappe.db.get_all("Item", fields = ["item_code"], filters = {
 	                            "variant_of": item_template})
 	for _size in ipd_sizes:
 		for item in item_code:
-			if str(_size) in item.get('item_code'):
-				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(
-					item.get("item_code")).get("bom_no")})
+			if _size.upper() in item.get('item_code'):
+				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(item.get("item_code")).get("bom_no")})
 				break
 	return po_items
 
