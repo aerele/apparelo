@@ -216,8 +216,9 @@ class ItemProductionDetail(Document):
 								process_variants['process_record'] = process.process_record
 								cutting_doc = frappe.get_doc('Cutting', process.process_record)
 								variants,attribute_set = cutting_doc.create_variants(input_items,item_size)
-								variants_.extend(variants)
-								boms.extend(cutting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+								bom,new_variants=cutting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count)
+								variants_.extend(new_variants)
+								boms.extend(bom)
 								counter_attr=Counter(cutting_attribute)
 								attr_set=Counter(attribute_set)
 								counter_attr.update(attr_set)
@@ -225,7 +226,7 @@ class ItemProductionDetail(Document):
 								for value in cutting_attribute:
 									cutting_attribute[value]=list(set(cutting_attribute[value]))
 					
-					process_variants['variants'] = list(set([var for var in variants_ if not ',' in var] ))
+					process_variants['variants'] = list(set(variants_))
 					process_variants['BOM']=boms
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)

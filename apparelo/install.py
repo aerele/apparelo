@@ -18,6 +18,7 @@ from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
 
 def after_install():
     remove_defaults()
+    create_new_uom()
     create_item_attributes()
     create_attr_values()
     create_item_template()

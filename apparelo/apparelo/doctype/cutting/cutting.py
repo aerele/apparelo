@@ -31,9 +31,10 @@ class Cutting(Document):
 			for part in parts:
 				variant_attribute_set['Part'] = []
 				variant_attribute_set['Part'].append(part)
-				if "," in part:
-					for part_ in part.split(","):
-						variant_attribute_set['Part'].append(part_)
+				part_=frappe.get_doc("Apparelo Part",part)
+				if part_.is_combined:
+					for part_ in part_.combined_parts:
+						variant_attribute_set['Part'].append(part_.parts)
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 				cutting_size=self.get_attribute_values('Apparelo Size', part)
 				if self.based_on_style==1:
@@ -71,21 +72,22 @@ class Cutting(Document):
 				return {"Dia": detail.dia, "Weight": detail.weight}
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
+		combined_item=[]
 		input_items = []
 		combo_=[]
 		boms = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		for part in attribute_set["Part"]:
-			if ',' in part:
+			part_=frappe.get_doc("Apparelo Part",part)
+			if part_.is_combined:
 				combined_part={}
 				variant=[]
 				variant_=[]
 				combined_part['color']=attribute_set["Apparelo Colour"]
 				combined_part['Size']=attribute_set["Apparelo Size"]
 				combined_part['Part']=part
-				count=part.count(",")
-				count=count+1
+				count=len(part_.combined_parts)
 				combined_part['count']=count
 				for variant in variants:
 					var=frappe.get_doc('Item', variant)
@@ -106,13 +108,22 @@ class Cutting(Document):
 						boms.append(combo_bom)
 					else:
 						bom=create_common_bom(self,variant,attr,input_items)
-						if not ',' in bom:
+						bom_doc=frappe.get_doc("BOM",bom)
+						if not is_combined_parts(bom_doc.item_name):
 							boms.append(bom)
+						else:
+							combined_item.append(bom.item_name)
+
 			else:
 				bom_=create_common_bom(self,variant,attr,input_items)
-				if not ',' in bom_:
+				bom_doc=frappe.get_doc("BOM",bom_)
+				if not is_combined_parts(bom_doc.item_name):
 					boms.append(bom_)
-		return boms
+				else:
+					combined_item.append(bom_.item_name)
+		for item in combined_item:
+			variants.remove(item)
+		return boms,variants
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
@@ -318,3 +329,15 @@ def create_common_bom(self,variant,attr,input_items):
 					return bom.name
 				else:
 					return existing_bom
+
+def is_combined_parts(item):
+	item_doc=frappe.get_doc("Item",item)
+	for attr in item_doc.attributes:
+		if attr.attribute=="Apparelo Part":
+			part=attr.attribute_value
+			part_=frappe.get_doc("Apparelo Part",part)
+			if part_.is_combined:
+				return True
+			else:
+				return False
+
