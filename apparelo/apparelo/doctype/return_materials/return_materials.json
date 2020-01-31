@@ -5,20 +5,12 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item_code",
+  "item",
   "quantity",
   "uom",
   "description"
  ],
  "fields": [
-  {
-   "fieldname": "item_code",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item Code",
-   "options": "Item",
-   "reqd": 1
-  },
   {
    "fieldname": "quantity",
    "fieldtype": "Float",
@@ -41,11 +33,19 @@
    "fieldtype": "Small Text",
    "label": "Description",
    "read_only": 1
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-25 12:46:19.600088",
+ "modified": "2020-01-31 15:43:43.728394",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",
