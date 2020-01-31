@@ -7,7 +7,12 @@ import frappe
 from frappe.model.document import Document
 
 class IPDBOMMapping(Document):
-	pass
+	def get_process_boms(self, process):
+		boms = []
+		for bom_mapping in self.bom_mapping:
+			if bom_mapping.process_1 == process:
+				boms.append(bom_mapping.bom)
+		return boms
 def ipd_bom_mapping(ipd_list,ipd_name,item):
 	ipd_bom=[]
 	for ipd in ipd_list:
