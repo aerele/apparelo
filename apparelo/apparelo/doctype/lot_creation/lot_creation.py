@@ -18,8 +18,7 @@ class LotCreation(Document):
 		default_company = frappe.db.get_single_value(
 		    'Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
-		parent = "Lot Warehouse"
-		create_parent_warehouse(self,parent, abbr)
+		create_parent_warehouse(self, abbr)
 		create_warehouse(self, abbr)
 
 	def make_material_request(self):
@@ -203,27 +202,27 @@ def get_ipd_item(doc):
 	item_production_detail=doc.get('item_production_detail')
 	item_template=frappe.db.get_value("Item Production Detail", {
 	                                  'name': item_production_detail}, "item")
+	ipd_sizes =[]
+	for _size in frappe.get_doc('Item Production Detail',item_production_detail).size:
+		ipd_sizes.append(_size.size)
 	item_code=frappe.db.get_all("Item", fields = ["item_code"], filters = {
 	                            "variant_of": item_template})
-	for item in item_code:
-		po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(
-		    item.get("item_code")).get("bom_no")})
+	for _size in ipd_sizes:
+		for item in item_code:
+			if _size.upper() in item.get('item_code'):
+				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(item.get("item_code")).get("bom_no")})
+				break
 	return po_items
-def create_parent_warehouse(self, name, abbr):
-	if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
-		frappe.get_doc({
-			"doctype": "Warehouse",
-			"warehouse_name": name,
-			"is_group": 1,
-			"parent_warehouse": f"All Warehouses - {abbr}"
-			}).save()
+
+def create_parent_warehouse(self,abbr):
 	if not frappe.db.exists("Warehouse", f'{self.name} - {abbr}'):
 		frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
 			"is_group": 1,
-			"parent_warehouse": f"{name} - {abbr}"
+			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
+
 def create_warehouse(self, abbr):
 	for location in self.location:
 		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} - {abbr}"):

@@ -24,6 +24,7 @@ def after_install():
     create_item_template()
     make_item_fields()
     make_custom_fields()
+    create_root_warehouse()
 
 def create_item_attributes():
     knitting.create_item_attribute()
@@ -49,8 +50,22 @@ def remove_defaults():
     stock_setting=frappe.get_doc("Stock Settings")
     stock_setting.stock_uom=None
     stock_setting.save()
+
 def create_new_uom():
     if not frappe.get_doc("UOM","Combined Part"):
         uom=frappe.new_doc("UOM")
         uom.uom_name= 'Combined Part'
         uom.save()
+
+def create_root_warehouse():
+    default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
+    abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
+    warehouses = ["Lot Warehouse","Supplier Warehouse"]
+    for name in warehouses:
+        if not frappe.db.exists("Warehouse", f'{name} - {abbr}'):
+            frappe.get_doc({
+                "doctype": "Warehouse",
+                "warehouse_name": name,
+                "is_group": 1,
+                "parent_warehouse": f"All Warehouses - {abbr}"
+            }).save()
