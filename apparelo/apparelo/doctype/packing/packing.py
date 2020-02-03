@@ -52,7 +52,32 @@ class Packing(Document):
 				else:
 					boms.append(existing_bom)
 		if self.input_qty > piece_count:
-			frappe.throw(_("Input Quantity is not available in Packing"))
+			if self.input_qty%piece_count==0:
+				repeating_count=self.input_qty//piece_count
+				for variant in variants:
+					item_list = []
+					for input_item in input_item_names:
+						for size in item_size:
+							if size.upper() in input_item  and size.upper() in variant:
+								item_list.append({"item_code": input_item,"uom": "Nos","qty":item.qty})
+					for item in self.additional_part:
+						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+					existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+					if not existing_bom:
+						bom = frappe.get_doc({
+							"doctype": "BOM",
+							"currency": get_default_currency(),
+							"item": variant,
+							"company": get_default_company(),
+							"items": item_list
+						})
+						bom.save()
+						bom.submit()
+						boms.append(bom.name)
+					else:
+						boms.append(existing_bom)
+			else:
+				frappe.throw(_("Invalid Input Quantity"))
 		if self.input_qty < piece_count:
 			colours=list(combinations(colour,self.input_qty))
 			create_item_combo_attribute(colours)
