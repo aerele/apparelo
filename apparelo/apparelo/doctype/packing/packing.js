@@ -5,10 +5,9 @@ frappe.ui.form.on('Packing', {
 	onload: function(frm) {
 		frm.set_query("item", function() {
 			return {
-				filters: {
-					"item_group":"Products",
-					"has_variants":1
-				}
+				"filters":{
+					"item_group":["in",["Products","Intermediate Product"]],
+				},
 			};
 		});
 		frm.set_query("items", function() {

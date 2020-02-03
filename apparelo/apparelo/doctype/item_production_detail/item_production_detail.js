@@ -2,7 +2,13 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Item Production Detail', {
-	// refresh: function(frm) {
-
-	// }
+	onload: function(frm) {
+		frm.set_query("item", function() {
+			return {
+				"filters":{
+					"item_group":["in",["Products","Intermediate Product"]],
+				},
+			};
+		});
+	}
 });
