@@ -37,7 +37,7 @@ class LabelFusing(Document):
 				for additional_ in self.additional_parts:
 					if additional_.based_on=="None":
 						item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
-			item_list.extend(matched_part)
+				item_list.extend(matched_part)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
