@@ -75,7 +75,6 @@ class Stitching(Document):
 			variants.extend(create_variants(item, variant_attribute_set))
 		else:
 			variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
-		
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
@@ -118,11 +117,12 @@ class Stitching(Document):
 									if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 										if piece_count.part==colour_mapping.part:
 											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
-			matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+			if self.enable_additional_parts:
+				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+				for additional_ in self.additional_parts:
+					if additional_.based_on=="None":
+						item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
 			item_list.extend(matched_part)
-			print(item_list,"!@$@#$@%")
-			print("               jkegfhlx")
-			print(variant)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({

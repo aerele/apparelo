@@ -19,13 +19,12 @@ def create_variants(item_template, args):
 			variants.append(variant.name)
 		else:
 			variants.append(existing_variant)
-
 	return variants
 def create_additional_variants(item_template, args,qty,uom):
 	args_set = generate_keyed_value_combinations(args)
 	variants = []
-	additional_parts={}
 	for attribute_values in args_set:
+		additional_parts={}
 		existing_variant = get_variant(item_template, args=attribute_values)
 		if not existing_variant:
 			variant = create_variant(item_template, attribute_values)
@@ -33,12 +32,12 @@ def create_additional_variants(item_template, args,qty,uom):
 			additional_parts['item_code']=variant.name
 			additional_parts['qty']=qty
 			additional_parts['uom']=uom
+			variants.append(additional_parts)
 		else:
 			additional_parts['item_code']=existing_variant
 			additional_parts['qty']=qty
 			additional_parts['uom']=uom
-		variants.append(additional_parts)
-
+			variants.append(additional_parts)
 	return variants
 
 
@@ -125,7 +124,7 @@ def create_additional_parts(colors,sizes,items):
 		attribute_set={}
 		colors_=[]
 		sizes_=[]
-		if item.based_on=="Both":
+		if item.based_on=="Size and Colour":
 			for size in sizes:
 				for color in colors:
 					if item.item == size.item and item.item == color.item:
@@ -150,8 +149,6 @@ def create_additional_parts(colors,sizes,items):
 						colors_.append(color.part_colour)
 			attribute_set["Apparelo Colour"]=colors_
 			additional_parts.extend(create_additional_variants(item.item,attribute_set,item.qty,item.uom))
-	print(additional_parts)
-	ee
 	return additional_parts
 
 def matching_additional_part(additional_parts,colors,sizes,items,variant):
@@ -159,7 +156,7 @@ def matching_additional_part(additional_parts,colors,sizes,items,variant):
 	for additional_part in additional_parts:
 		for item in items:
 			if item.item in additional_part['item_code']:
-				if item.based_on=="Both":
+				if item.based_on=="Size and Colour":
 					for size in sizes:
 						for color in colors:
 							if item.item == size.item and item.item == color.item:

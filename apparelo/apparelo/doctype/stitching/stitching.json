@@ -193,7 +193,7 @@
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.__islocal",
-   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts == 1\n",
+   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts == 1",
    "fieldname": "section_break_23",
    "fieldtype": "Section Break"
   },
@@ -237,7 +237,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-30 20:38:30.577172",
+ "modified": "2020-02-03 08:46:26.410582",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",

@@ -7,7 +7,7 @@ import frappe
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
 
 class Ironing(Document):
 	def on_submit(self):
@@ -26,8 +26,9 @@ class Ironing(Document):
 		return list(set(variants))
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count,final_process):
-		
 		boms = []
+		if self.enable_additional_parts:
+			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
@@ -39,9 +40,12 @@ class Ironing(Document):
 						for colour in colours:
 							if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
 								item_list.append({"item_code": input_item,"uom": "Nos"})
-			if not self.additional_part==[]:
-				for item in self.additional_part:
-						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
+			if self.enable_additional_parts:
+				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+				for additional_ in self.additional_parts:
+					if additional_.based_on=="None":
+						item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
+			item_list.extend(matched_part)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({

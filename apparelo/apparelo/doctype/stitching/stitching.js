@@ -45,11 +45,18 @@ frappe.ui.form.on('Stitching', {
 		});
 	},
 	onload: function(frm) {
+		frm.set_query("item", function() {
+			return {
+				filters: {
+					"item_group":"Products",
+					"has_variants":1
+				}
+			};
+		});
 		frm.set_query("items", function() {
 			return {
 				filters: {
-					"item_group":"Raw Material",
-					"has_variants":1
+					"item_group":"Raw Material"
 				}
 			};
 		});
@@ -57,7 +64,6 @@ frappe.ui.form.on('Stitching', {
 			return {
 				filters: {
 					"item_group":"Raw Material",
-					"has_variants":1
 				}
 			};
 		});
@@ -65,23 +71,20 @@ frappe.ui.form.on('Stitching', {
 			return {
 				filters: {
 					"item_group":"Raw Material",
-					"has_variants":1
 				}
 			};
 		});
-		frm.set_query("item", "additional_parts", function() {
+		frm.set_query("item", "additional_parts_size", function() {
 			return {
 				filters: {
 					"item_group":"Raw Material",
-					"has_variants":1
 				}
 			};
 		});
-		frm.set_query("item", "additional_parts", function() {
+		frm.set_query("item", "additional_parts_colour", function() {
 			return {
 				filters: {
 					"item_group":"Raw Material",
-					"has_variants":1
 				}
 			};
 		});

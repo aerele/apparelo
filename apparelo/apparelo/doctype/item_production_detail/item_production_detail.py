@@ -278,9 +278,8 @@ class ItemProductionDetail(Document):
 					boms.extend(stitching_doc.create_boms(input_items, variants,cutting_attribute,item_size,colour,piece_count,final_process))
 					process_variants['variants'] = list(set(variants))
 					process_variants['BOM']=list(set(boms))
-					process_variants['input_item']=list(set(input_items_))
+					process_variants['input_item']=list(set(input_items))
 					ipd.append(process_variants)
-					ee
 				continue
 
 			if process.process_name == 'Label Fusing':
