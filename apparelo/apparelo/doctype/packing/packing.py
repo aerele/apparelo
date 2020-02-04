@@ -3,21 +3,22 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
+from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
+from itertools import combinations
 import frappe
 from frappe import _
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants, create_additional_parts, matching_additional_part
-from itertools import combinations
-from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set,
+create_variants, create_additional_parts, matching_additional_part
 
 
 class Packing(Document):
     def on_submit(self):
         create_item_template(self)
 
-    def create_variants(self,input_item_names, item):
+    def create_variants(self, input_item_names, item):
         input_items = []
         for input_item_name in input_item_names:
             input_items.append(frappe.get_doc('Item', input_item_name))
@@ -28,7 +29,8 @@ class Packing(Document):
         variants = create_variants(item, attribute_set)
         return list(set(variants)), piece_count
 
-    def create_boms(self, input_item_names, variants, attribute_set, item_size, colour, piece_count, final_item):
+    def create_boms(self, input_item_names, variants,
+				attribute_set, item_size, colour, piece_count, final_item):
         boms = []
         if self.enable_additional_parts:
             additional_parts = create_additional_parts(
@@ -163,29 +165,29 @@ class Packing(Document):
 
 
 def create_combo_variant(final_item, colours, size):
-	"""Return the combo variants"""
-    combo_variants = []
-    item_attribute = frappe.get_doc("Item Attribute", "Combo")
-    count = 0
-    for size_ in size:
-        for attribute_ in colours:
-            attr = ''
-            for color in attribute_:
-                attr += color+","
-            count += 1
-            combo = []
-            for value in item_attribute.item_attribute_values:
-                combo.append(value.attribute_value)
-            if attr[:-1]not in combo:
-                item_attribute.append('item_attribute_values', {
-                    "attribute_value": attr[:-1],
-                    "abbr": "Combo "+str(count)
-                })
-                item_attribute.save()
-            attribute = {"Apparelo Size": [size_], "Combo": [attr[:-1]]}
-            combo_variants.extend(create_variants(
-                final_item+" Combo Cloth", attribute))
-    return combo_variants
+	"""Return the combo variants."""
+	combo_variants = []
+	item_attribute = frappe.get_doc("Item Attribute", "Combo")
+	count = 0
+	for size_ in size:
+		for attribute_ in colours:
+			 attr = ''
+			 for color in attribute_:
+				 attr += color+","
+			count += 1
+			combo = []
+			for value in item_attribute.item_attribute_values:
+				combo.append(value.attribute_value)
+			if attr[:-1]not in combo:
+				item_attribute.append('item_attribute_values', {
+					"attribute_value": attr[:-1],
+					"abbr": "Combo "+str(count)
+					})
+					item_attribute.save()
+			attribute = {"Apparelo Size": [size_], "Combo": [attr[:-1]]}
+			combo_variants.extend(create_variants(
+				final_item+" Combo Cloth", attribute))
+	return combo_variants
 
 
 def create_item_combo_attribute(colours):
