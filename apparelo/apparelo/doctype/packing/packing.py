@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from itertools import combinations
-import frappe
+import frappe,erpnext
 from frappe import _
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
@@ -29,8 +29,9 @@ class Packing(Document):
 		variants = create_variants(item, attribute_set)
 		return list(set(variants)), piece_count
 
-	def create_boms(self, input_item_names, variants, attribute_set,
+	def create_boms(self, input_item_names, variants,
 		item_size, colour, piece_count, final_item):
+		
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts = create_additional_parts(
@@ -38,34 +39,34 @@ class Packing(Document):
 		if piece_count == self.input_qty:
 			for variant in variants:
 				item_list = []
-			for input_item in input_item_names:
-				for size in item_size:
-					if size.upper() in input_item and size.upper() in variant:
+				for input_item in input_item_names:
+					for size in item_size:
+						if size.upper() in input_item and size.upper() in variant:
+							item_list.append({
+								"item_code": input_item,
+								"uom": "Nos"
+							})
+					for item in self.additional_part:
 						item_list.append({
-							"item_code": input_item,
-							"uom": "Nos"
+							"item_code": item.item,
+							"uom": "Nos",
+							"qty": item.qty
 						})
-				for item in self.additional_part:
-					item_list.append({
-						"item_code": item.item,
-						"uom": "Nos",
-						"qty": item.qty
-					})
-				existing_bom = frappe.db.get_value(
-					'BOM', {'item': variant}, 'name')
-				if not existing_bom:
-					bom = frappe.get_doc({
-						"doctype": "BOM",
-						"currency": get_default_currency(),
-						"item": variant,
-						"company": get_default_company(),
-						"items": item_list
-					})
-					bom.save()
-					bom.submit()
-					boms.append(bom.name)
-				else:
-					boms.append(existing_bom)
+					existing_bom = frappe.db.get_value(
+						'BOM', {'item': variant}, 'name')
+					if not existing_bom:
+						bom = frappe.get_doc({
+							"doctype": "BOM",
+							"currency": get_default_currency(),
+							"item": variant,
+							"company": get_default_company(),
+							"items": item_list
+						})
+						bom.save()
+						bom.submit()
+						boms.append(bom.name)
+					else:
+						boms.append(existing_bom)
 		if self.input_qty > piece_count:
 			if self.input_qty % piece_count == 0:
 				repeating_count = self.input_qty // piece_count
@@ -80,7 +81,8 @@ class Packing(Document):
 									"qty": repeating_count
 								})
 					if self.enable_additional_parts:
-						matched_part = matching_additional_part(additional_parts, self.additional_parts_colour,
+						matched_part = matching_additional_part(
+							additional_parts, self.additional_parts_colour,
 							self.additional_parts_size, self.additional_parts, variant)
 						for additional_part in self.additional_parts:
 							if additional_part.based_on == "None":
