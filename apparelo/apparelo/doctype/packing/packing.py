@@ -30,7 +30,7 @@ class Packing(Document):
 		return list(set(variants)), piece_count
 
 	def create_boms(self, input_item_names, variants, attribute_set, 
-		item_size, colour, piece_count, final_item):
+					item_size, colour, piece_count, final_item):
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts = create_additional_parts(
@@ -41,11 +41,9 @@ class Packing(Document):
 			for input_item in input_item_names:
 				for size in item_size:
 					if size.upper() in input_item and size.upper() in variant:
-						item_list.append(
-							{"item_code": input_item, "uom": "Nos"})
+						item_list.append({"item_code": input_item, "uom": "Nos"})
 				for item in self.additional_part:
-					item_list.append(
-						{"item_code": item.item, "uom": "Nos", "qty": item.qty})
+					item_list.append({"item_code": item.item, "uom": "Nos", "qty": item.qty})
 				existing_bom = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom:
@@ -69,17 +67,15 @@ class Packing(Document):
 					for input_item in input_item_names:
 						for size in item_size:
 							if size.upper() in input_item and size.upper() in variant:
-								item_list.append(
-									{"item_code": input_item, "uom": "Nos", "qty": repeating_count})
+								item_list.append({"item_code": input_item, "uom": "Nos", "qty": repeating_count})
 					if self.enable_additional_parts:
 						matched_part = matching_additional_part(
 							additional_parts, self.additional_parts_colour, 
 							self.additional_parts_size, self.additional_parts, variant)
 						for additional_part in self.additional_parts:
 							if additional_part.based_on == "None":
-								item_list.append(
-									{"item_code": additional_part.item, "qty": 
-									additional_part.qty, "uom": additional_part.uom})
+								item_list.append({"item_code": additional_part.item, "qty": 
+												additional_part.qty, "uom": additional_part.uom})
 						item_list.extend(matched_part)
 					existing_bom = frappe.db.get_value(
 						'BOM', {'item': variant}, 'name')
@@ -116,11 +112,9 @@ class Packing(Document):
 					if size.upper() in variant and size.upper() in items:
 						for color in combo.split(","):
 							if color.upper() in items:
-								item_list_.append(
-									{"item_code": items, "uom": "Nos"})
+								item_list_.append({"item_code": items, "uom": "Nos"})
 				for item in self.additional_part:
-					item_list_.append(
-						{"item_code": item.item, "uom": "Nos", "qty": item.qty})
+					item_list_.append({"item_code": item.item, "uom": "Nos", "qty": item.qty})
 				existing_bom = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom:
@@ -203,45 +197,45 @@ def create_item_combo_attribute(colours):
 
 def create_item_combo_template(final_item):
 	if not frappe.db.exists("Item", final_item+" Combo Cloth"):
-	frappe.get_doc({
-		"doctype": "Item",
-		"item_code": final_item+" Combo Cloth",
-		"item_name": final_item+" Combo Cloth",
-		"description": final_item+" Combo Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom": "Nos",
-		"has_variants": "1",
-		"variant_based_on": "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes": [
-			{
-				"attribute": "Combo"
-			},
-			{
-				"attribute": "Apparelo Size"
-			}
-		]
-	}).save()
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": final_item+" Combo Cloth",
+			"item_name": final_item+" Combo Cloth",
+			"description": final_item+" Combo Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom": "Nos",
+			"has_variants": "1",
+			"variant_based_on": "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes": [
+				{
+					"attribute": "Combo"
+				},
+				{
+					"attribute": "Apparelo Size"
+				}
+			]
+		}).save()
 
 
 def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+" Packed Cloth"):
-	frappe.get_doc({
-		"doctype": "Item",
-		"item_code": self.item+" Packed Cloth",
-		"item_name": self.item+" Packed Cloth",
-		"description": self.item+" Packed Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom": "Nos",
-		"has_variants": "1",
-		"variant_based_on": "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes": [
-			{
-				"attribute": "Apparelo Colour"
-			},
-			{
-				"attribute": "Apparelo Size"
-			}
-		]
-	}).save()
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": self.item+" Packed Cloth",
+			"item_name": self.item+" Packed Cloth",
+			"description": self.item+" Packed Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom": "Nos",
+			"has_variants": "1",
+			"variant_based_on": "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes": [
+				{
+					"attribute": "Apparelo Colour"
+				},
+				{
+					"attribute": "Apparelo Size"
+				}
+			]
+		}).save()
