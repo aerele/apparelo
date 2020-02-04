@@ -10,8 +10,8 @@ from frappe import _
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set,
-create_variants, create_additional_parts, matching_additional_part
+from apparelo.apparelo.utils.item_utils import (get_attr_dict, get_item_attribute_set,
+	create_variants, create_additional_parts, matching_additional_part)
 
 
 class Packing(Document):
@@ -29,8 +29,8 @@ class Packing(Document):
 		variants = create_variants(item, attribute_set)
 		return list(set(variants)), piece_count
 
-	def create_boms(self, input_item_names, variants, attribute_set, 
-					item_size, colour, piece_count, final_item):
+	def create_boms(self, input_item_names, variants, attribute_set,
+		item_size, colour, piece_count, final_item):
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts = create_additional_parts(
@@ -41,9 +41,16 @@ class Packing(Document):
 			for input_item in input_item_names:
 				for size in item_size:
 					if size.upper() in input_item and size.upper() in variant:
-						item_list.append({"item_code": input_item, "uom": "Nos"})
+						item_list.append({
+							"item_code": input_item,
+							"uom": "Nos"
+						})
 				for item in self.additional_part:
-					item_list.append({"item_code": item.item, "uom": "Nos", "qty": item.qty})
+					item_list.append({
+						"item_code": item.item,
+						"uom": "Nos",
+						"qty": item.qty
+					})
 				existing_bom = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom:
@@ -67,15 +74,21 @@ class Packing(Document):
 					for input_item in input_item_names:
 						for size in item_size:
 							if size.upper() in input_item and size.upper() in variant:
-								item_list.append({"item_code": input_item, "uom": "Nos", "qty": repeating_count})
+								item_list.append({
+									"item_code": input_item,
+									"uom": "Nos",
+									"qty": repeating_count
+								})
 					if self.enable_additional_parts:
-						matched_part = matching_additional_part(
-							additional_parts, self.additional_parts_colour, 
+						matched_part = matching_additional_part(additional_parts, self.additional_parts_colour,
 							self.additional_parts_size, self.additional_parts, variant)
 						for additional_part in self.additional_parts:
 							if additional_part.based_on == "None":
-								item_list.append({"item_code": additional_part.item, "qty": 
-												additional_part.qty, "uom": additional_part.uom})
+								item_list.append({
+									"item_code": additional_part.item,
+									"qty": additional_part.qty,
+									"uom": additional_part.uom
+								})
 						item_list.extend(matched_part)
 					existing_bom = frappe.db.get_value(
 						'BOM', {'item': variant}, 'name')
@@ -112,9 +125,16 @@ class Packing(Document):
 					if size.upper() in variant and size.upper() in items:
 						for color in combo.split(","):
 							if color.upper() in items:
-								item_list_.append({"item_code": items, "uom": "Nos"})
+								item_list_.append({
+									"item_code": items,
+									"uom": "Nos"
+								})
 				for item in self.additional_part:
-					item_list_.append({"item_code": item.item, "uom": "Nos", "qty": item.qty})
+					item_list_.append({
+						"item_code": item.item,
+						"uom": "Nos",
+						"qty": item.qty
+					})
 				existing_bom = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom:
@@ -137,8 +157,11 @@ class Packing(Document):
 				for variant_ in combo_variants:
 					for size in item_size:
 						if size.upper() in variant and size.upper() in variant_:
-							items_.append({"item_code": variant_, "uom": "Nos", "bom_no": get_item_details(
-								variant_).get("bom_no")})
+							items_.append({
+								"item_code": variant_,
+								"uom": "Nos",
+								"bom_no": get_item_details(variant_).get("bom_no")
+							})
 				existing_bom_ = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom_:
