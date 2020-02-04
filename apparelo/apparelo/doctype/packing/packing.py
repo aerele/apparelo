@@ -81,8 +81,8 @@ class Packing(Document):
 					matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
 					for additional_ in self.additional_parts:
 						if additional_.based_on=="None":
-							item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
-					item_list.extend(matched_part)
+							item_list_.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
+					item_list_.extend(matched_part)
 				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 				if not existing_bom:
 					new_bom = frappe.get_doc({
