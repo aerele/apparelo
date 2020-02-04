@@ -11,7 +11,7 @@
   "section_break_3",
   "enable_additional_parts",
   "section_break_5",
-  "items",
+  "color_additional_items",
   "get_piece_color",
   "column_break_8",
   "piece_colors",
@@ -19,7 +19,7 @@
   "section_break_11",
   "additional_parts_colour",
   "section_break_13",
-  "additional_items",
+  "size_additional_items",
   "get_piece_size",
   "column_break_16",
   "piece_sizes",
@@ -60,13 +60,6 @@
    "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts==1",
    "fieldname": "section_break_5",
    "fieldtype": "Section Break"
-  },
-  {
-   "depends_on": "enable_additional_parts",
-   "fieldname": "items",
-   "fieldtype": "Table MultiSelect",
-   "label": "Items",
-   "options": "Additional Item"
   },
   {
    "depends_on": "enable_additional_parts",
@@ -112,13 +105,6 @@
    "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts == 1",
    "fieldname": "section_break_13",
    "fieldtype": "Section Break"
-  },
-  {
-   "depends_on": "enable_additional_parts",
-   "fieldname": "additional_items",
-   "fieldtype": "Table MultiSelect",
-   "label": "Additional Items",
-   "options": "Additional Item"
   },
   {
    "depends_on": "enable_additional_parts",
@@ -172,11 +158,25 @@
    "fieldtype": "Table",
    "label": "Additional Parts",
    "options": "Stitching Additional Part"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "color_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Color Additional Items",
+   "options": "Additional Item"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "size_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Size Additional Items",
+   "options": "Additional Item"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-03 08:26:38.283204",
+ "modified": "2020-02-05 00:48:01.679909",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Ironing",

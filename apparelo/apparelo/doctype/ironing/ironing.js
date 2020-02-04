@@ -1,51 +1,7 @@
 // Copyright (c) 2019, Aerele Technologies Private Limited and contributors
 // For license information, please see license.txt
-
+{% include 'apparelo/apparelo/common_fields.js' %};
 frappe.ui.form.on('Ironing', {
-	onload: function(frm) {
-		frm.set_query("item", function() {
-			return {
-				"filters":{
-					"item_group":["in",["Products","Intermediate Product"]],
-				},
-			};
-		});
-		frm.set_query("items", function() {
-			return {
-				filters: {
-					"item_group":"Raw Material"
-				}
-			};
-		});
-		frm.set_query("additional_items", function() {
-			return {
-				filters: {
-					"item_group":"Raw Material",
-				}
-			};
-		});
-		frm.set_query("item", "additional_parts", function() {
-			return {
-				filters: {
-					"item_group":"Raw Material",
-				}
-			};
-		});
-		frm.set_query("item", "additional_parts_size", function() {
-			return {
-				filters: {
-					"item_group":"Raw Material",
-				}
-			};
-		});
-		frm.set_query("item", "additional_parts_colour", function() {
-			return {
-				filters: {
-					"item_group":"Raw Material",
-				}
-			};
-		});
-	},
 	get_piece_color:function(frm){
 		const set_fields_color =['item','piece_colour','part_colour'];
 		frappe.call({

@@ -119,9 +119,9 @@ class Stitching(Document):
 											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 			if self.enable_additional_parts:
 				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
-				for additional_ in self.additional_parts:
-					if additional_.based_on=="None":
-						item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
+				for additional_part in self.additional_parts:
+					if additional_part.based_on=="None":
+						item_list.append({"item_code": additional_part.item,"qty":additional_part.qty ,"uom": additional_part.uom})
 				item_list.extend(matched_part)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:

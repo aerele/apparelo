@@ -20,7 +20,7 @@
   "section_break_12",
   "enable_additional_parts",
   "section_break_24",
-  "items",
+  "color_additional_items",
   "get_piece_color",
   "column_break_15",
   "piece_colors",
@@ -28,7 +28,7 @@
   "section_break_18",
   "additional_parts_colour",
   "section_break_23",
-  "additional_items",
+  "size_additional_items",
   "get_piece_size",
   "column_break_26",
   "piece_sizes",
@@ -143,13 +143,6 @@
   },
   {
    "depends_on": "enable_additional_parts",
-   "fieldname": "items",
-   "fieldtype": "Table MultiSelect",
-   "label": "Items",
-   "options": "Additional Item"
-  },
-  {
-   "depends_on": "enable_additional_parts",
    "fieldname": "get_piece_color",
    "fieldtype": "Button",
    "label": "Get Piece Color"
@@ -199,13 +192,6 @@
   },
   {
    "depends_on": "enable_additional_parts",
-   "fieldname": "additional_items",
-   "fieldtype": "Table MultiSelect",
-   "label": "Additional Items",
-   "options": "Additional Item"
-  },
-  {
-   "depends_on": "enable_additional_parts",
    "fieldname": "get_piece_size",
    "fieldtype": "Button",
    "label": "Get Piece Size"
@@ -233,11 +219,25 @@
    "depends_on": "enable_additional_parts",
    "fieldname": "section_break_29",
    "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "color_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Color Additional Items",
+   "options": "Additional Item"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "size_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Size Additional Items",
+   "options": "Additional Item"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-03 08:46:26.410582",
+ "modified": "2020-02-05 00:44:38.947094",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",
