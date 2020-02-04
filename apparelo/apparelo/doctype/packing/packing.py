@@ -17,7 +17,7 @@ class Packing(Document):
     def on_submit(self):
         create_item_template(self)
 
-    def create_variants(input_item_names, item):
+    def create_variants(self,input_item_names, item):
         input_items = []
         for input_item_name in input_item_names:
             input_items.append(frappe.get_doc('Item', input_item_name))
@@ -163,6 +163,7 @@ class Packing(Document):
 
 
 def create_combo_variant(final_item, colours, size):
+	"""Return the combo variants"""
     combo_variants = []
     item_attribute = frappe.get_doc("Item Attribute", "Combo")
     count = 0
