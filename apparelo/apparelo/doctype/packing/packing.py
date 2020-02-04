@@ -29,7 +29,8 @@ class Packing(Document):
 		variants = create_variants(item, attribute_set)
 		return list(set(variants)), piece_count
 
-	def create_boms(self, input_item_names, variants, attribute_set, item_size, colour, piece_count, final_item):
+	def create_boms(self, input_item_names, variants, attribute_set, 
+		item_size, colour, piece_count, final_item):
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts = create_additional_parts(
@@ -72,11 +73,13 @@ class Packing(Document):
 									{"item_code": input_item, "uom": "Nos", "qty": repeating_count})
 					if self.enable_additional_parts:
 						matched_part = matching_additional_part(
-							additional_parts, self.additional_parts_colour, self.additional_parts_size, self.additional_parts, variant)
+							additional_parts, self.additional_parts_colour, 
+							self.additional_parts_size, self.additional_parts, variant)
 						for additional_part in self.additional_parts:
 							if additional_part.based_on == "None":
 								item_list.append(
-									{"item_code": additional_part.item, "qty": additional_part.qty, "uom": additional_part.uom})
+									{"item_code": additional_part.item, "qty": 
+									additional_part.qty, "uom": additional_part.uom})
 						item_list.extend(matched_part)
 					existing_bom = frappe.db.get_value(
 						'BOM', {'item': variant}, 'name')
@@ -170,9 +173,9 @@ def create_combo_variant(final_item, colours, size):
 	count = 0
 	for size_ in size:
 		for attribute_ in colours:
-			 attr = ''
-			 for color in attribute_:
-				 attr += color+","
+			attr = ''
+			for color in attribute_:
+				attr += color+","
 			count += 1
 			combo = []
 			for value in item_attribute.item_attribute_values:
@@ -182,7 +185,7 @@ def create_combo_variant(final_item, colours, size):
 					"attribute_value": attr[:-1],
 					"abbr": "Combo "+str(count)
 					})
-					item_attribute.save()
+				item_attribute.save()
 			attribute = {"Apparelo Size": [size_], "Combo": [attr[:-1]]}
 			combo_variants.extend(create_variants(
 				final_item+" Combo Cloth", attribute))
