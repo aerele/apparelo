@@ -212,7 +212,7 @@ def get_additional_item_piece_colour(doc):
 				else:
 					break
 		for colour in doc.get('piece_colors'):
-			for item in doc.get('items'):
+			for item in doc.get('color_additional_items'):
 				piece_colour_combination.append({'item':item['items'],'piece_colour':colour['colors'],'part_colour':colour['colors']})
 	else:
 		if doc.get('additional_parts_colour') != None:
@@ -222,7 +222,7 @@ def get_additional_item_piece_colour(doc):
 				else:
 					break
 		for colour in doc.get('piece_colors'):
-			for item in doc.get('items'):
+			for item in doc.get('color_additional_items'):
 				piece_colour_combination.append({'item':item['items'],'piece_colour':colour['colors'],'part_colour':' '})
 	return(piece_colour_combination)
 
@@ -239,7 +239,7 @@ def get_additional_item_size(doc):
 				else:
 					break
 		for size in doc.get('piece_sizes'):
-			for item in doc.get('additional_items'):
+			for item in doc.get('size_additional_items'):
 				size_combination.append({'item':item['items'],'piece_size':size['size'],'part_size':size['size']})
 	else:
 		if doc.get('additional_parts_size') != None:
@@ -249,6 +249,6 @@ def get_additional_item_size(doc):
 				else:
 					break
 		for size in doc.get('piece_sizes'):
-			for item in doc.get('additional_items'):
+			for item in doc.get('size_additional_items'):
 				size_combination.append({'item':item['items'],'piece_size':size['size'],'part_size':' '})
 	return(size_combination)
