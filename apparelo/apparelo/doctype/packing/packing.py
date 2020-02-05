@@ -5,13 +5,14 @@
 from __future__ import unicode_literals
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from itertools import combinations
-import frappe, erpnext
+import frappe
 from frappe import _
 from frappe.model.document import Document
+import erpnext
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import (get_attr_dict, get_item_attribute_set, create_variants,
-	create_additional_parts, matching_additional_part)
+from apparelo.apparelo.utils.item_utils import (get_attr_dict, get_item_attribute_set, 
+	create_variants, create_additional_parts, matching_additional_part)
 
 
 class Packing(Document):
