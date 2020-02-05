@@ -1,0 +1,37 @@
+{
+ "actions": [],
+ "creation": "2020-02-05 12:34:06.540411",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "surplus_material",
+  "quantity"
+ ],
+ "fields": [
+  {
+   "fieldname": "surplus_material",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Surplus Material"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Quantity"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-02-05 12:34:31.689309",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Surplus Wareouse Materials",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
