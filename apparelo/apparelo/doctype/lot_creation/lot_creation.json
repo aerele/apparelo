@@ -11,10 +11,12 @@
   "get_items",
   "section_break_3",
   "po_items",
+  "available_materials",
   "percentage",
   "get_items_for_mr",
   "section_break_5",
   "mr_items",
+  "table",
   "amended_from"
  ],
  "fields": [
@@ -79,11 +81,22 @@
    "fieldtype": "Table MultiSelect",
    "label": "Location",
    "options": "Lot Warehouse Location"
+  },
+  {
+   "fieldname": "available_materials",
+   "fieldtype": "Table",
+   "label": "Available Materials",
+   "options": "Surplus Wareouse Materials"
+  },
+  {
+   "fieldname": "table",
+   "fieldtype": "HTML Editor",
+   "label": "Table"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-28 11:06:33.878455",
+ "modified": "2020-02-05 12:36:07.438092",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",

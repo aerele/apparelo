@@ -239,3 +239,10 @@ def create_warehouse(self, abbr):
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
 				}).save()
+		if not frappe.db.exists("Warehouse", f"Surplus-{location.location} - {abbr}"):
+			frappe.get_doc({
+				"doctype": "Warehouse",
+				"warehouse_name": f"Surplus-{location.location}",
+				"is_group": 0,
+				"parent_warehouse": f"{self.name} - {abbr}"
+				}).save()
