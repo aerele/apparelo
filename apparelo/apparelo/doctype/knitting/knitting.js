@@ -2,7 +2,14 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Knitting', {
-	// refresh: function(frm) {
+	onload: function(frm) {
+		frm.set_query("yarn", "apparelo_yarn_ratio", function() {
+        return {
+            filters: {
+                "variant_of":"Yarn",
+            }
+        };
+    });
 
-	// }
+	}
 });

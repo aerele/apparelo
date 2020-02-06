@@ -13,6 +13,8 @@
   "gauge",
   "loop_length",
   "additional_information",
+  "is_striped",
+  "apparelo_yarn_ratio",
   "conversion_details_section",
   "input_qty",
   "output_qty",
@@ -114,11 +116,24 @@
    "fieldname": "loop_length",
    "fieldtype": "Data",
    "label": "Loop Length"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_striped",
+   "fieldtype": "Check",
+   "label": "Is Striped"
+  },
+  {
+   "depends_on": "is_striped",
+   "fieldname": "apparelo_yarn_ratio",
+   "fieldtype": "Table",
+   "label": "Apparelo Yarn Ratio",
+   "options": "Apparelo Yarn Ratio"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-27 11:23:43.819378",
+ "modified": "2020-02-06 11:29:09.962665",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Knitting",

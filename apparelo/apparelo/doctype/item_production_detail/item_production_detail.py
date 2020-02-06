@@ -23,10 +23,13 @@ class ItemProductionDetail(Document):
 		count = 0
 		link =''
 		for process in self.processes:
-			doc_type= frappe.get_doc(process.process_name, process.process_record)
-			if not doc_type.docstatus:
-				link += f'{get_link_to_form(process.process_name,process.process_record)} , '
-				count +=1
+			if process.process_name==None and process.process_record==None:
+				continue
+			else:
+				doc_type= frappe.get_doc(process.process_name, process.process_record)
+				if not doc_type.docstatus:
+					link += f'{get_link_to_form(process.process_name,process.process_record)} , '
+					count +=1
 		if count != 0:
 			frappe.throw(_(f"The process {link} is not submitted"))
 
@@ -45,6 +48,15 @@ class ItemProductionDetail(Document):
 
 		for process in self.processes:
 			process_variants = {}
+			if process.process_name== None and process.process_record== None:
+				process_variants['process'] = 'Yarn'
+				process_variants['index']=process.idx
+				process_variants['input_index']=''
+				process_variants['process_record'] =''
+				process_variants['input_item']=[process.input_item]
+				process_variants['variants'] = [process.input_item]
+				process_variants['BOM']=''
+				ipd.append(process_variants)
 			if process.process_name == 'Knitting':
 				process_variants['process'] = 'Knitting'
 				process_variants['index']=process.idx
@@ -59,9 +71,26 @@ class ItemProductionDetail(Document):
 					process_variants['BOM']=list(set(boms))
 					ipd.append(process_variants)
 				elif process.input_index:
-					pass
+					input_items = []
+					variants=[]
+					boms=[]
+					input_indexs = process.input_index.split(',')
+					process_variants['input_index']=process.input_index
+					for pro in ipd:
+						for input_index in input_indexs:
+							
+							if str(pro['index'])==input_index:
+								input_items.extend(pro["variants"])
+								
+					process_variants['process_record'] = process.process_record
+					Knitting_doc = frappe.get_doc('Knitting', process.process_record)
+					variants.extend(Knitting_doc.create_variants(input_items))
+					boms.extend(Knitting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count))
+					process_variants['variants'] = list(set(variants))
+					process_variants['BOM']=list(set(boms))
+					process_variants['input_item']=input_items
+					ipd.append(process_variants)
 				continue
-
 			if process.process_name == 'Dyeing':
 				process_variants['process'] = 'Dyeing'
 				process_variants['index']=process.idx

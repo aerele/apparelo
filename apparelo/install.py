@@ -31,13 +31,16 @@ def create_item_attributes():
     cutting.create_item_attribute()
     roll_printing.create_item_attribute()
 
+
 def create_item_template():
     knitting.create_item_template()
+    knitting.create_striped_item_template()
     dyeing.create_item_template()
     bleaching.create_item_template()
     compacting.create_item_template()
     steaming.create_item_template()
     roll_printing.create_item_template()
+    
 
 def create_attr_values():
     knitting.create_attr_values()

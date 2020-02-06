@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "creation": "2020-02-04 12:32:48.327659",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "yarn"
+ ],
+ "fields": [
+  {
+   "fieldname": "yarn",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Yarn",
+   "options": "Apparelo Yarn Shade",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-02-04 15:41:51.898705",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Combined  Yarn Shade",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "autoname": "field:yarn_shade",
+ "creation": "2020-02-04 12:13:48.535805",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "is_combined",
+  "combined_yarn",
+  "get_combined_yarn",
+  "yarn_shade",
+  "disabled"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "is_combined",
+   "fieldtype": "Check",
+   "label": "Is Combined"
+  },
+  {
+   "depends_on": "is_combined",
+   "fieldname": "get_combined_yarn",
+   "fieldtype": "Button",
+   "label": "Get Combined Yarn"
+  },
+  {
+   "fieldname": "yarn_shade",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Yarn Shade",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  },
+  {
+   "depends_on": "is_combined",
+   "fieldname": "combined_yarn",
+   "fieldtype": "Table MultiSelect",
+   "label": "Combined Yarn",
+   "options": "Combined  Yarn Shade"
+  }
+ ],
+ "links": [],
+ "modified": "2020-02-04 15:10:34.977767",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Apparelo Yarn Shade",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

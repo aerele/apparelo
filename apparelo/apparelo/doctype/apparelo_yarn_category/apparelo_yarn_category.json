@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "autoname": "field:yarn_category",
+ "creation": "2020-02-04 16:09:56.637026",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "yarn_category",
+  "disabled"
+ ],
+ "fields": [
+  {
+   "fieldname": "yarn_category",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Yarn Category",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled"
+  }
+ ],
+ "links": [],
+ "modified": "2020-02-04 16:11:20.313153",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Apparelo Yarn Category",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

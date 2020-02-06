@@ -28,10 +28,11 @@ def ipd_item_mapping(ipd_list,ipd_name,item):
 
 def get_description(process , process_record):
 	description = ''
-	doc = frappe.get_doc(process,process_record)
-	if doc.additional_information:
-		for add_info in doc.additional_information:
-			description += f'{add_info.parameter} : {add_info.value}\n'
-		return description
-	else:
-		return 'none'
+	if not process_record=='':
+		doc = frappe.get_doc(process,process_record)
+		if doc.additional_information:
+			for add_info in doc.additional_information:
+				description += f'{add_info.parameter} : {add_info.value}\n'
+			return description
+		else:
+			return 'none'
