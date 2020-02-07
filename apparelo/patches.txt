@@ -7,3 +7,4 @@ apparelo.apparelo.patches.v1.additional_parameter
 apparelo.apparelo.patches.v1.dia_to_apparelo_dia
 apparelo.apparelo.patches.v1.uom_creation
 apparelo.apparelo.patches.v1.root_warehouse
+apparelo.apparelo.patches.v1.create_item_group
