@@ -394,6 +394,29 @@ class ItemProductionDetail(Document):
 				continue
 		if self.additional_flows!=[]:
 			ipd=additional_process(self,ipd)
+		if self.is_combined_packing:
+			input_items_=[]
+			process_variants = {}
+			for ipd_ in self.combined_ipd:
+				ipd_item_mapping = frappe.db.get_value("IPD Item Mapping", {'item_production_details': ipd_.ipd})
+				ipd_doc=frappe.get_doc("Item Production Detail",ipd_.ipd)
+				variants = frappe.get_doc('IPD Item Mapping', ipd_item_mapping).get_process_variants("Ironing")
+				input_items_.extend(variants)
+			if self.process_name == 'Packing':
+				process_variants['process'] = 'Packing'
+				process_variants['index']="C1"
+				variants_=[]
+				boms=[]
+				process_variants['input_index']=''
+				process_variants['process_record'] = self.process_record
+				packing_doc = frappe.get_doc('Packing', self.process_record)
+				variants,piece_count= packing_doc.create_variants(input_items_,self.item)
+				variants_.extend(variants)
+				boms.extend(packing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count,self.item))
+				process_variants['variants'] = list(set(variants_))
+				process_variants['BOM']=list(set(boms))
+				process_variants['input_item']=list(set(input_items_))
+				ipd.append(process_variants)
 		return ipd
 
 def additional_process(self,ipd):

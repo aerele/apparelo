@@ -12,6 +12,11 @@
   "processes",
   "final_process",
   "additional_flows",
+  "section_break_7",
+  "is_combined_packing",
+  "combined_ipd",
+  "process_name",
+  "process_record",
   "amended_from"
  ],
  "fields": [
@@ -28,15 +33,6 @@
    "fieldtype": "Table",
    "label": "Processes",
    "options": "Item Production Detail Process"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Item Production Detail",
-   "print_hide": 1,
-   "read_only": 1
   },
   {
    "fieldname": "size",
@@ -61,11 +57,52 @@
    "fieldtype": "Select",
    "label": "Final Process",
    "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_combined_packing",
+   "fieldtype": "Check",
+   "label": "Is Combined Packing"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "combined_ipd",
+   "fieldtype": "Table MultiSelect",
+   "label": "Combined IPD",
+   "options": "Combined IPD"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "process_name",
+   "fieldtype": "Link",
+   "label": "Process",
+   "options": "DocType"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "process_record",
+   "fieldtype": "Dynamic Link",
+   "label": "Process Record",
+   "options": "process_name"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Item Production Detail",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-22 10:59:10.101556",
+ "modified": "2020-02-07 07:12:39.607478",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
