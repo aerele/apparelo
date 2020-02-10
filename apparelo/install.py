@@ -18,6 +18,7 @@ from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
 
 def after_install():
     remove_defaults()
+    create_item_group()
     create_new_uom()
     create_item_attributes()
     create_attr_values()
@@ -52,7 +53,7 @@ def remove_defaults():
     stock_setting.save()
 
 def create_new_uom():
-    if not frappe.db.get_value('UOM', {'uom_name': 'Combined Part'}, 'name'):
+    if not frappe.db.exists("UOM","Combined Part"):
         uom=frappe.new_doc("UOM")
         uom.uom_name= 'Combined Part'
         uom.save()
@@ -69,3 +70,10 @@ def create_root_warehouse():
                 "is_group": 1,
                 "parent_warehouse": f"All Warehouses - {abbr}"
             }).save()
+
+def create_item_group():
+    existing_item_group=frappe.db.get_value('Item Group', {'item_group_name': "Intermediate Product"}, 'name')
+    if not existing_item_group:
+        item_group=frappe.new_doc("Item Group")
+        item_group.item_group_name="Intermediate Product"
+        item_group.save()

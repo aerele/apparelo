@@ -45,27 +45,26 @@ class Packing(Document):
 								"item_code": input_item,
 								"uom": "Nos"
 							})
-					for item in self.additional_part:
-						item_list.append({
-							"item_code": item.item,
-							"uom": "Nos",
-							"qty": item.qty
-						})
-					existing_bom = frappe.db.get_value(
-						'BOM', {'item': variant}, 'name')
-					if not existing_bom:
-						bom = frappe.get_doc({
-							"doctype": "BOM",
-							"currency": get_default_currency(),
-							"item": variant,
-							"company": get_default_company(),
-							"items": item_list
-						})
-						bom.save()
-						bom.submit()
-						boms.append(bom.name)
-					else:
-						boms.append(existing_bom)
+				if self.enable_additional_parts:
+					matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+					for additional_ in self.additional_parts:
+						if additional_.based_on=="None":
+							item_list.append({"item_code": additional_.item,"qty":additional_.qty ,"uom": additional_.uom})
+					item_list.extend(matched_part)
+				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom:
+					bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						"item": variant,
+						"company": get_default_company(),
+						"items": item_list
+					})
+					bom.save()
+					bom.submit()
+					boms.append(bom.name)
+				else:
+					boms.append(existing_bom)
 		if self.input_qty > piece_count:
 			if self.input_qty % piece_count == 0:
 				repeating_count = self.input_qty // piece_count
@@ -130,12 +129,12 @@ class Packing(Document):
 									"item_code": items,
 									"uom": "Nos"
 								})
-				for item in self.additional_part:
-					item_list_.append({
-						"item_code": item.item,
-						"uom": "Nos",
-						"qty": item.qty
-					})
+				if self.enable_additional_parts:
+					matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+					for additional_part in self.additional_parts:
+						if additional_part.based_on=="None":
+							item_list_.append({"item_code": additional_part.item,"qty":additional_part.qty ,"uom": additional_part.uom})
+					item_list_.extend(matched_part)
 				existing_bom = frappe.db.get_value(
 					'BOM', {'item': variant}, 'name')
 				if not existing_bom:
