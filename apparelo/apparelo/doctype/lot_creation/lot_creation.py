@@ -232,17 +232,17 @@ def create_parent_warehouse(self, abbr):
 
 def create_warehouse(self, abbr):
     for location in self.location:
-        if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} - {abbr}"):
+        if not frappe.db.exists("Warehouse", f"{self.name} - {location.location} - {abbr}"):
             frappe.get_doc({
                 "doctype": "Warehouse",
-                "warehouse_name": f"{self.name}-{location.location}",
+                "warehouse_name": f"{self.name} - {location.location}",
                 "is_group": 0,
                 "parent_warehouse": f"{self.name} - {abbr}"
             }).save()
-        if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} Mistake - {abbr}"):
+        if not frappe.db.exists("Warehouse", f"{self.name} - {location.location} Mistake - {abbr}"):
             frappe.get_doc({
                 "doctype": "Warehouse",
-                "warehouse_name": f"{self.name}-{location.location} Mistake",
+                "warehouse_name": f"{self.name} - {location.location} Mistake",
                 "is_group": 0,
                 "parent_warehouse": f"{self.name} - {abbr}"
             }).save()
