@@ -29,7 +29,7 @@ class ItemProductionDetail(Document):
 				count +=1
 		if count != 0:
 			frappe.throw(_(f"The process {link} is not submitted"))
-	
+
 	def submit_all_process_records(self):
 		for process in self.processes:
 			process_doc = frappe.get_doc(process.process_name, process.process_record)
@@ -37,11 +37,10 @@ class ItemProductionDetail(Document):
 				try:
 					process_doc.submit()
 				except:
-					link = get_link_to_form(process.process_name,process.process_record)
+					link = get_link_to_form(process.process_name, process.process_record)
 					frappe.throw(_(f"Unable to submit process {link}"))
 					frappe.log_error(frappe.get_traceback())
 					return
-
 
 	def create_process_details(self):
 		ipd = []
