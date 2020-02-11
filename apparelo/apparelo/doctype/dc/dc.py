@@ -52,7 +52,7 @@ def create_purchase_order(self,abbr):
 		"dc":self.name,
 		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
-		"set_warehouse": f'{self.lot} - {abbr}', 
+		"set_warehouse": f'{self.lot} - {self.location} - {abbr}', 
 		"is_subcontracted": "Yes", 
 		"supplier_warehouse": f'{self.supplier} - {abbr}', 
 		"items": dc_items,
