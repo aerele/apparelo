@@ -12,6 +12,8 @@
   "processes",
   "final_process",
   "additional_flows",
+  "administrator_section_section",
+  "submit_internal_processes",
   "amended_from"
  ],
  "fields": [
@@ -61,11 +63,22 @@
    "fieldtype": "Select",
    "label": "Final Process",
    "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer"
+  },
+  {
+   "fieldname": "administrator_section_section",
+   "fieldtype": "Section Break",
+   "label": "Administrator Section"
+  },
+  {
+   "depends_on": "eval:frappe.user.has_role('System Manager')",
+   "fieldname": "submit_internal_processes",
+   "fieldtype": "Button",
+   "label": "Submit Internal Processes"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-22 10:59:10.101556",
+ "modified": "2020-02-11 19:31:09.313420",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
