@@ -12,6 +12,11 @@
   "processes",
   "final_process",
   "additional_flows",
+  "section_break_7",
+  "is_combined_packing",
+  "combined_ipds",
+  "process_name",
+  "process_record",
   "administrator_section_section",
   "submit_internal_processes",
   "amended_from"
@@ -30,15 +35,6 @@
    "fieldtype": "Table",
    "label": "Processes",
    "options": "Item Production Detail Process"
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Item Production Detail",
-   "print_hide": 1,
-   "read_only": 1
   },
   {
    "fieldname": "size",
@@ -65,6 +61,46 @@
    "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer"
   },
   {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_combined_packing",
+   "fieldtype": "Check",
+   "label": "Is Combined Packing"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "process_name",
+   "fieldtype": "Link",
+   "label": "Process",
+   "options": "DocType"
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "process_record",
+   "fieldtype": "Dynamic Link",
+   "label": "Process Record",
+   "options": "process_name"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Item Production Detail",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "combined_ipds",
+   "fieldtype": "Table MultiSelect",
+   "label": "Combined IPDs",
+   "options": "Combined IPDs"
+  },
+  {
    "fieldname": "administrator_section_section",
    "fieldtype": "Section Break",
    "label": "Administrator Section"
@@ -78,7 +114,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-11 19:31:09.313420",
+ "modified": "2020-02-12 13:26:13.538055",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
