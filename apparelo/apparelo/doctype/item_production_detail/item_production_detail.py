@@ -467,9 +467,9 @@ def additional_process(self,ipd):
 	return ipd
 
 def bom_item(qty,bom,additional_item,variants,items,planned_qty):
-	bom_=frappe.get_doc("BOM",bom)
+	bom_doc=frappe.get_doc("BOM",bom)
 	bom_quantity=(bom_.quantity/bom_.quantity)*planned_qty
-	for item in bom_.items:
+	for item in bom_doc.items:
 		if item.uom=='Gram':
 			bom_quantity=bom_quantity*item.stock_qty
 		if item.uom=='Nos' and item.qty>1:
@@ -482,10 +482,10 @@ def bom_item(qty,bom,additional_item,variants,items,planned_qty):
 				additional_item[item.item_code]+=item.qty*bom_quantity
 		else:
 			if item.item_code in variants:
-				for item_ in items:
-					if item.item_code==item_['item']:
-						item_['qty']+=item.qty*qty*bom_quantity
-						item_['uom']=item.uom
+				for bom_item in items:
+					if item.item_code==bom_item['item']:
+						bom_item['qty']+=item.qty*qty*bom_quantity
+						bom_item['uom']=item.uom
 						qty=1
 			else:
 				bom_item(qty,item.bom_no,additional_item,variants,items,bom_quantity)
@@ -493,42 +493,38 @@ def bom_item(qty,bom,additional_item,variants,items,planned_qty):
 	return additional_item,items
 
 def process_based_qty(process,ipd=None,lot=None,qty_based_bom=None):
-	items_=[]
+	items=[]
 	input_item=[]
 	qty_based_bom=[]
 	if lot:
 		lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
 		ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': lot_ipd})
-		ipd_doc=frappe.get_doc("Item Production Detail",lot_ipd)
 		process_bom= frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(process)
 		lot_doc=frappe.get_doc("Lot Creation",lot)
 		for item in lot_doc.po_items:
 			qty_based_bom.append({item.bom_no:item.planned_qty})
 	if ipd:
 		ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': ipd})
-		ipd_doc=frappe.get_doc("Item Production Detail",ipd)
 		process_bom= frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(process)
-	for bom_ in process_bom:
-		bom_doc=frappe.get_doc("BOM",bom_)
+	for bom in process_bom:
+		bom_doc=frappe.get_doc("BOM",bom)
 		for item in bom_doc.items:
 			input_item.append(item.item_code)
 	for item in set(input_item):
-		item_={}
-		item_['item']=item
-		item_['qty']=0
-		item_['uom']=''
-		items_.append(item_)
-	
-	input_=set()
+		item_list={}
+		item_list['item']=item
+		item_list['qty']=0
+		item_list['uom']=''
+		items.append(item_list)
+
 	additional_item={}
 	for bom_dict in qty_based_bom:
 		for bom in bom_dict:
-			item_list=[]
-			bom_=frappe.get_doc("BOM",bom)
-			for _item in bom_.items:
-				if _item.bom_no=='':
-					additional_item[_item.item_code]=0
+			bom_doc=frappe.get_doc("BOM",bom)
+			for item in bom_doc.items:
+				if item.bom_no=='':
+					additional_item[item.item_code]=0
 			qty=1
-			additional_item,items_=bom_item(qty,bom,additional_item,set(input_item),items_,bom_dict[bom])
-	return additional_item,items_
+			additional_item,items=bom_item(qty,bom,additional_item,set(input_item),items,bom_dict[bom])
+	return additional_item,items
 

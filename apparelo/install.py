@@ -62,3 +62,8 @@ def create_root_warehouse():
                 "is_group": 1,
                 "parent_warehouse": f"All Warehouses - {abbr}"
             }).save()
+def create_roll_uom():
+    if not frappe.db.exists("UOM","Roll"):
+        uom=frappe.new_doc("UOM")
+        uom.uom_name= 'Roll'
+        uom.save()

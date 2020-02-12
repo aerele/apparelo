@@ -1,35 +1,22 @@
 {
  "actions": [],
- "autoname": "format:{from_process}-{to_process}",
+ "autoname": "field:apparelo_process",
  "creation": "2020-02-11 12:49:11.310662",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "apparelo_process",
-  "in_primary_uom",
-  "out_primary_uom",
   "in_secondary_uom",
-  "out_secondary_uom"
+  "out_secondary_uom",
+  "is_multi_process"
  ],
  "fields": [
   {
    "fieldname": "apparelo_process",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "label": "Apparelo Process",
-   "options": "DocType"
-  },
-  {
-   "fieldname": "in_primary_uom",
-   "fieldtype": "Link",
-   "label": "In Primary UOM",
-   "options": "UOM"
-  },
-  {
-   "fieldname": "out_primary_uom",
-   "fieldtype": "Link",
-   "label": "Out Primary UOM",
-   "options": "UOM"
+   "unique": 1
   },
   {
    "fieldname": "in_secondary_uom",
@@ -42,10 +29,16 @@
    "fieldtype": "Link",
    "label": "Out Secondary UOM",
    "options": "UOM"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_multi_process",
+   "fieldtype": "Check",
+   "label": "Is Multi Process"
   }
  ],
  "links": [],
- "modified": "2020-02-11 12:57:13.056606",
+ "modified": "2020-02-12 21:37:38.200559",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Process",

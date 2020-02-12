@@ -6,10 +6,10 @@
  "engine": "InnoDB",
  "field_order": [
   "item_code",
-  "roll",
   "available_quantity",
   "quantity",
-  "uom",
+  "primary_uom",
+  "secondary_uom",
   "pf_item_code"
  ],
  "fields": [
@@ -19,12 +19,6 @@
    "in_list_view": 1,
    "label": "Item Code",
    "options": "Item"
-  },
-  {
-   "fieldname": "roll",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Roll"
   },
   {
    "fieldname": "available_quantity",
@@ -39,21 +33,31 @@
    "label": "Delivery Quantity"
   },
   {
-   "fieldname": "uom",
-   "fieldtype": "Link",
-   "label": "UOM",
-   "options": "UOM"
-  },
-  {
    "fetch_from": "item_code.print_code",
    "fieldname": "pf_item_code",
    "fieldtype": "Data",
    "label": "PF Item Code"
+  },
+  {
+   "fieldname": "primary_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Primary UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "fieldname": "secondary_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Secondary UOM",
+   "options": "UOM",
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-31 16:05:31.211321",
+ "modified": "2020-02-12 16:02:52.614778",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC Item",
