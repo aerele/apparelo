@@ -14,7 +14,7 @@
   "additional_flows",
   "section_break_7",
   "is_combined_packing",
-  "combined_ipd",
+  "combined_ipds",
   "process_name",
   "process_record",
   "amended_from"
@@ -70,13 +70,6 @@
   },
   {
    "depends_on": "is_combined_packing",
-   "fieldname": "combined_ipd",
-   "fieldtype": "Table MultiSelect",
-   "label": "Combined IPD",
-   "options": "Combined IPD"
-  },
-  {
-   "depends_on": "is_combined_packing",
    "fieldname": "process_name",
    "fieldtype": "Link",
    "label": "Process",
@@ -90,7 +83,6 @@
    "options": "process_name"
   },
   {
-   "depends_on": "is_combined_packing",
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -98,11 +90,18 @@
    "options": "Item Production Detail",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "depends_on": "is_combined_packing",
+   "fieldname": "combined_ipds",
+   "fieldtype": "Table MultiSelect",
+   "label": "Combined IPDs",
+   "options": "Combined IPDs"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-07 07:12:39.607478",
+ "modified": "2020-02-12 13:26:13.538055",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
