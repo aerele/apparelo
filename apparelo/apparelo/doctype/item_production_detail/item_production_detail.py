@@ -365,7 +365,6 @@ class ItemProductionDetail(Document):
 				continue
 
 			if process.process_name == 'Packing':
-				index=process.idx
 				process_variants['process'] = 'Packing'
 				process_variants['index']=process.idx
 				if process.input_item:
@@ -426,7 +425,6 @@ def additional_process(self,ipd):
 	for process in self.additional_flows:
 			input_index=''
 			process_variants={}
-			variants=[]
 			input_item=[]
 			process_variants['index']='A'+str(process.idx)
 			process_variants['process']=process.process_1
