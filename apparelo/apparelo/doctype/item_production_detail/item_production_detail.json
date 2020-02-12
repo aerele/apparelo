@@ -17,6 +17,8 @@
   "combined_ipds",
   "process_name",
   "process_record",
+  "administrator_section_section",
+  "submit_internal_processes",
   "amended_from"
  ],
  "fields": [
@@ -97,6 +99,17 @@
    "fieldtype": "Table MultiSelect",
    "label": "Combined IPDs",
    "options": "Combined IPDs"
+  },
+  {
+   "fieldname": "administrator_section_section",
+   "fieldtype": "Section Break",
+   "label": "Administrator Section"
+  },
+  {
+   "depends_on": "eval:frappe.user.has_role('System Manager')",
+   "fieldname": "submit_internal_processes",
+   "fieldtype": "Button",
+   "label": "Submit Internal Processes"
   }
  ],
  "is_submittable": 1,

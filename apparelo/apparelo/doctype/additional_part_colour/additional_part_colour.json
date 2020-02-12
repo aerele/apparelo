@@ -1,51 +1,46 @@
 {
  "actions": [],
- "creation": "2019-10-03 13:41:56.837595",
+ "creation": "2020-01-29 12:25:28.399544",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "qty",
-  "uom",
-  "based_on"
+  "piece_colour",
+  "part_colour"
  ],
  "fields": [
   {
    "fieldname": "item",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Item ",
-   "options": "Item"
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
   },
   {
-   "fieldname": "qty",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Qty"
-  },
-  {
-   "fieldname": "uom",
+   "fieldname": "piece_colour",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "UOM",
-   "options": "UOM"
+   "label": "Piece Colour",
+   "options": "Apparelo Colour",
+   "reqd": 1
   },
   {
-   "fieldname": "based_on",
-   "fieldtype": "Select",
+   "fieldname": "part_colour",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Based On",
-   "options": "\nSize\nColour\nSize and Colour\nNone",
+   "label": "Part Colour",
+   "options": "Apparelo Colour",
    "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-02 21:55:02.701497",
+ "modified": "2020-01-29 12:25:31.847684",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Stitching Additional Part",
+ "name": "Additional Part Colour",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,

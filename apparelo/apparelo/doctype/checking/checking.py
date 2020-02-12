@@ -39,9 +39,6 @@ class Checking(Document):
 						for colour in colours:
 							if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
 								item_list.append({"item_code": input_item,"uom": "Nos"})
-			if not self.additional_part==[]:
-				for item in self.additional_part:
-						item_list.append({"item_code": item.item,"uom": "Nos","qty":item.qty})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({
