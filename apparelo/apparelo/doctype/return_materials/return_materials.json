@@ -5,39 +5,18 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
-  "quantity",
-  "primary_uom",
+  "item_code",
+  "qty",
+  "uom",
   "secondary_uom",
-  "description"
+  "description",
+  "pf_item_code"
  ],
  "fields": [
-  {
-   "fieldname": "quantity",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Expected quantity",
-   "no_copy": 1
-  },
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Description",
-   "read_only": 1
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item Code",
-   "options": "Item"
-  },
-  {
-   "fieldname": "primary_uom",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Primary UOM",
-   "options": "UOM",
    "read_only": 1
   },
   {
@@ -47,11 +26,39 @@
    "label": "Secondary UOM",
    "options": "UOM",
    "read_only": 1
+  },
+  {
+   "fetch_from": "item.print_code",
+   "fieldname": "pf_item_code",
+   "fieldtype": "Data",
+   "label": "PF Item Code"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Expected quantity",
+   "no_copy": 1
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Primary UOM",
+   "options": "UOM",
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-12 16:03:28.732216",
+ "modified": "2020-02-13 16:10:16.836245",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",

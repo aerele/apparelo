@@ -11,6 +11,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.doctype.lot_creation.lot_creation import create_parent_warehouse
 from erpnext.stock.report.stock_balance.stock_balance import execute
+from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
@@ -149,13 +150,13 @@ def get_ipd_item(doc):
 		doc = frappe._dict(json.loads(doc))
 
 	doc['items'] = []
-	items=[]
 
 	lot=doc.get('lot')
 	if not frappe.get_doc('Lot Creation', lot).docstatus:
 		frappe.throw(_(f'Lot {lot} is not yet submitted'))
 
 	dc_process=doc.get('process_1')
+	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	location = doc.get('location')
 
 	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
@@ -171,14 +172,16 @@ def get_ipd_item(doc):
 		if len(data):
 			item['available_quantity'] = data[0]['actual_qty']
 			item_detail = frappe.get_doc('Item', item.item_code)
-			item['uom'] = item_detail.stock_uom
+			item['primary_uom'] = item_detail.stock_uom
+			item['secondary_uom'] = apparelo_process.in_secondary_uom
 			item['pf_item_code'] = item_detail.print_code
-
 	return items_to_be_sent
 
 
 @frappe.whitelist()
 def item_return(doc):
+	index=[]
+	process_list=set()
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 
@@ -190,10 +193,24 @@ def item_return(doc):
 
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
-
+	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
-	ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': lot_ipd})
-	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
-
-	expected_items_in_return = frappe.get_list('BOM', filters={'name': ['in', boms]}, fields='item,uom,description') 
+	lot_ipd_doc=frappe.get_doc("Item Production Detail",lot_ipd)
+	for process in lot_ipd_doc.processes:
+		if process.process_name==dc_process:
+			index.append(process.idx)
+	for process in lot_ipd_doc.processes:
+		for idx in index:
+			if process.input_index:
+				if str(idx) in process.input_index:
+					process_list.add(process.process_name)
+	additional_item_list,expected_items_in_return=process_based_qty(process=list(process_list),lot=lot)
+	ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': lot_ipd})
+	for item in expected_items_in_return:
+		for ipd_item in ipd_item_map.item_mapping:
+			if ipd_item.item == item['item_code']:
+				item_detail = frappe.get_doc('Item', item['item_code'])
+				item['description'] = ipd_item.description
+				item['secondary_uom'] = apparelo_process.out_secondary_uom
+				item['pf_item_code'] = item_detail.print_code
 	return expected_items_in_return

@@ -6,3 +6,4 @@ apparelo.apparelo.patches.v1.roll_printing_attribute
 apparelo.apparelo.patches.v1.additional_parameter
 apparelo.apparelo.patches.v1.dia_to_apparelo_dia
 apparelo.apparelo.patches.v1.root_warehouse
+apparelo.apparelo.patches.v1.create_roll_uom

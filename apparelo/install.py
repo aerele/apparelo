@@ -20,6 +20,7 @@ def after_install():
     remove_defaults()
     create_item_attributes()
     create_attr_values()
+    create_roll_uom()
     create_item_template()
     make_item_fields()
     make_custom_fields()

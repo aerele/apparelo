@@ -87,16 +87,16 @@
   },
   {
    "fieldname": "process_1",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Process",
-   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
+   "options": "Apparelo Process",
    "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-31 16:09:44.148392",
+ "modified": "2020-02-13 12:21:42.233744",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
