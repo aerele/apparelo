@@ -15,12 +15,14 @@ from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 from apparelo.apparelo.doctype.dc.dc import make_item_fields
 from apparelo.apparelo.doctype.additional_parameters import additional_parameters
 from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
+from apparelo.apparelo.doctype.apparelo_process.apparelo_process import create_apparelo_process
 
 def after_install():
     remove_defaults()
     create_item_attributes()
     create_attr_values()
     create_roll_uom()
+    create_apparelo_process()
     create_item_template()
     make_item_fields()
     make_custom_fields()
