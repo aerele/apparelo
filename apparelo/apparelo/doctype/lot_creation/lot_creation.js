@@ -176,6 +176,17 @@ frappe.ui.form.on('Lot Creation', {
 				refresh_field('mr_items');
 			}
 		});
+		frappe.call({
+			method: "apparelo.apparelo.doctype.lot_creation.lot_creation.cloth_qty",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('cloth_quantity', r.message);
+				}
+				refresh_field('cloth_quantity');
+			}
+		});
 	},
 	for_warehouse: function(frm) {
 		if (frm.doc.mr_items) {
