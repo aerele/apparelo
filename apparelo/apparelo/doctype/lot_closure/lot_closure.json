@@ -1,0 +1,66 @@
+{
+ "actions": [],
+ "creation": "2020-02-11 12:40:08.892440",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lot",
+  "check",
+  "surplus_item_details",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "lot",
+   "fieldtype": "Link",
+   "label": "Lot",
+   "options": "Lot Creation"
+  },
+  {
+   "fieldname": "check",
+   "fieldtype": "Button",
+   "label": "Check"
+  },
+  {
+   "fieldname": "surplus_item_details",
+   "fieldtype": "Table",
+   "label": "Surplus Item Details",
+   "options": "Lot Closure Surplus Item"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Closure",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2020-02-11 12:41:57.375559",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Closure",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
