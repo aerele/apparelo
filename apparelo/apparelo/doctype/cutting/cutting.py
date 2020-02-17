@@ -11,12 +11,15 @@ from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext.stock.get_item_details import get_conversion_factor
+from collections import Counter
+
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
 		create_item_template(self)
 
 	def create_variants(self, input_item_names,size):
+		cutting_attribute={}
 		input_items = []
 		for input_item_name in set(input_item_names):
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -24,9 +27,14 @@ class Cutting(Document):
 		variants = []
 		if self.attribute_validate("Apparelo Colour", attribute_set["Apparelo Colour"]) and self.attribute_validate("Dia", attribute_set["Dia"]):
 			parts = set(self.get_attribute_values("Part"))
+			variant_attribute_set = {}
 			for part in parts:
-				variant_attribute_set = {}
-				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Part'] = []
+				variant_attribute_set['Part'].append(part)
+				part_=frappe.get_doc("Apparelo Part",part)
+				if part_.is_combined:
+					for part_ in part_.combined_parts:
+						variant_attribute_set['Part'].append(part_.parts)
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
 				cutting_size=self.get_attribute_values('Apparelo Size', part)
 				if self.based_on_style==1:
@@ -37,11 +45,17 @@ class Cutting(Document):
 				if cutting_size==size:
 					variant_attribute_set['Apparelo Size'] = cutting_size
 					variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+					counter_attr=Counter(cutting_attribute)
+					attr_set=Counter(variant_attribute_set)
+					counter_attr.update(attr_set)
+					cutting_attribute=dict(counter_attr)
+					for value in cutting_attribute:
+						cutting_attribute[value]=list(set(cutting_attribute[value]))
 				else:
 					frappe.throw(_("Size is not available"))
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
-		return list(set(variants)),variant_attribute_set
+		return list(set(variants)),cutting_attribute
 
 	def attribute_validate(self, attribute_name, input_attribute_values):
 		if len(set(input_attribute_values))==len(set(self.get_attribute_values(attribute_name))):
@@ -58,41 +72,58 @@ class Cutting(Document):
 				return {"Dia": detail.dia, "Weight": detail.weight}
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
+		combined_item=[]
 		input_items = []
+		combo_=[]
+		boms = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
-		boms = []
+		for part in attribute_set["Part"]:
+			part_=frappe.get_doc("Apparelo Part",part)
+			if part_.is_combined:
+				combined_part={}
+				variant=[]
+				variant_=[]
+				combined_part['color']=attribute_set["Apparelo Colour"]
+				combined_part['Size']=attribute_set["Apparelo Size"]
+				combined_part['Part']=part
+				count=len(part_.combined_parts)
+				combined_part['count']=count
+				for variant in variants:
+					var=frappe.get_doc('Item', variant)
+					attr = get_attr_dict(var.attributes)
+					if part.upper() in variant:
+						variant_.append(variant)
+						bom=create_common_bom(self,variant,attr,input_items)
+						variants.remove(variant)
+				combined_part['variants']=variant_ 
+				combo_.append(combined_part)
 		for variant in variants:
 			var=frappe.get_doc('Item', variant)
 			attr = get_attr_dict(var.attributes)
-			attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
-			for input_item in input_items:
-				input_item_attr = get_attr_dict(input_item.attributes)
-				if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"]:
-					if input_item_attr["Dia"][0] == attr["Dia"]:
-						existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
-						if not existing_bom:
-							conversion_factor=get_conversion_factor(input_item.name,'Gram')
-							bom = frappe.get_doc({
-								"doctype": "BOM",
-								"currency": get_default_currency(),
-								"item": variant,
-								"company": get_default_company(),
-								"items": [
-									{
-										"item_code": input_item.name,
-										"qty": attr["Weight"],
-										"uom": 'Gram',
-										"conversion_factor":conversion_factor["conversion_factor"]
-									}
-								]
-							})
-							bom.save()
-							bom.submit()
-							boms.append(bom.name)
+			if combo_:
+				for combo in combo_:
+					if len(attr['Part'][0])<len(combo['Part']) and attr['Part'][0] in combo['Part']:
+						combo_bom=create_combined_bom(combo,variant)
+						boms.append(combo_bom)
+					else:
+						bom=create_common_bom(self,variant,attr,input_items)
+						bom_doc=frappe.get_doc("BOM",bom)
+						if not is_combined_parts(bom_doc.item_name):
+							boms.append(bom)
 						else:
-							boms.append(existing_bom)
-		return boms
+							combined_item.append(bom.item_name)
+
+			else:
+				bom_=create_common_bom(self,variant,attr,input_items)
+				bom_doc=frappe.get_doc("BOM",bom_)
+				if not is_combined_parts(bom_doc.item_name):
+					boms.append(bom_)
+				else:
+					combined_item.append(bom_.item_name)
+		for item in combined_item:
+			variants.remove(item)
+		return boms,variants
 
 	def get_attribute_values(self, attribute_name, part=None):
 		attribute_value = set()
@@ -237,3 +268,76 @@ def get_part_colour_combination(doc):
 				for style in doc.get('styles'):
 					part_colour_combination.append({'part':part['parts'],'colour':colour['colors'],'style':style['styles']})
 	return(part_colour_combination)
+
+def create_combined_bom(combo,input_item):
+	weight=1
+	input_items=[]
+	item_doc=frappe.get_doc("Item",input_item)
+	for variant in combo['variants']:
+		item_ = get_attr_dict(item_doc.attributes)
+		if item_["Apparelo Colour"][0] in combo["color"] and item_["Apparelo Size"][0] in combo["Size"]:
+			if item_["Apparelo Colour"][0].upper() in variant and item_["Apparelo Size"][0].upper() in variant:
+				existing_bom = frappe.db.get_value('BOM', {'item':input_item}, 'name')
+				if not existing_bom:
+					bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						"item": input_item,
+						"company": get_default_company(),
+						"quantity": 1,
+						"uom": 'Combined Part',
+						"items": [
+							{
+								"item_code": variant,
+								"qty": weight/combo['count'],
+								"uom": 'Combined Part',
+								"stock_qty":weight/combo['count'],
+								"stock_uom":'Combined Part'
+							}
+						]
+					})
+					bom.save()
+					bom.submit()
+					return bom.name
+				else:
+					return existing_bom
+def create_common_bom(self,variant,attr,input_items):
+	attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))				
+	for input_item in input_items:
+		input_item_attr = get_attr_dict(input_item.attributes)
+		if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"]:
+			if input_item_attr["Dia"][0] == attr["Dia"]:
+				existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
+				if not existing_bom:
+					conversion_factor=get_conversion_factor(input_item.name,'Gram')
+					bom = frappe.get_doc({
+						"doctype": "BOM",
+						"currency": get_default_currency(),
+						"item": variant,
+						"company": get_default_company(),
+						"items": [
+							{
+								"item_code": input_item.name,
+								"qty": attr["Weight"],
+								"uom": 'Gram',
+								"conversion_factor":conversion_factor["conversion_factor"]
+							}
+						]
+					})
+					bom.save()
+					bom.submit()
+					return bom.name
+				else:
+					return existing_bom
+
+def is_combined_parts(item):
+	item_doc=frappe.get_doc("Item",item)
+	for attr in item_doc.attributes:
+		if attr.attribute=="Apparelo Part":
+			part=attr.attribute_value
+			part_=frappe.get_doc("Apparelo Part",part)
+			if part_.is_combined:
+				return True
+			else:
+				return False
+

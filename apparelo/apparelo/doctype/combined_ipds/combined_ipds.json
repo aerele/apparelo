@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "creation": "2020-02-12 13:25:41.152986",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "ipd"
+ ],
+ "fields": [
+  {
+   "fieldname": "ipd",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "IPD",
+   "options": "Item Production Detail",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-02-12 13:25:47.818913",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Combined IPDs",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

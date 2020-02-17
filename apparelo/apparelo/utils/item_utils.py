@@ -19,8 +19,27 @@ def create_variants(item_template, args):
 			variants.append(variant.name)
 		else:
 			variants.append(existing_variant)
-
 	return variants
+def create_additional_variants(item_template, args,qty,uom):
+	args_set = generate_keyed_value_combinations(args)
+	variants = []
+	for attribute_values in args_set:
+		additional_parts={}
+		existing_variant = get_variant(item_template, args=attribute_values)
+		if not existing_variant:
+			variant = create_variant(item_template, attribute_values)
+			variant.save()
+			additional_parts['item_code']=variant.name
+			additional_parts['qty']=qty
+			additional_parts['uom']=uom
+			variants.append(additional_parts)
+		else:
+			additional_parts['item_code']=existing_variant
+			additional_parts['qty']=qty
+			additional_parts['uom']=uom
+			variants.append(additional_parts)
+	return variants
+
 
 def get_attr_dict(attrs):
 	attribute_set = {}
@@ -98,3 +117,59 @@ def get_bom_diff(bom1, bom2):
 					out.removed.append([df.fieldname, d.as_dict()])
 
 	return out
+
+def create_additional_parts(colors,sizes,items):
+	additional_parts=[]
+	for item in items:
+		attribute_set={}
+		colors_=[]
+		sizes_=[]
+		if item.based_on=="Size and Colour":
+			for size in sizes:
+				for color in colors:
+					if item.item == size.item and item.item == color.item:
+						if not color.part_colour in colors_:
+							colors_.append(color.part_colour)
+						if not size.part_size  in sizes_:
+							sizes_.append(size.part_size)
+			attribute_set["Apparelo Colour"]=colors_
+			attribute_set["Apparelo Size"]=sizes_
+			additional_parts.extend(create_additional_variants(item.item,attribute_set,item.qty,item.uom))
+		if item.based_on=="Size":
+			for size in sizes:
+				if item.item ==size.item:
+					if not size.part_size  in sizes_:
+						sizes_.append(size.part_size)
+			attribute_set["Apparelo Size"]=sizes_
+			additional_parts.extend(create_additional_variants(item.item,attribute_set,item.qty,item.uom))
+		if item.based_on=="Colour":
+			for color in colors:
+				if item.item ==color.item:
+					if not color.part_colour in colors_:
+						colors_.append(color.part_colour)
+			attribute_set["Apparelo Colour"]=colors_
+			additional_parts.extend(create_additional_variants(item.item,attribute_set,item.qty,item.uom))
+	return additional_parts
+
+def matching_additional_part(additional_parts,colors,sizes,items,variant):
+	matched_part=[]
+	for additional_part in additional_parts:
+		for item in items:
+			if item.item in additional_part['item_code']:
+				if item.based_on=="Size and Colour":
+					for size in sizes:
+						for color in colors:
+							if item.item == size.item and item.item == color.item:
+								if color.piece_colour.upper() in variant and size.piece_size.upper() in variant and color.part_colour.upper() in additional_part['item_code'] and size.part_size.upper() in additional_part['item_code']:
+									matched_part.append(additional_part)
+				if item.based_on=="Size":
+					for size in sizes:
+						if item.item ==size.item:
+							if size.piece_size.upper()  in variant and size.part_size.upper() in additional_part['item_code']:
+								matched_part.append(additional_part)
+				if item.based_on=="Colour":
+					for color in colors:
+						if item.item ==color.item:
+							if color.piece_colour.upper() in variant and color.part_colour.upper() in additional_part['item_code']:
+								matched_part.append(additional_part)
+	return matched_part

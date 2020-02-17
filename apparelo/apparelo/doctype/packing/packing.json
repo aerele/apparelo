@@ -7,7 +7,6 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
-  "additional_part",
   "additional_information",
   "conversion_details_section",
   "input_qty",
@@ -15,6 +14,25 @@
   "column_break_12",
   "input_uom",
   "output_uom",
+  "section_break_9",
+  "enable_additional_parts",
+  "section_break_11",
+  "color_additional_items",
+  "get_piece_color",
+  "column_break_14",
+  "piece_colors",
+  "is_part_color_same_as_piece_color",
+  "section_break_17",
+  "additional_parts_colour",
+  "section_break_19",
+  "size_additional_items",
+  "get_piece_size",
+  "column_break_22",
+  "piece_sizes",
+  "is_part_size_same_as_piece_size",
+  "section_break_25",
+  "additional_parts_size",
+  "additional_parts",
   "amended_from"
  ],
  "fields": [
@@ -24,13 +42,6 @@
    "in_list_view": 1,
    "label": "Item",
    "options": "Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "additional_part",
-   "fieldtype": "Table",
-   "label": "Additional Part",
-   "options": "Stitching Additional Part",
    "reqd": 1
   },
   {
@@ -76,6 +87,85 @@
    "reqd": 1
   },
   {
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_additional_parts",
+   "fieldtype": "Check",
+   "label": "Enable Additional Parts"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.__islocal",
+   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts==1",
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "get_piece_color",
+   "fieldtype": "Button",
+   "label": "Get Piece Color"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "piece_colors",
+   "fieldtype": "Table MultiSelect",
+   "label": "Piece Colors",
+   "options": "Cutting Colors"
+  },
+  {
+   "default": "0",
+   "depends_on": "enable_additional_parts",
+   "fieldname": "is_part_color_same_as_piece_color",
+   "fieldtype": "Check",
+   "label": "is part color same as piece color"
+  },
+  {
+   "collapsible_depends_on": "eval: doc.__islocal",
+   "depends_on": "enable_additional_parts",
+   "fieldname": "section_break_17",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "additional_parts_colour",
+   "fieldtype": "Table",
+   "label": "Additional Parts Colour",
+   "options": "Additional Part Colour"
+  },
+  {
+   "collapsible": 1,
+   "collapsible_depends_on": "eval: doc.__islocal",
+   "depends_on": "eval: doc.docstatus == 0 && doc.enable_additional_parts == 1",
+   "fieldname": "section_break_19",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "get_piece_size",
+   "fieldtype": "Button",
+   "label": "Get Piece Size"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "column_break_22",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -85,15 +175,56 @@
    "read_only": 1
   },
   {
-   "fieldname": "additional_information",
+   "depends_on": "enable_additional_parts",
+   "fieldname": "piece_sizes",
+   "fieldtype": "Table MultiSelect",
+   "label": "Piece Sizes",
+   "options": "Cutting Size"
+  },
+  {
+   "default": "0",
+   "depends_on": "enable_additional_parts",
+   "fieldname": "is_part_size_same_as_piece_size",
+   "fieldtype": "Check",
+   "label": "is part size same as piece size"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "additional_parts_size",
    "fieldtype": "Table",
-   "label": "Additional Information",
-   "options": "Additional Information Table"
+   "label": "Additional Parts Size",
+   "options": "Additional Part Size"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "additional_parts",
+   "fieldtype": "Table",
+   "label": "Additional Parts",
+   "options": "Stitching Additional Part"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "color_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Color Additional Items",
+   "options": "Additional Item"
+  },
+  {
+   "depends_on": "enable_additional_parts",
+   "fieldname": "size_additional_items",
+   "fieldtype": "Table MultiSelect",
+   "label": "Size Additional Items",
+   "options": "Additional Item"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-24 15:56:01.172038",
+ "modified": "2020-02-05 00:49:05.734614",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Packing",
@@ -112,7 +243,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
