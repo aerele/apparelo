@@ -227,8 +227,8 @@ class ItemProductionDetail(Document):
 								input_items_.extend(input_items)
 					process_variants['process_record'] = process.process_record
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
-					variants,attribute_set = cutting_doc.create_variants(input_items,item_size)
-					bom,new_variants=cutting_doc.create_boms(input_items, variants, attribute_set,item_size,colour,piece_count)
+					variants,attribute_set = cutting_doc.create_variants(input_items_,item_size)
+					bom,new_variants=cutting_doc.create_boms(input_items_, variants, attribute_set,item_size,colour,piece_count)
 					new_variants.extend(new_variants)
 					boms.extend(bom)
 					counter_attr=Counter(cutting_attribute)
@@ -405,6 +405,7 @@ class ItemProductionDetail(Document):
 					process_variants['input_item']=list(set(input_items_))
 					ipd.append(process_variants)
 				continue
+
 		if self.additional_flows!=[]:
 			ipd=additional_process(self,ipd)
 		if self.is_combined_packing:
