@@ -44,7 +44,6 @@ class Compacting(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
-		doc_values = self.get_variant_values()
 		for item in input_items:
 			for variant in variants:
 				for color in colour:
@@ -78,8 +77,6 @@ class Compacting(Document):
 									boms.append(existing_bom_name)
 								else:
 									frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
-						else:
-							frappe.throw(_("Unexpected error while creating BOM. Expected variant not found in list of supplied variants"))
 		return boms
 
 	def get_variant_values(self):
