@@ -10,6 +10,7 @@
   "lot",
   "process_1",
   "supplier",
+  "location",
   "get_items",
   "items",
   "get_return_item",
@@ -18,14 +19,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "process_1",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Process",
-   "options": "\nKnitting\nDyeing\nBleaching\nCompacting\nSteaming\nCutting\nPiece Printing\nStitching\nLabel Fusing\nChecking\nIroning\nPacking\nRoll Printing\nIroning and Packing\nStitching to Packing\nYarn\nCutting to Packing\nWashing\nRework(Piece)\nTransfer",
-   "reqd": 1
-  },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
@@ -43,14 +36,13 @@
   {
    "fieldname": "items",
    "fieldtype": "Table",
-   "label": "Items",
+   "label": "Delivery Items",
    "options": "DC Item"
   },
   {
-   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_items",
    "fieldtype": "Button",
-   "label": "Get Items"
+   "label": "Get delivery items"
   },
   {
    "fieldname": "naming_series",
@@ -63,10 +55,9 @@
    "set_only_once": 1
   },
   {
-   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_return_item",
    "fieldtype": "Button",
-   "label": "Get Return Item"
+   "label": "Get items expected in return"
   },
   {
    "fieldname": "section_break_5",
@@ -75,7 +66,7 @@
   {
    "fieldname": "return_materials",
    "fieldtype": "Table",
-   "label": "Return Materials",
+   "label": "Items Expected in Return",
    "options": "Return Materials"
   },
   {
@@ -86,11 +77,26 @@
    "options": "DC",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location",
+   "reqd": 1
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Process",
+   "options": "Apparelo Process",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-28 11:51:55.726338",
+ "modified": "2020-02-13 12:21:42.233744",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

@@ -15,6 +15,7 @@ from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 from apparelo.apparelo.doctype.dc.dc import make_item_fields
 from apparelo.apparelo.doctype.additional_parameters import additional_parameters
 from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
+from apparelo.apparelo.doctype.apparelo_process.apparelo_process import create_apparelo_process
 
 
 def after_install():
@@ -23,6 +24,8 @@ def after_install():
     create_new_uom()
     create_item_attributes()
     create_attr_values()
+    create_roll_uom()
+    create_apparelo_process()
     create_item_template()
     make_item_fields()
     make_custom_fields()
@@ -79,6 +82,11 @@ def create_root_warehouse():
                 "is_group": 1,
                 "parent_warehouse": f"All Warehouses - {abbr}"
             }).save()
+def create_roll_uom():
+    if not frappe.db.exists("UOM","Roll"):
+        uom=frappe.new_doc("UOM")
+        uom.uom_name= 'Roll'
+        uom.save()
 
 def create_item_group():
     existing_item_group=frappe.db.get_value('Item Group', {'item_group_name': "Intermediate Product"}, 'name')
