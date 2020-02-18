@@ -8,7 +8,12 @@ from frappe.model.document import Document
 
 
 class IPDItemMapping(Document):
-	pass
+	def get_process_variants(self, process):
+		variants = []
+		for item_mapping in self.item_mapping:
+			if item_mapping.process_1 == process:
+				variants.append(item_mapping.item)
+		return variants
 def ipd_item_mapping(ipd_list,ipd_name,item):
 	ipd_item=[]
 	for ipd in ipd_list:

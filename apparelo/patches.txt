@@ -5,5 +5,7 @@ apparelo.apparelo.patches.v1.attribute_value
 apparelo.apparelo.patches.v1.roll_printing_attribute
 apparelo.apparelo.patches.v1.additional_parameter
 apparelo.apparelo.patches.v1.dia_to_apparelo_dia
+apparelo.apparelo.patches.v1.uom_creation
 apparelo.apparelo.patches.v1.root_warehouse
 apparelo.apparelo.patches.v1.Striped_knitting
+apparelo.apparelo.patches.v1.create_item_group

@@ -1,9 +1,7 @@
 // Copyright (c) 2019, Aerele Technologies Private Limited and contributors
 // For license information, please see license.txt
-
+{% include 'apparelo/apparelo/common_fields.js' %};
 frappe.ui.form.on('Cutting', {
-	// refresh: function(frm) {
-
 	get_size_combination:function(frm){
 		const set_fields =['part','size'];
 		frappe.call({
@@ -49,5 +47,4 @@ frappe.ui.form.on('Cutting', {
 			}
 		});
 	}
-	// }
 });

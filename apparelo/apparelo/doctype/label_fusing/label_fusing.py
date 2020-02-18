@@ -7,7 +7,7 @@ import frappe
 from frappe.model.document import Document
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
-from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
 
 class LabelFusing(Document):
 	def on_submit(self):
@@ -22,9 +22,9 @@ class LabelFusing(Document):
 		return list(set(variants))
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
-		
 		boms = []
-
+		if self.enable_additional_parts:
+			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
 			for input_item in input_item_names:
@@ -32,8 +32,12 @@ class LabelFusing(Document):
 					for colour in attribute_set["Apparelo Colour"]:
 						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
-			for additional_part in self.additional_parts:
-				item_list.append({"item_code": additional_part.item,"qty":additional_part.qty,"uom": "Nos"})
+			if self.enable_additional_parts:
+				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+				for additional_part in self.additional_parts:
+					if additional_part.based_on=="None":
+						item_list.append({"item_code": additional_part.item,"qty":additional_part.qty ,"uom": additional_part.uom})
+				item_list.extend(matched_part)
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
 				bom = frappe.get_doc({

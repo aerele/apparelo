@@ -8,10 +8,6 @@
  "field_order": [
   "dia",
   "type",
-  "gsm",
-  "texture",
-  "gauge",
-  "loop_length",
   "additional_information",
   "is_striped",
   "apparelo_yarn_ratio",
@@ -96,26 +92,6 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
-  },
-  {
-   "fieldname": "gsm",
-   "fieldtype": "Data",
-   "label": "GSM"
-  },
-  {
-   "fieldname": "texture",
-   "fieldtype": "Data",
-   "label": "Texture"
-  },
-  {
-   "fieldname": "gauge",
-   "fieldtype": "Data",
-   "label": "Gauge"
-  },
-  {
-   "fieldname": "loop_length",
-   "fieldtype": "Data",
-   "label": "Loop Length"
   },
   {
    "default": "0",
