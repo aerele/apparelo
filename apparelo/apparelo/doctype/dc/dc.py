@@ -202,7 +202,7 @@ def item_return(doc):
 	for process in lot_ipd_doc.processes:
 		for idx in index:
 			if process.input_index:
-				if str(idx) in process.input_index:
+				if str(idx) == process.input_index:
 					process_list.add(process.process_name)
 	additional_item_list,expected_items_in_return=process_based_qty(process=list(process_list),lot=lot)
 	ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': lot_ipd})
