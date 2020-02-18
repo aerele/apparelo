@@ -79,13 +79,15 @@ after_install = "apparelo.install.after_install"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Location": {
+		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_surplus_location_warehouse"
+	},
+	"Supplier": {
+		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_supplier_warehouse"
+	}
+
+}
 
 # Scheduled Tasks
 # ---------------

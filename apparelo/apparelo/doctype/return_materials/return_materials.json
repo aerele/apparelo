@@ -5,12 +5,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "pf_item_code",
   "item_code",
   "qty",
   "uom",
+  "secondary_qty",
   "secondary_uom",
-  "description",
-  "pf_item_code"
+  "description"
  ],
  "fields": [
   {
@@ -20,6 +21,7 @@
    "read_only": 1
   },
   {
+   "columns": 1,
    "fieldname": "secondary_uom",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -31,34 +33,44 @@
    "fetch_from": "item.print_code",
    "fieldname": "pf_item_code",
    "fieldtype": "Data",
-   "label": "PF Item Code"
+   "in_list_view": 1,
+   "label": "PF Item Code",
+   "read_only": 1
   },
   {
    "fieldname": "item_code",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Item Code",
    "options": "Item"
   },
   {
+   "columns": 1,
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Expected quantity",
+   "label": "Expected Qty",
    "no_copy": 1
   },
   {
+   "columns": 1,
    "fieldname": "uom",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Primary UOM",
    "options": "UOM",
    "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "secondary_qty",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Secondary Qty"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-13 16:10:16.836245",
+ "modified": "2020-02-18 13:16:33.584300",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",

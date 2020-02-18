@@ -3,59 +3,42 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe ,json
-from frappe import _,msgprint
+import frappe, json
+from frappe import _, msgprint
 from six import string_types, iteritems
 from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
-from apparelo.apparelo.doctype.lot_creation.lot_creation import create_parent_warehouse
 from erpnext.stock.report.stock_balance.stock_balance import execute
 from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
-		parent= "Supplier Warehouse"
-		create_parent_warehouse(parent,abbr)
-		create_warehouse(self,parent,abbr)
 		new_po=create_purchase_order(self,abbr)
 		stock_entry_type="Material Receipt"
 		po=""
 		stock=create_stock_entry(self,po,stock_entry_type,abbr)
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock.name, stock.name))))
-		# msgprint(_([new_po.name]))
-		# msgprint(_([stock.name]))
-		# stock_entry_type="Send to Subcontractor"
-		# create_purchase_receipt(self,new_po,abbr)
-		# create_stock_entry(self,new_po,stock_entry_type,abbr)
-		pass
-def create_warehouse(self,parent,abbr):
-	if not frappe.db.exists("Warehouse",f"{self.supplier} - {abbr}"):
-		frappe.get_doc({
-			"doctype":"Warehouse",
-			"warehouse_name": self.supplier,
-			"is_group": 0,
-			"parent_warehouse":f"{parent} - {abbr}"
-			}).save()
+
 def create_purchase_order(self,abbr):
 	dc_items=[]
 	supplied_items=[]
 	for item_ in self.return_materials:
 		dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.quantity})
 	for item in self.items:
-		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": f'{self.lot} - {abbr}'})
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse":  f'{self.lot} - {self.location} - {abbr}'})
 	po=frappe.get_doc({
 		"doctype": "Purchase Order",
-		"docstatus": 1, 
+		"docstatus": 1,
 		"supplier": self.supplier,
 		"dc":self.name,
 		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
-		"set_warehouse": f'{self.lot} - {self.location} - {abbr}', 
-		"is_subcontracted": "Yes", 
-		"supplier_warehouse": f'{self.supplier} - {abbr}', 
+		"set_warehouse": f'{self.lot} - {self.location} - {abbr}',
+		"is_subcontracted": "Yes",
+		"supplier_warehouse": f'{self.supplier} - {abbr}',
 		"items": dc_items,
 		"supplied_items": supplied_items})
 	po.save()
@@ -63,11 +46,11 @@ def create_purchase_order(self,abbr):
 def create_purchase_receipt(self,po,abbr):
 	item_list=[]
 	for item in po.items:
-		item_list.append({ "item_code": item.item_name, "qty": item.qty,"bom": item.bom,"schedule_date": add_days(nowdate(), 7) ,"warehouse": f'{self.lot} - {abbr}'})
+		item_list.append({ "item_code": item.item_name, "qty": item.qty,"bom": item.bom,"schedule_date": add_days(nowdate(), 7) ,"warehouse":  f'{self.lot} - {self.location} - {abbr}'})
 	frappe.get_doc({ 
 		"docstatus": 1, 
 		"supplier": self.supplier, 
-		"set_warehouse": f'{self.lot} - {abbr}', 
+		"set_warehouse":  f'{self.lot} - {self.location} - {abbr}',
 		"is_subcontracted": "Yes", 
 		"supplier_warehouse": f'{self.supplier} - {abbr}', 
 		"doctype": "Purchase Receipt", 
@@ -75,12 +58,12 @@ def create_purchase_receipt(self,po,abbr):
 def create_stock_entry(self,po,stock_entry_type,abbr):
 	item_list=[]
 	for item in self.return_materials:
-		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse": f'{self.lot} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.quantity })
+		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse":  f'{self.lot} - {self.location} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.quantity })
 	if po=="":
 		se=frappe.get_doc({ 
 			"docstatus": 1,
 			"stock_entry_type": stock_entry_type,
-			"doctype": "Stock Entry", 
+			"doctype": "Stock Entry",
 			"items": item_list})
 		se.save()
 	else:
@@ -88,7 +71,7 @@ def create_stock_entry(self,po,stock_entry_type,abbr):
 			"docstatus": 1,
 			"stock_entry_type": stock_entry_type,
 			"purchase_order": po.name,
-			"doctype": "Stock Entry", 
+			"doctype": "Stock Entry",
 			"items": item_list})
 		se.save()
 	return se
@@ -104,41 +87,41 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 def make_item_fields(update=True):
 	custom_fields={'Item': [
 		{
-	"fieldname": "print_code", 
-	"fieldtype": "Data", 
-	"label": "PF Item Code", 
+	"fieldname": "print_code",
+	"fieldtype": "Data",
+	"label": "PF Item Code",
 		}
 	]}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
 def make_custom_fields(update=True):
 	custom_fields={'Supplier': [
 		{
-	"fieldname": "supplier_process", 
-	"fieldtype": "Table", 
-	"label": "Supplier Process", 
-	"options": "Supplier_Process", 
+	"fieldname": "supplier_process",
+	"fieldtype": "Table",
+	"label": "Supplier Process",
+	"options": "Supplier_Process",
 	"reqd": 1
 	}
 	],
 	'BOM': [
 		{
-	"fieldname": "process", 
-	"fieldtype": "Link", 
-	"label": "Process", 
+	"fieldname": "process",
+	"fieldtype": "Link",
+	"label": "Process",
 	"options": "Multi Process"
 		}
 	],
 	'Purchase Order': [
 		{
-	"fieldname": "dc", 
-	"fieldtype": "Link", 
-	"label": "DC", 
+	"fieldname": "dc",
+	"fieldtype": "Link",
+	"label": "DC",
 	"options": "DC"
 		},
 		{
-	"fieldname": "lot", 
-	"fieldtype": "Link", 
-	"label": "Lot", 
+	"fieldname": "lot",
+	"fieldtype": "Link",
+	"label": "Lot",
 	"options": "Lot Creation"
 		}
 	]
@@ -202,7 +185,7 @@ def item_return(doc):
 	for process in lot_ipd_doc.processes:
 		for idx in index:
 			if process.input_index:
-				if str(idx) in process.input_index:
+				if str(idx) == process.input_index:
 					process_list.add(process.process_name)
 	additional_item_list,expected_items_in_return=process_based_qty(process=list(process_list),lot=lot)
 	ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': lot_ipd})

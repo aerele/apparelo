@@ -72,10 +72,10 @@ class Cutting(Document):
 				return {"Dia": detail.dia, "Weight": detail.weight}
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
-		combined_item=[]
 		input_items = []
 		combo_=[]
 		boms = []
+		variant_=[]
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		for part in attribute_set["Part"]:
@@ -83,7 +83,6 @@ class Cutting(Document):
 			if part_.is_combined:
 				combined_part={}
 				variant=[]
-				variant_=[]
 				combined_part['color']=attribute_set["Apparelo Colour"]
 				combined_part['Size']=attribute_set["Apparelo Size"]
 				combined_part['Part']=part
@@ -95,7 +94,6 @@ class Cutting(Document):
 					if part.upper() in variant:
 						variant_.append(variant)
 						bom=create_common_bom(self,variant,attr,input_items)
-						variants.remove(variant)
 				combined_part['variants']=variant_ 
 				combo_.append(combined_part)
 		for variant in variants:
@@ -107,21 +105,14 @@ class Cutting(Document):
 						combo_bom=create_combined_bom(combo,variant)
 						boms.append(combo_bom)
 					else:
-						bom=create_common_bom(self,variant,attr,input_items)
-						bom_doc=frappe.get_doc("BOM",bom)
-						if not is_combined_parts(bom_doc.item_name):
+						if not is_combined_parts(variant):
+							bom=create_common_bom(self,variant,attr,input_items)
 							boms.append(bom)
-						else:
-							combined_item.append(bom.item_name)
-
 			else:
-				bom_=create_common_bom(self,variant,attr,input_items)
-				bom_doc=frappe.get_doc("BOM",bom_)
-				if not is_combined_parts(bom_doc.item_name):
+				if not is_combined_parts(variant):
+					bom_=create_common_bom(self,variant,attr,input_items)
 					boms.append(bom_)
-				else:
-					combined_item.append(bom_.item_name)
-		for item in combined_item:
+		for item in variant_:
 			variants.remove(item)
 		return boms,variants
 
@@ -271,7 +262,6 @@ def get_part_colour_combination(doc):
 
 def create_combined_bom(combo,input_item):
 	weight=1
-	input_items=[]
 	item_doc=frappe.get_doc("Item",input_item)
 	for variant in combo['variants']:
 		item_ = get_attr_dict(item_doc.attributes)

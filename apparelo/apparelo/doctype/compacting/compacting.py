@@ -44,44 +44,39 @@ class Compacting(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
-		doc_values = self.get_variant_values()
 		for item in input_items:
-			attr = get_attr_dict(item.attributes)
-			attr.update(doc_values)
-			args_set = generate_keyed_value_combinations(attr)
-			for attribute_values in args_set:
-				variant = get_variant("Compacted Cloth", args=attribute_values)
-				if variant in variants:
-					bom_for_variant = frappe.get_doc({
-						"doctype": "BOM",
-						"currency": get_default_currency(),
-						"item": variant,
-						"company": get_default_company(),
-						"quantity": self.output_qty,
-						"uom": self.output_uom,
-						"items": [
-							{
-								"item_code": item.name,
-								"qty": self.input_qty,
-								"uom": self.input_uom,
-								"rate": 0.0,
-							}
-						]
-					})
-					existing_bom_name = frappe.db.get_value('BOM', {'item': variant, 'docstatus': 1, 'is_active': 1}, 'name')
-					if not existing_bom_name:
-						bom_for_variant.save()
-						bom_for_variant.submit()
-						boms.append(bom_for_variant.name)
-					else:
-						existing_bom = frappe.get_doc('BOM', existing_bom_name)
-						similar_diff = is_similar_bom(existing_bom, bom_for_variant)
-						if similar_diff:
-							boms.append(existing_bom_name)
-						else:
-							frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
-				else:
-					frappe.throw(_("Unexpected error while creating BOM. Expected variant not found in list of supplied variants"))
+			for variant in variants:
+				for color in colour:
+					for dia in self.dia_conversions:
+						if color.upper() in item.name and color.upper() in variant and dia.from_dia in item.name and dia.to_dia in variant:
+							bom_for_variant = frappe.get_doc({
+								"doctype": "BOM",
+								"currency": get_default_currency(),
+								"item": variant,
+								"company": get_default_company(),
+								"quantity": self.output_qty,
+								"uom": self.output_uom,
+								"items": [
+									{
+										"item_code": item.name,
+										"qty": self.input_qty,
+										"uom": self.input_uom,
+										"rate": 0.0,
+									}
+								]
+							})
+							existing_bom_name = frappe.db.get_value('BOM', {'item': variant, 'docstatus': 1, 'is_active': 1}, 'name')
+							if not existing_bom_name:
+								bom_for_variant.save()
+								bom_for_variant.submit()
+								boms.append(bom_for_variant.name)
+							else:
+								existing_bom = frappe.get_doc('BOM', existing_bom_name)
+								similar_diff = is_similar_bom(existing_bom, bom_for_variant)
+								if similar_diff:
+									boms.append(existing_bom_name)
+								else:
+									frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
 		return boms
 
 	def get_variant_values(self):
