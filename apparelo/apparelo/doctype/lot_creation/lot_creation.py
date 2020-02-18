@@ -16,7 +16,7 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 class LotCreation(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value(
-			'Global Defaults', 'default_company')
+		    'Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 		create_parent_warehouse(self, abbr)
 		create_warehouse(self, abbr)
@@ -33,7 +33,7 @@ class LotCreation(Document):
 
 			# key for Sales Order:Material Request Type:Customer
 			key = '{}:{}:{}'.format(
-				item.sales_order, material_request_type, item_doc.customer or '')
+			    item.sales_order, material_request_type, item_doc.customer or '')
 			schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
 
 			if not key in material_request_map:
@@ -54,7 +54,7 @@ class LotCreation(Document):
 
 			# add item
 			default_company = frappe.db.get_single_value(
-				'Global Defaults', 'default_company')
+			    'Global Defaults', 'default_company')
 			abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 			material_request.append("items", {
 				"item_code": item.item_code,
@@ -65,7 +65,7 @@ class LotCreation(Document):
 				'lot_creation': self.name,
 				'material_request_plan_item': item.name,
 				"project": frappe.db.get_value("Sales Order", item.sales_order, "project")
-				if item.sales_order else None
+					if item.sales_order else None
 			})
 
 		for material_request in material_request_list:
@@ -82,7 +82,7 @@ class LotCreation(Document):
 
 		if material_request_list:
 			material_request_list = ["""<a href="#Form/Material Request/{0}">{1}</a>""".format(m.name, m.name)
-									 for m in material_request_list]
+				for m in material_request_list]
 			msgprint(_("{0} created").format(comma_and(material_request_list)))
 		else:
 			msgprint(_("No material request created"))
@@ -97,7 +97,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 	po_items = doc.get('po_items') if doc.get('po_items') else doc.get('items')
 	if not po_items:
 		frappe.throw(
-			_("Items are required to pull the raw materials which is associated with it."))
+		    _("Items are required to pull the raw materials which is associated with it."))
 
 	company = doc.get('company')
 	warehouse = doc.get('for_warehouse')
@@ -127,10 +127,10 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 				if include_subcontracted_items:
 					# fetch exploded items from BOM
 					item_details = get_exploded_items(item_details,
-													  company, bom_no, include_non_stock_items, planned_qty=planned_qty)
+						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
 				else:
 					item_details = get_subitems(doc, data, item_details, bom_no, company,
-												include_non_stock_items, include_subcontracted_items, 1, planned_qty=planned_qty)
+						include_non_stock_items, include_subcontracted_items, 1, planned_qty=planned_qty)
 		elif data.get('item_code'):
 			item_master = frappe.get_doc('Item', data['item_code']).as_dict()
 			purchase_uom = item_master.purchase_uom or item_master.stock_uom
@@ -162,7 +162,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 			so_item_details.setdefault(sales_order, frappe._dict())
 			if item_code in so_item_details.get(sales_order, {}):
 				so_item_details[sales_order][item_code]['qty'] = so_item_details[sales_order][item_code].get(
-					"qty", 0) + flt(details.qty)
+				    "qty", 0) + flt(details.qty)
 			else:
 				so_item_details[sales_order][item_code] = details
 
@@ -175,20 +175,17 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 
 			if details.qty > 0:
 				items = get_material_request_items(details, sales_order, company,
-												   ignore_existing_ordered_qty, warehouse, bin_dict)
+					ignore_existing_ordered_qty, warehouse, bin_dict)
 				if items:
 					mr_items.append(items)
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):
-				item['quantity'] = round(
-					item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) + 1
+				item['quantity']=round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) + 1
 			else:
-				item['quantity'] = round(
-					item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100)
+				item['quantity']=round(item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100)
 		else:
-			item['quantity'] = item['quantity'] + \
-				(item['quantity'] * float(doc.get('percentage')))/100
+			item['quantity']=item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100
 
 	if not mr_items:
 		frappe.msgprint(_("""As raw materials projected quantity is more than required quantity, there is no need to create material request.
@@ -196,53 +193,49 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 
 	return mr_items
 
-
 @frappe.whitelist()
 def get_ipd_item(doc):
 	if isinstance(doc, string_types):
-		doc = frappe._dict(json.loads(doc))
-	doc['po_items'] = []
-	po_items = []
-	item_production_detail = doc.get('item_production_detail')
-	item_template = frappe.db.get_value("Item Production Detail", {
-		'name': item_production_detail}, "item")
-	ipd_sizes = []
-	for _size in frappe.get_doc('Item Production Detail', item_production_detail).size:
+		doc=frappe._dict(json.loads(doc))
+	doc['po_items']=[]
+	po_items=[]
+	item_production_detail=doc.get('item_production_detail')
+	item_template=frappe.db.get_value("Item Production Detail", {
+	                                  'name': item_production_detail}, "item")
+	ipd_sizes =[]
+	for _size in frappe.get_doc('Item Production Detail',item_production_detail).size:
 		ipd_sizes.append(_size.size)
-	item_code = frappe.db.get_all("Item", fields=["item_code"], filters={
-		"variant_of": item_template})
+	item_code=frappe.db.get_all("Item", fields = ["item_code"], filters = {
+	                            "variant_of": item_template})
 	for _size in ipd_sizes:
 		for item in item_code:
 			if _size.upper() in item.get('item_code'):
-				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(
-					item.get("item_code")).get("bom_no")})
+				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(item.get("item_code")).get("bom_no")})
 				break
 	return po_items
 
-
-def create_parent_warehouse(self, abbr):
+def create_parent_warehouse(self,abbr):
 	if not frappe.db.exists("Warehouse", f'{self.name} - {abbr}'):
 		frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
 			"is_group": 1,
 			"parent_warehouse": f"Lot Warehouse - {abbr}"
-		}).save()
-
+			}).save()
 
 def create_warehouse(self, abbr):
 	for location in self.location:
-		if not frappe.db.exists("Warehouse", f"{self.name} - {location.location} - {abbr}"):
+		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} - {abbr}"):
 			frappe.get_doc({
 				"doctype": "Warehouse",
-				"warehouse_name": f"{self.name} - {location.location}",
+				"warehouse_name": f"{self.name}-{location.location}",
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
-			}).save()
-		if not frappe.db.exists("Warehouse", f"{self.name} - {location.location} Mistake - {abbr}"):
+				}).save()
+		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} Mistake - {abbr}"):
 			frappe.get_doc({
 				"doctype": "Warehouse",
-				"warehouse_name": f"{self.name} - {location.location} Mistake",
+				"warehouse_name": f"{self.name}-{location.location} Mistake",
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
-			}).save()
+				}).save()
