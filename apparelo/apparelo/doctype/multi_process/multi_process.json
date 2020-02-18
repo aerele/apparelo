@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "Prompt",
+ "autoname": "format:{from_process}-{to_process}",
  "creation": "2019-12-30 16:52:22.132247",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -24,7 +24,7 @@
   }
  ],
  "links": [],
- "modified": "2019-12-30 16:54:28.241853",
+ "modified": "2020-02-11 12:38:28.827020",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Multi Process",

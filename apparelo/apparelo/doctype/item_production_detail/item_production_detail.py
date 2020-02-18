@@ -474,7 +474,8 @@ def additional_process(self,ipd):
 					if _item.bom_no=='':
 						additional_item[_item.item_code]=0
 				qty=1
-				additional_item,items_=bom_item(qty,bom,additional_item,input_item,items)
+				planned_qty=1
+				additional_item,items_=bom_item(qty,bom,additional_item,input_item,items,planned_qty)
 				for item in items_:
 					if item['qty']!=0:
 						input_.add(item['item'])
@@ -505,24 +506,80 @@ def additional_process(self,ipd):
 			ipd.append(process_variants)
 	return ipd
 
-def bom_item(qty,bom,additional_item,variants,items):
-	bom_=frappe.get_doc("BOM",bom)
-	for item in bom_.items:
+def bom_item(qty,bom,additional_item,variants,items,planned_qty):
+	bom_doc=frappe.get_doc("BOM",bom)
+	bom_quantity=(bom_doc.quantity/bom_doc.quantity)*planned_qty
+	for item in bom_doc.items:
+		if item.uom=='Gram':
+			bom_quantity=bom_quantity*item.stock_qty
 		if item.uom=='Nos' and item.qty>1:
-				qty=item.qty
+				qty=item.qty*planned_qty
 		if item.bom_no=='':
 			if not item.item_code in additional_item:
 				additional_item[item.item_code]=0
-			additional_item[item.item_code]+=item.qty
+				additional_item[item.item_code]+=item.qty*bom_quantity
+			else:
+				additional_item[item.item_code]+=item.qty*bom_quantity
 		else:
 			if item.item_code in variants:
-				for item_ in items:
-					if item.item_code==item_['item']:
-						item_['qty']+=item.qty*qty
-						item_['uom']=item.uom
+				for bom_item_list in items:
+					if item.item_code==bom_item_list['item']:
+						bom_item_list['qty']+=item.qty*qty*bom_quantity
+						bom_item_list['uom']=item.uom
 						qty=1
 			else:
-				bom_item(qty,item.bom_no,additional_item,variants,items)
+				bom_item(qty,item.bom_no,additional_item,variants,items,bom_quantity)
 				qty=1
-			
 	return additional_item,items
+
+def process_based_qty(process,ipd=None,lot=None,qty_based_bom=None):
+	process_bom=[]
+	if lot:
+		# getting qty from the lot
+		qty_based_bom=[]
+		lot_doc=frappe.get_doc("Lot Creation",lot)
+		for item in lot_doc.po_items:
+			qty_based_bom.append({item.bom_no:item.planned_qty})
+		# setting IPD from lot as the qty is related to this lot only
+		ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
+	if ipd:
+		ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': ipd})
+		for process_name in process:
+			process_bom.extend(frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(process_name))
+	else:
+		frappe.throw(_("Either IPD or Lot is required to compute process based qty"))
+
+	items = []
+	input_item = []
+	for bom in set(process_bom):
+		bom_doc=frappe.get_doc("BOM",bom)
+		for item in bom_doc.items:
+			input_item.append(item.item_code)
+	for item in set(input_item):
+		item_list={}
+		item_list['item']=item
+		item_list['qty']=0
+		item_list['uom']=''
+		items.append(item_list)
+
+	additional_item = {}
+	for bom_dict in qty_based_bom:
+		for bom in bom_dict:
+			bom_doc=frappe.get_doc("BOM",bom)
+			for item in bom_doc.items:
+				if item.bom_no=='':
+					additional_item[item.item_code]=0
+			if bom_dict[bom]:
+				qty=1
+				additional_item,items=bom_item(qty,bom,additional_item,set(input_item),items,bom_dict[bom])
+
+	# making desired output structure from the created data
+	final_item_list = []
+	additional_item_list = []
+	for item in items:
+		if item['qty']!=0:
+			final_item_list.append({"item_code": item['item'],"qty":item['qty'] ,"uom": item['uom']})
+	for item in additional_item:
+		additional_item_list.append({"item_code": item,"qty":additional_item[item] ,"uom": 'Nos'})
+
+	return additional_item_list,final_item_list

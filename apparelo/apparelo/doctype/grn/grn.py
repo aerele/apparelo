@@ -28,7 +28,7 @@ def create_purchase_receipt(self,abbr):
 	pr=frappe.get_doc({ 
 		"docstatus": 1, 
 		"supplier": self.supplier, 
-		"set_warehouse": f'{self.lot} - {abbr}', 
+		"set_warehouse": f'{self.lot} - {self.location} - {abbr}', 
 		"is_subcontracted": "Yes", 
 		"supplier_warehouse": f'{self.supplier} - {abbr}', 
 		"doctype": "Purchase Receipt", 

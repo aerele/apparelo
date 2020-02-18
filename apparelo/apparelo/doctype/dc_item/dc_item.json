@@ -5,55 +5,72 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "pf_item_code",
   "item_code",
-  "roll",
   "available_quantity",
   "quantity",
-  "uom",
-  "pf_item_code"
+  "primary_uom",
+  "secondary_qty",
+  "secondary_uom"
  ],
  "fields": [
   {
    "fieldname": "item_code",
    "fieldtype": "Link",
-   "in_list_view": 1,
    "label": "Item Code",
    "options": "Item"
   },
   {
-   "fieldname": "roll",
-   "fieldtype": "Int",
-   "in_list_view": 1,
-   "label": "Roll"
-  },
-  {
+   "columns": 1,
    "fieldname": "available_quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Available Quantity"
+   "label": "Available Qty"
   },
   {
+   "columns": 1,
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Ordered Quantity"
-  },
-  {
-   "fieldname": "uom",
-   "fieldtype": "Link",
-   "label": "UOM",
-   "options": "UOM"
+   "label": "Delivery Qty"
   },
   {
    "fetch_from": "item_code.print_code",
    "fieldname": "pf_item_code",
    "fieldtype": "Data",
-   "label": "PF Item Code"
+   "in_list_view": 1,
+   "label": "PF Item Code",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "primary_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Primary UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "secondary_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Secondary UOM",
+   "options": "UOM",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "secondary_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Secondary Qty"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-20 11:17:13.999946",
+ "modified": "2020-02-18 13:16:43.275405",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC Item",

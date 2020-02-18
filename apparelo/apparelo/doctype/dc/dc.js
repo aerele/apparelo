@@ -13,7 +13,7 @@ frappe.ui.form.on('DC', {
 		});
 	},
 	get_items:function(frm) {
-		const set_fields =['item_code','available_quantity','uom'];
+		const set_fields =['item_code','available_quantity','primary_uom','secondary_uom','pf_item_code'];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.get_ipd_item",
 			freeze: true,
@@ -35,7 +35,7 @@ frappe.ui.form.on('DC', {
 		});
 	},
 	get_return_item: function(frm) {
-		const set_fields = ['item_code','uom','quantity','description'];
+		const set_fields = ['item_code','uom','qty','secondary_uom','description','pf_item_code'];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.item_return",
 			freeze: true,
