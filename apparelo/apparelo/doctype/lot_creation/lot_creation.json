@@ -15,6 +15,7 @@
   "get_items_for_mr",
   "section_break_5",
   "mr_items",
+  "cloth_quantity",
   "amended_from"
  ],
  "fields": [
@@ -79,11 +80,16 @@
    "fieldtype": "Table MultiSelect",
    "label": "Location",
    "options": "Lot Warehouse Location"
+  },
+  {
+   "fieldname": "cloth_quantity",
+   "fieldtype": "HTML Editor",
+   "label": "Cloth Quantity"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-17 11:36:04.353626",
+ "modified": "2020-02-17 12:54:24.357899",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",

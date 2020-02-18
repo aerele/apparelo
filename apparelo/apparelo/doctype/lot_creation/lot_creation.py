@@ -11,6 +11,7 @@ from six import string_types, iteritems
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_exploded_items, get_subitems, get_bin_details, get_material_request_items
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
+from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 
 
 class LotCreation(Document):
@@ -239,3 +240,48 @@ def create_warehouse(self, abbr):
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
 				}).save()
+
+@frappe.whitelist()
+def cloth_qty(doc):
+	if isinstance(doc, string_types):
+		doc=frappe._dict(json.loads(doc))
+	html_head = '<th>Dia/Colour</th>'
+	html_body = ''
+	bom_qty = []
+	process = []
+	colour_list = []
+	dia_list = []
+	colour_dia_weight = []
+	for item in doc.po_items:
+		bom_qty.append({item['bom_no']:item['planned_qty']})
+
+	ipd = frappe.get_doc('Item Production Detail',doc.item_production_detail)
+	for ipd_process in ipd.processes:
+		if ipd_process.process_name == 'Knitting':
+			for knitting_dia in frappe.get_doc('Knitting',ipd_process.process_record).dia:
+				dia_list.append(knitting_dia.dia)
+		elif ipd_process.process_name == 'Compacting' or ipd_process.process_name == 'Steaming':
+			process.append(ipd_process.process_name)
+	process = list(set(process))
+	for colour in ipd.colour:
+		colour_list.append(colour.colour)
+		html_head += f'<th>{colour.colour}</th>'
+
+	additional_item,final_item_list = process_based_qty(process = process, ipd = doc.item_production_detail, qty_based_bom = bom_qty)
+	
+	dia_qty_list =[]
+	for dia in dia_list:
+		dia_list = [0]*(len(colour_list)+1)
+		dia_list[0] = dia
+		for colour in colour_list:
+			for item in final_item_list:
+				if colour.upper() in item['item_code'] and str(dia) in item['item_code']:
+					dia_list[colour_list.index(colour)+1] = item['qty']
+		dia_qty_list.append(dia_list)
+
+	for lists in dia_qty_list:
+		for value in lists:
+			html_body += f'<td>{value}</td>'
+		html_body = f'<tr>{html_body}</tr>'
+
+	return f'<table class="table table-bordered"><tbody><tr>{html_head}</tr>{html_body}</tbody></table>'
