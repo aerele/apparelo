@@ -81,11 +81,14 @@ after_install = "apparelo.install.after_install"
 
 doc_events = {
 	"Location": {
-		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_surplus_location_warehouse"
+		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_surplus_location_warehouse"
 	},
 	"Supplier": {
-		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_supplier_warehouse"
-	}
+		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_supplier_warehouse"
+	},
+ 	"Purchase Order": {
+	 	"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.set_lot_link_field_in_po"
+ 	}
 
 }
 

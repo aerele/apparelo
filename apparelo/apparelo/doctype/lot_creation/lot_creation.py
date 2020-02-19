@@ -42,6 +42,7 @@ class LotCreation(Document):
 				material_request_map[key] = frappe.new_doc("Material Request")
 				material_request = material_request_map[key]
 				material_request.update({
+					"lot":self.name,
 					"transaction_date": nowdate(),
 					"status": "Draft",
 					"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
