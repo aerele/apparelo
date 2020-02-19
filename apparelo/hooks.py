@@ -86,9 +86,9 @@ doc_events = {
 	"Supplier": {
 		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_supplier_warehouse"
 	},
- 	"Purchase Order": {
-	 	"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.set_lot_link_field_in_po"
- 	}
+    "Purchase Order": {
+        "validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.set_lot_link_field_in_po"
+        }
 
 }
 
@@ -131,4 +131,3 @@ doc_events = {
 # override_doctype_dashboards = {
 # 	"Task": "apparelo.task.get_dashboard_data"
 # }
-
