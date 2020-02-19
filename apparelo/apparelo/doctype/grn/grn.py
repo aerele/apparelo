@@ -15,46 +15,24 @@ class GRN(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
-		# stock_entry_type="Send to Subcontractor"
 		pr=create_purchase_receipt(self,abbr)
-		# se=create_stock_entry(self,stock_entry_type,abbr)
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
-		# msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(se.name, se.name))))
 def create_purchase_receipt(self,abbr):
 	item_list=[]
 	PO_=frappe.get_doc("Purchase Order",self.po)
 	for item in PO_.items:
-		item_list.append({ "item_code": item.item_name, "qty": item.qty,"bom": item.bom,"schedule_date": add_days(nowdate(), 7) ,"warehouse": f'{self.lot} - {abbr}'})
+		item_list.append({"item_code": item.item_name, "qty": item.qty, "bom": item.bom, "schedule_date": add_days(nowdate(), 7), "warehouse": f'{self.lot}-{self.location} - {abbr}', "purchase_order": self.po})
 	pr=frappe.get_doc({ 
-		"docstatus": 1, 
 		"supplier": self.supplier, 
-		"set_warehouse": f'{self.lot} - {self.location} - {abbr}', 
+		"set_warehouse": f'{self.lot}-{self.location} - {abbr}', 
 		"is_subcontracted": "Yes", 
 		"supplier_warehouse": f'{self.supplier} - {abbr}', 
 		"doctype": "Purchase Receipt", 
 		"items": item_list })
 	pr.save()
+	pr.submit()
 	return pr
-def create_stock_entry(self,stock_entry_type,abbr):
-	item_list=[]
-	for item in self.return_materials:
-		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse": f'{self.lot} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.quantity })
-	if self.po=="":
-		se=frappe.get_doc({ 
-			"docstatus": 1,
-			"stock_entry_type": stock_entry_type,
-			"doctype": "Stock Entry", 
-			"items": item_list})
-		se.save()
-	else:
-		se=frappe.get_doc({ 
-			"docstatus": 1,
-			"stock_entry_type": stock_entry_type,
-			"purchase_order": self.po,
-			"doctype": "Stock Entry", 
-			"items": item_list})
-		se.save()
-	return se
+
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':
 		DC=[]

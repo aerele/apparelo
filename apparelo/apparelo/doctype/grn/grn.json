@@ -9,6 +9,7 @@
   "naming_series",
   "supplier",
   "lot",
+  "location",
   "against_type",
   "against_document",
   "get_items",
@@ -39,6 +40,7 @@
    "label": "Get Items"
   },
   {
+   "default": "DC",
    "fieldname": "against_type",
    "fieldtype": "Select",
    "label": "Against Type",
@@ -77,11 +79,18 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Purchase_order"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Link",
+   "label": "Location",
+   "options": "Location",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-08 12:51:35.931625",
+ "modified": "2020-02-18 21:17:04.506997",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",
