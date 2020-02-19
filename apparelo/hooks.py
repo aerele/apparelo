@@ -85,8 +85,10 @@ doc_events = {
 	},
 	"Supplier": {
 		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_supplier_warehouse"
-	}
-
+	},
+	"Item": {
+		"validate": "apparelo.erpnext_hooks.populate_pf_item_code"
+	},
 }
 
 # Scheduled Tasks
