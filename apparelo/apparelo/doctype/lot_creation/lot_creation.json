@@ -23,8 +23,10 @@
    "fieldname": "item_production_detail",
    "fieldtype": "Link",
    "in_filter": 1,
+   "in_list_view": 1,
    "label": "Item Production Detail",
-   "options": "Item Production Detail"
+   "options": "Item Production Detail",
+   "reqd": 1
   },
   {
    "fieldname": "section_break_3",
@@ -62,9 +64,12 @@
    "read_only": 1
   },
   {
+   "default": "0.0",
    "fieldname": "percentage",
    "fieldtype": "Data",
-   "label": "Percentage"
+   "in_list_view": 1,
+   "label": "Percentage",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
@@ -79,7 +84,8 @@
    "fieldname": "location",
    "fieldtype": "Table MultiSelect",
    "label": "Location",
-   "options": "Lot Warehouse Location"
+   "options": "Lot Warehouse Location",
+   "reqd": 1
   },
   {
    "fieldname": "cloth_quantity",
@@ -89,7 +95,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-17 12:54:24.357899",
+ "modified": "2020-02-19 11:06:20.073659",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
