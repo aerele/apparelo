@@ -6,6 +6,6 @@ from __future__ import unicode_literals
 
 
 def populate_pf_item_code(doc, action):
-	if hasattr(doc, 'print_code') and action = 'validate':
+	if hasattr(doc, 'print_code') and action == 'validate':
 		if not doc.print_code:
 			doc.print_code = doc.item_code
