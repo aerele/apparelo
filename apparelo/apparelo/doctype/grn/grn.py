@@ -22,8 +22,8 @@ def create_purchase_receipt(self,abbr):
 	PO_=frappe.get_doc("Purchase Order",self.po)
 	for item in PO_.items:
 		item_list.append({"item_code": item.item_name, "qty": item.qty, "bom": item.bom, "schedule_date": add_days(nowdate(), 7), "warehouse": f'{self.lot}-{self.location} - {abbr}', "purchase_order": self.po})
-    pr = frappe.get_doc({ 
-		"grn": self.name,
+	pr = frappe.get_doc({
+        "grn": self.name,
 		"supplier": self.supplier, 
 		"set_warehouse": f'{self.lot}-{self.location} - {abbr}', 
 		"is_subcontracted": "Yes", 
