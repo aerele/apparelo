@@ -9,6 +9,9 @@
   "location",
   "item_production_detail",
   "get_items",
+  "column_break_4",
+  "start_date",
+  "no_of_days_to_complete",
   "section_break_3",
   "po_items",
   "percentage",
@@ -85,11 +88,27 @@
    "fieldname": "cloth_quantity",
    "fieldtype": "HTML Editor",
    "label": "Cloth Quantity"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "Start Date"
+  },
+  {
+   "allow_on_submit": 1,
+   "fieldname": "no_of_days_to_complete",
+   "fieldtype": "Int",
+   "label": "No. of days to complete"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-17 12:54:24.357899",
+ "modified": "2020-02-20 12:51:47.810574",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
