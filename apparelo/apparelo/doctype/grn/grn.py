@@ -83,11 +83,17 @@ def get_items(doc):
 			po_=frappe.get_doc("Purchase Order",po.name)
 			if po_.dc==doc_:
 				doc_=po_.name
+				dc_doc=frappe.get_doc("DC",po_.dc)
+				dc_process=dc_doc.process_1
+	if doc_.startswith("P"):
+		po_doc=frappe.get_doc("Purchase Order",doc_)
+		dc_doc=frappe.get_doc("DC",po_doc.dc)
+		dc_process=dc_doc.process_1
 	PO=frappe.get_doc("Purchase Order",doc_)
+	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	for item in PO.items:
 		item_detail = frappe.get_doc('Item', item.item_code)
-		return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code})
-	print(return_materials,"WW")
+		return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":apparelo_process.in_secondary_uom})
 	return return_materials
 def get_po(self):
 	doc_=self.against_document
