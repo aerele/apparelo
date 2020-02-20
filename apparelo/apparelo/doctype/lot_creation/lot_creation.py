@@ -30,41 +30,57 @@ class LotCreation(Document):
 		for item in self.mr_items:
 			item_doc = frappe.get_cached_doc('Item', item.item_code)
 
-			material_request_type = item.material_request_type or item_doc.default_material_request_type
-
+			material_request_type = item_doc.default_material_request_type
 			# key for Sales Order:Material Request Type:Customer
 			key = '{}:{}:{}'.format(
-			    item.sales_order, material_request_type, item_doc.customer or '')
-			schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
+					item.sales_order, material_request_type, item_doc.customer or '')
+			if material_request_type == 'Purchase':
+				if not key in material_request_map:
+					# make a new MR for the combination
+					material_request_map[key] = frappe.new_doc("Material Request")
+					material_request = material_request_map[key]
+					material_request.update({
+						"lot": self.name,
+						"transaction_date": nowdate(),
+						"status": "Draft",
+						"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
+						"requested_by": frappe.session.user,
+						"material_request_type": material_request_type,
+						"customer": item_doc.customer or ""
+					})
+					material_request_list.append(material_request)
+				else:
+					material_request = material_request_map[key]
 
-			if not key in material_request_map:
-				# make a new MR for the combination
-				material_request_map[key] = frappe.new_doc("Material Request")
-				material_request = material_request_map[key]
-				material_request.update({
-					"transaction_date": nowdate(),
-					"status": "Draft",
-					"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
-					"requested_by": frappe.session.user,
-					'material_request_type': material_request_type,
-					'customer': item_doc.customer or ''
-				})
-				material_request_list.append(material_request)
 			else:
-				material_request = material_request_map[key]
+				if not key in material_request_map:
+					# make a new MR for the combination
+					material_request_map[key] = frappe.new_doc("Material Request")
+					material_request = material_request_map[key]
+					material_request.update({
+						"lot": self.name,
+						"transaction_date": nowdate(),
+						"status": "Draft",
+						"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
+						"requested_by": frappe.session.user,
+						"material_request_type": material_request_type,
+						"customer": item_doc.customer or ''
+					})
+					material_request_list.append(material_request)
+				else:
+					material_request = material_request_map[key]
 
 			# add item
 			default_company = frappe.db.get_single_value(
-			    'Global Defaults', 'default_company')
+				'Global Defaults', 'default_company')
 			abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 			material_request.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
-				"schedule_date": schedule_date,
-				"warehouse": f'{self.name} - {abbr}',
+				"schedule_date": item.req_by_date,
 				"sales_order": item.sales_order,
-				'lot_creation': self.name,
-				'material_request_plan_item': item.name,
+				"lot_creation": self.name,
+				"material_request_plan_item": item.name,
 				"project": frappe.db.get_value("Sales Order", item.sales_order, "project")
 					if item.sales_order else None
 			})
@@ -74,10 +90,10 @@ class LotCreation(Document):
 			material_request.flags.ignore_permissions = 1
 			material_request.run_method("set_missing_values")
 
-			if self.get('submit_material_request'):
-				material_request.submit()
-			else:
-				material_request.save()
+			# if self.get('submit_material_request'):
+			# 	material_request.submit()
+			# else:
+			material_request.save()
 
 		frappe.flags.mute_messages = False
 
@@ -251,7 +267,6 @@ def cloth_qty(doc):
 	process = []
 	colour_list = []
 	dia_list = []
-	colour_dia_weight = []
 	for item in doc.po_items:
 		bom_qty.append({item['bom_no']:item['planned_qty']})
 
@@ -266,17 +281,20 @@ def cloth_qty(doc):
 	for colour in ipd.colour:
 		colour_list.append(colour.colour)
 		html_head += f'<th>{colour.colour}</th>'
-
+	html_head += '<th>Total</th>'
 	additional_item,final_item_list = process_based_qty(process = process, ipd = doc.item_production_detail, qty_based_bom = bom_qty)
-	
 	dia_qty_list =[]
-	for dia in dia_list:
-		dia_list = [0]*(len(colour_list)+1)
+	dia_list = list(set(dia_list))
+	for dia in sorted(dia_list):
+		dia_list = [0]*(len(colour_list)+2)
 		dia_list[0] = dia
+		dia_total = 0
 		for colour in colour_list:
 			for item in final_item_list:
 				if colour.upper() in item['item_code'] and str(dia) in item['item_code']:
 					dia_list[colour_list.index(colour)+1] = item['qty']
+					dia_total += item['qty']
+		dia_list[len(colour_list)+1] = round(dia_total,2)
 		dia_qty_list.append(dia_list)
 
 	for lists in dia_qty_list:
