@@ -26,11 +26,9 @@ def create_supplier_warehouse(doc, action):
 
 def set_lot_link_field_in_po(doc, action):
 	if hasattr(doc, 'lot') and action == 'validate':
-		for item in doc.items:
-			material_request = item.material_request
-			break
-	material_request_doc = frappe.get_doc("Material Request", material_request)
-	doc.lot = material_request_doc.lot
+		material_request = doc.items[0].material_request
+		material_request_doc = frappe.get_doc("Material Request", material_request)
+		doc.lot = material_request_doc.lot
 	
 	
 def set_custom_fields(update=True):
