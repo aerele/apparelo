@@ -8,6 +8,7 @@
   "pf_item_code",
   "item_code",
   "qty",
+  "received_qty",
   "uom",
   "secondary_qty",
   "secondary_uom",
@@ -49,7 +50,8 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Expected Qty",
-   "no_copy": 1
+   "no_copy": 1,
+   "read_only": 1
   },
   {
    "columns": 1,
@@ -67,11 +69,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Secondary Qty"
+  },
+  {
+   "fieldname": "received_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Received Qty",
+   "no_copy": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-19 11:32:46.537211",
+ "modified": "2020-02-20 12:07:29.750293",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",

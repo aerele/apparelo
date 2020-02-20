@@ -22,12 +22,12 @@ def create_purchase_receipt(self,abbr):
 	PO_=frappe.get_doc("Purchase Order",self.po)
 	for item in PO_.items:
 		item_list.append({"item_code": item.item_name, "qty": item.qty, "bom": item.bom, "schedule_date": add_days(nowdate(), 7), "warehouse": f'{self.lot}-{self.location} - {abbr}', "purchase_order": self.po})
-	pr=frappe.get_doc({ 
-		"supplier": self.supplier, 
-		"set_warehouse": f'{self.lot}-{self.location} - {abbr}', 
-		"is_subcontracted": "Yes", 
-		"supplier_warehouse": f'{self.supplier} - {abbr}', 
-		"doctype": "Purchase Receipt", 
+	pr=frappe.get_doc({
+		"supplier": self.supplier,
+		"set_warehouse": f'{self.lot}-{self.location} - {abbr}',
+		"is_subcontracted": "Yes",
+		"supplier_warehouse": f'{self.supplier} - {abbr}',
+		"doctype": "Purchase Receipt",
 		"items": item_list })
 	pr.save()
 	pr.submit()
@@ -58,7 +58,8 @@ def get_Lot(doctype, txt, searchfield, start, page_len, filters):
 	all_po=frappe.db.get_all("Purchase Order")
 	for po in all_po:
 		po_=frappe.get_doc("Purchase Order",po.name)
-		Lot.add(po_.lot)
+		if po_.lot:
+			Lot.add(po_.lot)
 	for lot_ in Lot:
 		lot.append([lot_])
 	return lot
@@ -84,7 +85,9 @@ def get_items(doc):
 				doc_=po_.name
 	PO=frappe.get_doc("Purchase Order",doc_)
 	for item in PO.items:
-		return_materials.append({"item_code":item.item_code,"uom":item.uom,"quantity":item.qty})
+		item_detail = frappe.get_doc('Item', item.item_code)
+		return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code})
+	print(return_materials,"WW")
 	return return_materials
 def get_po(self):
 	doc_=self.against_document
