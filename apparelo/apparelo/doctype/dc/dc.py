@@ -10,12 +10,13 @@ from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from erpnext.stock.report.stock_balance.stock_balance import execute
-from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
 from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 
 class DC(Document):
+
+
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
@@ -158,7 +159,7 @@ def get_ipd_item(doc):
 def get_expected_items_in_return(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-	
+
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
 	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
@@ -167,7 +168,7 @@ def get_expected_items_in_return(doc):
 	ipd_bom_mapping = frappe.db.get_value('IPD BOM Mapping', {'item_production_details': lot_ipd})
 	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
 
-	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in',boms]}, group_by='item', fields='item')
+	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields='item')
 
 	receivable_list = {}
 	for item_to_be_received in items_to_be_received:
@@ -180,14 +181,14 @@ def get_expected_items_in_return(doc):
 		lot_item['warehouse'] = expect_return_items_at
 		if not lot_item['stock_uom']:
 			lot_item['stock_uom'] = frappe.db.get_value('Item', lot_item['item_code'], 'stock_uom')
-	
+
 	company = get_default_company()
 	po_items = lot_items
 	# Using the production plan function doing the complete traversal of BOM while calculating the
 	# required quantity in the receivable list. There is a scope to improve this if we can stop at
 	# arriving the receivable list.
 	while True:
-		if len(po_items):
+		if len(po_items) > 0:
 			input = {
 				'company': company,
 				'po_items': po_items
@@ -209,8 +210,8 @@ def get_expected_items_in_return(doc):
 				po_item['stock_uom'] = mr_item['stock_uom']
 				po_item['warehouse'] = expect_return_items_at
 				po_items.append(po_item)
-	
-	for item_to_be_received in  items_to_be_received:
+
+	for item_to_be_received in items_to_be_received:
 		item = frappe.get_doc('Item', item_to_be_received['item'])
 		item_to_be_received['item_code'] = item_to_be_received['item']
 		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
