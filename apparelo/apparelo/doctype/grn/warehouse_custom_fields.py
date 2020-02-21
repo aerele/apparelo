@@ -9,22 +9,19 @@ def make_warehouse_custom_fields(update=True):
 	"fieldname": "supplier",
 	"fieldtype": "Link",
 	"label": "Supplier",
-	"options": "Supplier",
-	"reqd": 1
+	"options": "Supplier"
 		},
 	{
 	"fieldname": "lot",
 	"fieldtype": "Link",
 	"label": "Lot",
-	"options": "Lot Creation",
-	"reqd": 1
+	"options": "Lot Creation"
 		},
 		{
 	"fieldname": "location",
 	"fieldtype": "Link",
 	"label": "Location",
-	"options": "Location",
-	"reqd": 1
+	"options": "Location"
 		}
 	]}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
