@@ -184,7 +184,7 @@ def create_item_template():
 			"item_code": "Yarn",
 			"item_name": "Yarn",
 			"description": "Yarn",
-			"item_group": "Sub Assemblies",
+			"item_group": "Raw Material",
 			"stock_uom" : "Kg",
 			"has_variants" : "1",
 			"variant_based_on" : "Item Attribute",
