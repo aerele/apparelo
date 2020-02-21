@@ -10,6 +10,7 @@ from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
+import hashlib
 
 class RollPrinting(Document):
 	def on_submit(self):
@@ -27,9 +28,16 @@ class RollPrinting(Document):
 			for variant in variants:
 				if dia in variant:
 					if not dia+" Dia" in variant:
+						hash_=hashlib.sha256(variant.replace('Roll Printed cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(dia,dia+" Dia")
+						doc=frappe.get_doc("Item",variant)
+						doc.print_code=new_variant
+						doc.save()
+						new_variant=new_variant+" "+hash_[0:7]
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
+					else:
+						new_variants.append(variant)
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
