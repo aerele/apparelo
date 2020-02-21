@@ -262,44 +262,60 @@ def cloth_qty(doc):
 	if isinstance(doc, string_types):
 		doc=frappe._dict(json.loads(doc))
 	html_head = '<th>Dia/Colour</th>'
-	html_body = ''
+	html = ''
 	bom_qty = []
 	process = []
 	colour_list = []
-	dia_list = []
+	yarn_list=[]
+	# get bom and planned quantity
 	for item in doc.po_items:
 		bom_qty.append({item['bom_no']:item['planned_qty']})
 
 	ipd = frappe.get_doc('Item Production Detail',doc.item_production_detail)
+	# get yarn, dia and end process list
 	for ipd_process in ipd.processes:
 		if ipd_process.process_name == 'Knitting':
+			dia_list = []
 			for knitting_dia in frappe.get_doc('Knitting',ipd_process.process_record).dia:
 				dia_list.append(knitting_dia.dia)
+			yarn_list.append({'yarn':ipd_process.input_item,'index':ipd_process.idx,'dia':dia_list})
 		elif ipd_process.process_name == 'Compacting' or ipd_process.process_name == 'Steaming':
 			process.append(ipd_process.process_name)
 	process = list(set(process))
+	# get colour list
 	for colour in ipd.colour:
 		colour_list.append(colour.colour)
 		html_head += f'<th>{colour.colour}</th>'
 	html_head += '<th>Total</th>'
+	# get item and quantity
 	additional_item,final_item_list = process_based_qty(process = process, ipd = doc.item_production_detail, qty_based_bom = bom_qty)
-	dia_qty_list =[]
-	dia_list = list(set(dia_list))
-	for dia in sorted(dia_list):
-		dia_list = [0]*(len(colour_list)+2)
-		dia_list[0] = dia
-		dia_total = 0
-		for colour in colour_list:
-			for item in final_item_list:
-				if colour.upper() in item['item_code'] and str(dia) in item['item_code']:
-					dia_list[colour_list.index(colour)+1] = item['qty']
-					dia_total += item['qty']
-		dia_list[len(colour_list)+1] = round(dia_total,2)
-		dia_qty_list.append(dia_list)
 
-	for lists in dia_qty_list:
-		for value in lists:
-			html_body += f'<td>{value}</td>'
-		html_body = f'<tr>{html_body}</tr>'
-
-	return f'<table class="table table-bordered"><tbody><tr>{html_head}</tr>{html_body}</tbody></table>'
+	for data in yarn_list:
+		html_body = ''
+		dia_qty_list =[]
+		html += data['yarn']
+		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':'Essdee gym vest'},'name')
+		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
+		ipd_item_list = []
+		for item in ipd_items:
+			ipd_item_list.append(item['item'])
+		for dia in data['dia']:
+			dia_list = [0]*(len(colour_list)+2)
+			dia_list[0] = dia
+			dia_total = 0
+			for colour in colour_list:
+				for item in final_item_list:
+					if (colour.upper() in item['item_code']) and (dia in item['item_code']) and (item['item_code'] in ipd_item_list):
+						dia_list[colour_list.index(colour)+1] = item['qty']
+						dia_total += item['qty']
+						if 'FOLD' in item['item_code']:
+							dia_list[0] = f'{dia} (FOLD)'
+						break
+			dia_list[len(colour_list)+1] = round(dia_total,2)
+			dia_qty_list.append(dia_list)
+		for lists in dia_qty_list:
+			for value in lists:
+				html_body += f'<td>{value}</td>'
+			html_body = f'<tr>{html_body}</tr>'
+		html += f'<table class="table table-bordered"><tbody><tr>{data["yarn"]}</tr><tr>{html_head}</tr>{html_body}</tbody></table>'
+	return html
