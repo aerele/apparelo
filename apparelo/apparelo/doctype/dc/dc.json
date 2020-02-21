@@ -15,6 +15,7 @@
   "items",
   "get_return_item",
   "section_break_5",
+  "expect_return_items_at",
   "return_materials",
   "amended_from"
  ],
@@ -81,7 +82,7 @@
   {
    "fieldname": "location",
    "fieldtype": "Link",
-   "label": "Location",
+   "label": "Delivery Location",
    "options": "Location",
    "reqd": 1
   },
@@ -92,11 +93,17 @@
    "label": "Process",
    "options": "Apparelo Process",
    "reqd": 1
+  },
+  {
+   "fieldname": "expect_return_items_at",
+   "fieldtype": "Link",
+   "label": "Expect Return Items At",
+   "options": "Location"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-13 12:21:42.233744",
+ "modified": "2020-02-20 19:53:33.275639",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

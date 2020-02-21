@@ -12,6 +12,9 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 from erpnext.stock.report.stock_balance.stock_balance import execute
 from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
+from erpnext import get_default_company
+from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
+
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
@@ -152,38 +155,68 @@ def get_ipd_item(doc):
 
 
 @frappe.whitelist()
-def item_return(doc):
-	index=[]
-	process_list=set()
+def get_expected_items_in_return(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-
-	doc['return_materials'] = []
-
-	items = doc.get('items')
-	if not items:
-		frappe.throw(_("Items are required to calculate return items"))
-
+	
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
 	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
-	lot_ipd_doc=frappe.get_doc("Item Production Detail",lot_ipd)
-	for process in lot_ipd_doc.processes:
-		if process.process_name==dc_process:
-			index.append(process.idx)
-	for process in lot_ipd_doc.processes:
-		for idx in index:
-			if process.input_index:
-				if str(idx) == process.input_index:
-					process_list.add(process.process_name)
-	additional_item_list,expected_items_in_return=process_based_qty(process=list(process_list),lot=lot)
-	ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': lot_ipd})
-	for item in expected_items_in_return:
-		for ipd_item in ipd_item_map.item_mapping:
-			if ipd_item.item == item['item_code']:
-				item_detail = frappe.get_doc('Item', item['item_code'])
-				item['description'] = ipd_item.description
-				item['secondary_uom'] = apparelo_process.out_secondary_uom
-				item['pf_item_code'] = item_detail.print_code
-	return expected_items_in_return
+
+	ipd_bom_mapping = frappe.db.get_value('IPD BOM Mapping', {'item_production_details': lot_ipd})
+	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
+
+	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in',boms]}, group_by='item', fields='item')
+
+	receivable_list = {}
+	for item_to_be_received in items_to_be_received:
+		receivable_list[item_to_be_received['item']] = 0
+
+	lot_items = frappe.get_list('Lot Creation Plan Item', filters={'parent': lot}, fields=['item_code', 'planned_qty', 'bom_no', 'stock_uom'])
+	expect_return_items_at = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{doc.get("expect_return_items_at")}'}, 'name')
+
+	for lot_item in lot_items:
+		lot_item['warehouse'] = expect_return_items_at
+		if not lot_item['stock_uom']:
+			lot_item['stock_uom'] = frappe.db.get_value('Item', lot_item['item_code'], 'stock_uom')
+	
+	company = get_default_company()
+	po_items = lot_items
+	# Using the production plan function doing the complete traversal of BOM while calculating the
+	# required quantity in the receivable list. There is a scope to improve this if we can stop at
+	# arriving the receivable list.
+	while True:
+		if len(po_items):
+			input = {
+				'company': company,
+				'po_items': po_items
+			}
+			mr_items = get_items_for_material_requests(json.dumps(input))
+		else:
+			break
+		po_items = []
+		for mr_item in mr_items:
+			if mr_item['item_code'] in receivable_list:
+				receivable_list[mr_item['item_code']] += mr_item['quantity']
+		
+			bom_no = frappe.db.get_value('Item', mr_item['item_code'], 'default_bom')
+			po_item = {}
+			if bom_no:
+				po_item['bom_no'] = bom_no
+				po_item['item_code'] = mr_item['item_code']
+				po_item['planned_qty'] = mr_item['quantity']
+				po_item['stock_uom'] = mr_item['stock_uom']
+				po_item['warehouse'] = expect_return_items_at
+				po_items.append(po_item)
+	
+	for item_to_be_received in  items_to_be_received:
+		item = frappe.get_doc('Item', item_to_be_received['item'])
+		item_to_be_received['item_code'] = item_to_be_received['item']
+		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
+		item_to_be_received['pf_item_code'] = item.print_code
+		item_to_be_received['uom'] = item.stock_uom
+		item_to_be_received['description'] = item.description
+		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
+
+	return items_to_be_received
