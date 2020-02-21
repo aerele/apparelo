@@ -57,8 +57,7 @@ class Steaming(Document):
 								"item": variant,
 								"company": get_default_company(),
 								"quantity": self.output_qty,
-								"uom": self.ouelse:
-          			new_variants.append(variant)tput_uom,
+								"uom": self.output_uom,
 								"items": [
 									{
 										"item_code": item.name,
