@@ -9,3 +9,4 @@ apparelo.apparelo.patches.v1.uom_creation
 apparelo.apparelo.patches.v1.root_warehouse
 apparelo.apparelo.patches.v1.create_roll_uom
 apparelo.apparelo.patches.v1.create_item_group
+apparelo.apparelo.patches.v1.warehouse_custom_fields
