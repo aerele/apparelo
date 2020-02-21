@@ -81,12 +81,17 @@ after_install = "apparelo.install.after_install"
 
 doc_events = {
 	"Location": {
-		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_surplus_location_warehouse"
+		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_surplus_location_warehouse"
 	},
 	"Supplier": {
 		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_supplier_warehouse"
-	}
-
+	},
+	"Item": {
+		"validate": "apparelo.erpnext_hooks.populate_pf_item_code"
+	},
+	"Purchase Order": {
+		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.set_lot_link_field_in_po"
+		}
 }
 
 # Scheduled Tasks
@@ -128,4 +133,3 @@ doc_events = {
 # override_doctype_dashboards = {
 # 	"Task": "apparelo.task.get_dashboard_data"
 # }
-

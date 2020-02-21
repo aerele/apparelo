@@ -11,70 +11,60 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from erpnext.stock.report.stock_balance.stock_balance import execute
 from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
+from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
 class DC(Document):
 	def on_submit(self):
 		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
 		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
 		new_po=create_purchase_order(self,abbr)
-		stock_entry_type="Material Receipt"
-		po=""
-		stock=create_stock_entry(self,po,stock_entry_type,abbr)
+		rm_items = []
+		for item in new_po.supplied_items:
+			item_list = {}
+			item_list['name'] = item.name
+			item_list['item_code'] = item.main_item_code
+			item_list['rm_item_code'] = item.rm_item_code
+			item_list['item_name'] = item.rm_item_code
+			item_list['qty'] = item.required_qty
+			item_list['warehouse'] = item.reserve_warehouse
+			item_list['rate'] = item.rate
+			item_list['amount'] = item.amount
+			item_list['stock_uom'] = item.stock_uom
+			rm_items.append(item_list)
+		stock_dict = make_rm_stock_entry(new_po.name, json.dumps(rm_items))
+		stock_entry = frappe.get_doc(stock_dict)
+		stock_entry.save()
+		stock_entry.submit()
+
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
-		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock.name, stock.name))))
+		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock_entry.name, stock_entry.name))))
 
 def create_purchase_order(self,abbr):
 	dc_items=[]
 	supplied_items=[]
 	for item_ in self.return_materials:
-		dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.quantity})
+		dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
 	for item in self.items:
-		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse":  f'{self.lot} - {self.location} - {abbr}'})
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse":  f'{self.lot}-{self.location} - {abbr}'})
 	po=frappe.get_doc({
 		"doctype": "Purchase Order",
-		"docstatus": 1,
 		"supplier": self.supplier,
 		"dc":self.name,
 		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
-		"set_warehouse": f'{self.lot} - {self.location} - {abbr}',
+		"set_warehouse": f'{self.lot}-{self.location} - {abbr}',
+		"set_reserve_warehouse": f'{self.lot}-{self.location} - {abbr}',
 		"is_subcontracted": "Yes",
 		"supplier_warehouse": f'{self.supplier} - {abbr}',
 		"items": dc_items,
 		"supplied_items": supplied_items})
 	po.save()
+	# set_reserve_warehouse related code does not exist in python hence the following is required
+	for item in po.supplied_items:
+		item.reserve_warehouse = f'{self.lot}-{self.location} - {abbr}'
+	po.save()
+	po.submit()
 	return po
-def create_purchase_receipt(self,po,abbr):
-	item_list=[]
-	for item in po.items:
-		item_list.append({ "item_code": item.item_name, "qty": item.qty,"bom": item.bom,"schedule_date": add_days(nowdate(), 7) ,"warehouse":  f'{self.lot} - {self.location} - {abbr}'})
-	frappe.get_doc({ 
-		"docstatus": 1, 
-		"supplier": self.supplier, 
-		"set_warehouse":  f'{self.lot} - {self.location} - {abbr}',
-		"is_subcontracted": "Yes", 
-		"supplier_warehouse": f'{self.supplier} - {abbr}', 
-		"doctype": "Purchase Receipt", 
-		"items": item_list }).save()
-def create_stock_entry(self,po,stock_entry_type,abbr):
-	item_list=[]
-	for item in self.return_materials:
-		item_list.append({"allow_zero_valuation_rate": 1,"s_warehouse":  f'{self.lot} - {self.location} - {abbr}',"t_warehouse": f'{self.supplier} - {abbr}',"item_code": item.item_code,"qty": item.quantity })
-	if po=="":
-		se=frappe.get_doc({ 
-			"docstatus": 1,
-			"stock_entry_type": stock_entry_type,
-			"doctype": "Stock Entry",
-			"items": item_list})
-		se.save()
-	else:
-		se=frappe.get_doc({ 
-			"docstatus": 1,
-			"stock_entry_type": stock_entry_type,
-			"purchase_order": po.name,
-			"doctype": "Stock Entry",
-			"items": item_list})
-		se.save()
-	return se
+
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers=[]
 	all_supplier=frappe.db.get_all("Supplier")

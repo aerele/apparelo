@@ -16,6 +16,7 @@ from apparelo.apparelo.doctype.dc.dc import make_item_fields
 from apparelo.apparelo.doctype.additional_parameters import additional_parameters
 from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
 from apparelo.apparelo.doctype.apparelo_process.apparelo_process import create_apparelo_process
+from apparelo.apparelo.doctype.lot_creation.custom_scripts import set_custom_fields
 
 
 def after_install():
@@ -30,6 +31,7 @@ def after_install():
     make_item_fields()
     make_custom_fields()
     create_root_warehouse()
+    set_custom_fields()
 
 
 def create_item_attributes():
