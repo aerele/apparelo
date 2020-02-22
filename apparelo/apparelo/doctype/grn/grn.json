@@ -71,7 +71,7 @@
   {
    "fieldname": "return_materials",
    "fieldtype": "Table",
-   "label": "Return Materials",
+   "label": "Items Expected in Return",
    "options": "GRN Return Materials"
   },
   {
@@ -90,7 +90,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 11:33:21.468678",
+ "modified": "2020-02-21 22:34:51.639348",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

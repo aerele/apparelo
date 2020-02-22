@@ -9,24 +9,26 @@ from frappe.model.document import Document
 from six import string_types, iteritems
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 
+
 class GRN(Document):
 	def validate(self):
 		get_po(self)
 	def on_submit(self):
-		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
-		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
-		pr=create_purchase_receipt(self,abbr)
+		pr=create_purchase_receipt(self)
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
-def create_purchase_receipt(self,abbr):
+def create_purchase_receipt(self):
 	item_list=[]
-	PO_=frappe.get_doc("Purchase Order",self.po)
-	for item in PO_.items:
-		item_list.append({"item_code": item.item_name, "qty": item.qty, "bom": item.bom, "schedule_date": add_days(nowdate(), 7), "warehouse": f'{self.lot}-{self.location} - {abbr}', "purchase_order": self.po})
+	lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+	rejected_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Mistake'},'name')
+	po_doc=frappe.get_doc("Purchase Order",self.po)
+	for item in self.return_materials:
+		item_list.append({"item_code": item.item_code, "received_qty":item.qty, "qty": item.received_qty, "uom": item.uom, "stock_uom": item.uom, "rejected_qty": item.rejected_qty, "schedule_date": add_days(nowdate(), 7), "warehouse": lot_warehouse, "purchase_order": self.po})
 	pr=frappe.get_doc({
 		"supplier": self.supplier,
-		"set_warehouse": f'{self.lot}-{self.location} - {abbr}',
-		"is_subcontracted": "Yes",
-		"supplier_warehouse": f'{self.supplier} - {abbr}',
+		"rejected_warehouse": rejected_warehouse,
+		"set_warehouse": lot_warehouse,
+		"is_subcontracted": po_doc.is_subcontracted,
+		"supplier_warehouse": po_doc.supplier_warehouse,
 		"doctype": "Purchase Receipt",
 		"items": item_list })
 	pr.save()
@@ -77,6 +79,8 @@ def get_items(doc):
 		doc = frappe._dict(json.loads(doc))
 	doc['return_materials'] = []
 	doc_=doc.get("against_document")
+	dc_process=None
+	apparelo_process=None
 	if doc_.startswith("D"):
 		all_po=frappe.db.get_all("Purchase Order")
 		for po in all_po:
@@ -85,15 +89,16 @@ def get_items(doc):
 				doc_=po_.name
 				dc_doc=frappe.get_doc("DC",po_.dc)
 				dc_process=dc_doc.process_1
-	if doc_.startswith("P"):
-		po_doc=frappe.get_doc("Purchase Order",doc_)
-		dc_doc=frappe.get_doc("DC",po_doc.dc)
-		dc_process=dc_doc.process_1
+				break
 	PO=frappe.get_doc("Purchase Order",doc_)
-	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
+	if dc_process:
+		apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	for item in PO.items:
 		item_detail = frappe.get_doc('Item', item.item_code)
-		return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":apparelo_process.in_secondary_uom})
+		if apparelo_process:
+			return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":apparelo_process.in_secondary_uom})
+		else:
+			return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":item.uom})
 	return return_materials
 def get_po(self):
 	doc_=self.against_document

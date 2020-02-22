@@ -14,9 +14,7 @@ from apparelo.apparelo.doctype.item_production_detail.item_production_detail imp
 from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
 class DC(Document):
 	def on_submit(self):
-		default_company = frappe.db.get_single_value('Global Defaults', 'default_company')
-		abbr = frappe.db.get_value("Company",f"{default_company}","abbr")
-		new_po=create_purchase_order(self,abbr)
+		new_po=create_purchase_order(self)
 		rm_items = []
 		for item in new_po.supplied_items:
 			item_list = {}
@@ -38,29 +36,27 @@ class DC(Document):
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock_entry.name, stock_entry.name))))
 
-def create_purchase_order(self,abbr):
+def create_purchase_order(self):
 	dc_items=[]
 	supplied_items=[]
+	lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+	supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
 	for item_ in self.return_materials:
 		dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
 	for item in self.items:
-		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse":  f'{self.lot}-{self.location} - {abbr}'})
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": lot_warehouse})
 	po=frappe.get_doc({
 		"doctype": "Purchase Order",
 		"supplier": self.supplier,
 		"dc":self.name,
 		"lot":self.lot,
 		"schedule_date": add_days(nowdate(), 7),
-		"set_warehouse": f'{self.lot}-{self.location} - {abbr}',
-		"set_reserve_warehouse": f'{self.lot}-{self.location} - {abbr}',
+		"set_warehouse": lot_warehouse,
+		"set_reserve_warehouse": lot_warehouse,
 		"is_subcontracted": "Yes",
-		"supplier_warehouse": f'{self.supplier} - {abbr}',
+		"supplier_warehouse": supplier_warehouse,
 		"items": dc_items,
 		"supplied_items": supplied_items})
-	po.save()
-	# set_reserve_warehouse related code does not exist in python hence the following is required
-	for item in po.supplied_items:
-		item.reserve_warehouse = f'{self.lot}-{self.location} - {abbr}'
 	po.save()
 	po.submit()
 	return po
@@ -139,7 +135,7 @@ def get_ipd_item(doc):
 	items_to_be_sent = frappe.get_list("BOM Item", filters={'parent': ['in',boms]}, group_by='item_code', fields='item_code')
 
 	from erpnext.stock.dashboard import item_dashboard
-	dc_warehouse = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{location}'}, 'name')
+	dc_warehouse = frappe.db.get_value("Warehouse", {'location': location,'lot': lot},'name')
 	for item in items_to_be_sent:
 		data = item_dashboard.get_data(item_code = item.item_code, warehouse = dc_warehouse)
 		if len(data):
