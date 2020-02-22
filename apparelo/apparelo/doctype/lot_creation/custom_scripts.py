@@ -8,19 +8,22 @@ abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 
 
 def create_surplus_location_warehouse(doc, action):
-    if action == 'validate':
-        if not frappe.db.exists("Warehouse", f"Surplus-{doc.name} - {abbr}"):
-            frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Surplus - {doc.name}",
-                            "is_group": 0, "parent_warehouse": f"Surplus Warehouse - {abbr}"}).save()
-        if not frappe.db.exists("Warehouse", f"Surplus Mistake - {doc.name} - {abbr}"):
-            frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Surplus Mistake - {doc.name}",
-                            "is_group": 0, "parent_warehouse": f"Surplus Warehouse - {abbr}"}).save()
+	if action == 'validate':
+		surplus_location_warehouse=frappe.db.get_value("Warehouse",{"parent_warehouse":"Surplus","location":doc.name},"name")
+		surplus_mistake_warehouse=frappe.db.get_value("Warehouse",{"parent_warehouse":"Surplus","location":doc.name,"warehouse_type":"Mistake"},"name")
+		if not surplus_location_warehouse:
+			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Surplus - {doc.name}","location": doc.name,
+						"is_group": 0, "parent_warehouse": f"Surplus Warehouse - {abbr}"}).save()
+		if not surplus_mistake_warehouse:
+			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Surplus Mistake - {doc.name}","location": doc.name,"warehouse_type": "Mistake",
+							"is_group": 0, "parent_warehouse": f"Surplus Warehouse - {abbr}"}).save()
 
 
 def create_supplier_warehouse(doc, action):
 	if action == 'validate':
-		if not frappe.db.exists("Warehouse", f"{doc.name} - {abbr}"):
-			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"{doc.name}",
+		supplier_warehouse= frappe.db.get_value("Warehouse",{'supplier':doc.name},"name")
+		if not supplier_warehouse:
+			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"{doc.name}","supplier": doc.name,
 							"is_group": 0, "parent_warehouse": f"Supplier Warehouse - {abbr}"}).save()
 
 
