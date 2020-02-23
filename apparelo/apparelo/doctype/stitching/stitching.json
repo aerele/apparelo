@@ -107,6 +107,7 @@
    "label": "is part colour same as piece colour"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "additional_information",
    "fieldtype": "Table",
    "label": "Additional Information",
@@ -237,7 +238,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-05 00:44:38.947094",
+ "modified": "2020-02-21 15:04:18.537665",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",

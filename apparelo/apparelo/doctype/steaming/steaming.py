@@ -35,6 +35,8 @@ class Steaming(Document):
 						new_variant=new_variant+" "+hash_[0:7]
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
+					else:
+						new_variants.append(variant)
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
