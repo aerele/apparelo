@@ -179,7 +179,23 @@ def item_return(doc):
 		for ipd_item in ipd_item_map.item_mapping:
 			if ipd_item.item == item['item_code']:
 				item_detail = frappe.get_doc('Item', item['item_code'])
-				item['description'] = ipd_item.description
+				item['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_item.ipd_process_index)
 				item['secondary_uom'] = apparelo_process.out_secondary_uom
 				item['pf_item_code'] = item_detail.print_code
 	return expected_items_in_return
+
+def get_additional_params(ipd_processes, ipd_process_index):
+	ipd_process_array_index = int(ipd_process_index)-1
+	if ipd_processes[ipd_process_array_index].idx == int(ipd_process_index):
+		process_name = ipd_processes[ipd_process_array_index].process_name
+		process_record = ipd_processes[ipd_process_array_index].process_record
+		process_doc = frappe.get_doc(process_name, process_record)
+		if process_doc.additional_information:
+			additional_parameters_string = ''
+			for info in process_doc.additional_information:
+				additional_parameters_string += f'{info.parameter} : {info.value}\n'
+			return additional_parameters_string
+		else:
+			return None
+	else:
+		frappe.throw(_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))

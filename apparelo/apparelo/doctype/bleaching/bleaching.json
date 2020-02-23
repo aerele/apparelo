@@ -83,6 +83,7 @@
    "reqd": 1
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "additional_information",
    "fieldtype": "Table",
    "label": "Additional Information",
@@ -91,7 +92,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-01-24 15:37:18.344337",
+ "modified": "2020-02-21 15:04:18.537665",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",

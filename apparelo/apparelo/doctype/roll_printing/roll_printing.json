@@ -27,15 +27,16 @@
    "read_only": 1
   },
   {
-    "fieldname": "additional_information",
-    "fieldtype": "Table",
-    "label": "Additional Information",
-    "options": "Additional Information Table"
+   "allow_on_submit": 1,
+   "fieldname": "additional_information",
+   "fieldtype": "Table",
+   "label": "Additional Information",
+   "options": "Additional Information Table"
    }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-10 12:40:34.814400",
+ "modified": "2020-02-21 15:04:18.537665",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Roll Printing",
