@@ -12,6 +12,7 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 
 class GRN(Document):
 	def validate(self):
+		self.po=None
 		self.get_po()
 	def on_submit(self):
 		pr=self.create_purchase_receipt()

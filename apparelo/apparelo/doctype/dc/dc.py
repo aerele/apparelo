@@ -36,30 +36,30 @@ class DC(Document):
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Order/{0}">{1}</a>""".format(new_po.name, new_po.name))))
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock_entry.name, stock_entry.name))))
 
-	def create_purchase_order(self):
-		dc_items=[]
-		supplied_items=[]
-		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
-		supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
-		for item_ in self.return_materials:
-			dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
-		for item in self.items:
-			supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": lot_warehouse})
-		po=frappe.get_doc({
-			"doctype": "Purchase Order",
-			"supplier": self.supplier,
-			"dc":self.name,
-			"lot":self.lot,
-			"schedule_date": add_days(nowdate(), 7),
-			"set_warehouse": lot_warehouse,
-			"set_reserve_warehouse": lot_warehouse,
-			"is_subcontracted": "Yes",
-			"supplier_warehouse": supplier_warehouse,
-			"items": dc_items,
-			"supplied_items": supplied_items})
-		po.save()
-		po.submit()
-		return po
+def create_purchase_order(self):
+	dc_items=[]
+	supplied_items=[]
+	lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+	supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
+	for item_ in self.return_materials:
+		dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
+	for item in self.items:
+		supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": lot_warehouse})
+	po=frappe.get_doc({
+		"doctype": "Purchase Order",
+		"supplier": self.supplier,
+		"dc":self.name,
+		"lot":self.lot,
+		"schedule_date": add_days(nowdate(), 7),
+		"set_warehouse": lot_warehouse,
+		"set_reserve_warehouse": lot_warehouse,
+		"is_subcontracted": "Yes",
+		"supplier_warehouse": supplier_warehouse,
+		"items": dc_items,
+		"supplied_items": supplied_items})
+	po.save()
+	po.submit()
+	return po
 
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers=[]
