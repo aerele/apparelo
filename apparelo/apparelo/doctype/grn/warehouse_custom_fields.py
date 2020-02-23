@@ -5,7 +5,7 @@ from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def make_warehouse_custom_fields(update=True):
 	custom_fields={'Warehouse': [
-		{
+	{
 	"fieldname": "supplier",
 	"fieldtype": "Link",
 	"label": "Supplier",
@@ -17,7 +17,7 @@ def make_warehouse_custom_fields(update=True):
 	"label": "Lot",
 	"options": "Lot Creation"
 		},
-		{
+	{
 	"fieldname": "location",
 	"fieldtype": "Link",
 	"label": "Location",

@@ -12,28 +12,39 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 
 class GRN(Document):
 	def validate(self):
-		get_po(self)
+		self.get_po()
 	def on_submit(self):
-		pr=create_purchase_receipt(self)
+		pr=self.create_purchase_receipt()
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
-def create_purchase_receipt(self):
-	item_list=[]
-	lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
-	rejected_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Mistake'},'name')
-	po_doc=frappe.get_doc("Purchase Order",self.po)
-	for item in self.return_materials:
-		item_list.append({"item_code": item.item_code, "received_qty":item.qty, "qty": item.received_qty, "uom": item.uom, "stock_uom": item.uom, "rejected_qty": item.rejected_qty, "schedule_date": add_days(nowdate(), 7), "warehouse": lot_warehouse, "purchase_order": self.po})
-	pr=frappe.get_doc({
-		"supplier": self.supplier,
-		"rejected_warehouse": rejected_warehouse,
-		"set_warehouse": lot_warehouse,
-		"is_subcontracted": po_doc.is_subcontracted,
-		"supplier_warehouse": po_doc.supplier_warehouse,
-		"doctype": "Purchase Receipt",
-		"items": item_list })
-	pr.save()
-	pr.submit()
-	return pr
+	def create_purchase_receipt(self):
+		item_list=[]
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+		rejected_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Mistake'},'name')
+		po_doc=frappe.get_doc("Purchase Order",self.po)
+		for item in self.return_materials:
+			item_list.append({"item_code": item.item_code, "received_qty":item.qty, "qty": item.received_qty, "uom": item.uom, "stock_uom": item.uom, "rejected_qty": item.rejected_qty, "schedule_date": add_days(nowdate(), 7), "warehouse": lot_warehouse, "purchase_order": self.po})
+		pr=frappe.get_doc({
+			"supplier": self.supplier,
+			"rejected_warehouse": rejected_warehouse,
+			"set_warehouse": lot_warehouse,
+			"is_subcontracted": po_doc.is_subcontracted,
+			"supplier_warehouse": po_doc.supplier_warehouse,
+			"doctype": "Purchase Receipt",
+			"items": item_list })
+		pr.save()
+		pr.submit()
+		return pr
+	def get_po(self):
+		doc_=self.against_document
+		if doc_.startswith("D"):
+			all_po=frappe.db.get_all("Purchase Order")
+			for po in all_po:
+				po_=frappe.get_doc("Purchase Order",po.name)
+				if po_.dc==doc_:
+					doc_=po_.name
+		PO=frappe.get_doc("Purchase Order",doc_)
+		self.po=PO.name
+		return PO.name
 
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':
@@ -100,14 +111,3 @@ def get_items(doc):
 		else:
 			return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":item.uom})
 	return return_materials
-def get_po(self):
-	doc_=self.against_document
-	if doc_.startswith("D"):
-		all_po=frappe.db.get_all("Purchase Order")
-		for po in all_po:
-			po_=frappe.get_doc("Purchase Order",po.name)
-			if po_.dc==doc_:
-				doc_=po_.name
-	PO=frappe.get_doc("Purchase Order",doc_)
-	self.po=PO.name
-	return PO.name
