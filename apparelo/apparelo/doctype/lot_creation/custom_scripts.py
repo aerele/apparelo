@@ -8,7 +8,7 @@ abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 
 
 def create_surplus_location_warehouse(doc, action):
-	if action == 'validate':
+	if action == 'after_insert':
 		surplus_location_warehouse=frappe.db.get_value("Warehouse",{"parent_warehouse":"Surplus","location":doc.name},"name")
 		surplus_mistake_warehouse=frappe.db.get_value("Warehouse",{"parent_warehouse":"Surplus","location":doc.name,"warehouse_type":"Mistake"},"name")
 		if not surplus_location_warehouse:
@@ -20,7 +20,7 @@ def create_surplus_location_warehouse(doc, action):
 
 
 def create_supplier_warehouse(doc, action):
-	if action == 'validate':
+	if action == 'after_insert':
 		supplier_warehouse= frappe.db.get_value("Warehouse",{'supplier':doc.name},"name")
 		if not supplier_warehouse:
 			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"{doc.name}","supplier": doc.name,
