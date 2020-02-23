@@ -41,6 +41,8 @@ class Knitting(Document):
 						new_variant=new_variant+" "+hash_[0:7]
 						r_variant=frappe.rename_doc("Item",variant,new_variant)
 						new_variants.append(r_variant)
+					else:
+						new_variants.append(variant)
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
@@ -182,7 +184,7 @@ def create_item_template():
 			"item_code": "Yarn",
 			"item_name": "Yarn",
 			"description": "Yarn",
-			"item_group": "Sub Assemblies",
+			"item_group": "Raw Material",
 			"stock_uom" : "Kg",
 			"has_variants" : "1",
 			"variant_based_on" : "Item Attribute",
