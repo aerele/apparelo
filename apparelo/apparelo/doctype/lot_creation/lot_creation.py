@@ -75,7 +75,7 @@ class LotCreation(Document):
 			material_request.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
-				"schedule_date": schedule_date,
+				"schedule_date": item.req_by_date,
 				"warehouse": lot_warehouse,
 				"sales_order": item.sales_order,
 				"lot_creation": self.name,
