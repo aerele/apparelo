@@ -26,7 +26,9 @@ def make_warehouse_custom_fields(update=True):
 	]}
 	create_custom_fields(custom_fields,ignore_validate = frappe.flags.in_patch, update=update)
 def create_warehouse_type():
-	if not frappe.db.exists("Warehouse Type","Mistake"):
-		warehouse_type=frappe.new_doc("Warehouse Type")
-		warehouse_type.name="Mistake"
-		warehouse_type.save()
+	warehouse_type_list=["Actual","Mistake"]
+	for warehouse_type in warehouse_type_list:
+		if not frappe.db.exists("Warehouse Type",warehouse_type):
+			warehouse_type_doc=frappe.new_doc("Warehouse Type")
+			warehouse_type_doc.name=warehouse_type
+			warehouse_type_doc.save()

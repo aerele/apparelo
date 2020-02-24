@@ -231,25 +231,25 @@ def get_ipd_item(doc):
 	return po_items
 
 def create_parent_warehouse(self,abbr):
-	lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
+	lot_warehouse=frappe.db.get_value("Warehouse", {'warehouse_name': self.name,'parent_warehouse': f"Lot Warehouse - {abbr}"},'name')
 	if not lot_warehouse:
 		frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
-			"lot": self.name,
 			"is_group": 1,
 			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
 
 def create_warehouse(self, abbr):
 	for location in self.location:
-		lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name},'name')
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name,'warehouse_type': 'Actual'},'name')
 		mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name,'warehouse_type':'Mistake'},'name')
 		if not lot_warehouse:
 			frappe.get_doc({
 				"doctype": "Warehouse",
 				"location": location.location,
 				"lot": self.name,
+				"warehouse_type":'Actual',
 				"warehouse_name": f"{self.name}-{location.location}",
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"

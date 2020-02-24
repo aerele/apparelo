@@ -39,7 +39,7 @@ class DC(Document):
 	def create_purchase_order(self):
 		dc_items=[]
 		supplied_items=[]
-		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type': "Actual"},'name')
 		supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
 		for item_ in self.return_materials:
 			dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
@@ -135,7 +135,7 @@ def get_ipd_item(doc):
 	items_to_be_sent = frappe.get_list("BOM Item", filters={'parent': ['in',boms]}, group_by='item_code', fields='item_code')
 
 	from erpnext.stock.dashboard import item_dashboard
-	dc_warehouse = frappe.db.get_value("Warehouse", {'location': location,'lot': lot},'name')
+	dc_warehouse = frappe.db.get_value("Warehouse", {'location': location,'lot': lot,'warehouse_type':'Actual'},'name')
 	for item in items_to_be_sent:
 		data = item_dashboard.get_data(item_code = item.item_code, warehouse = dc_warehouse)
 		if len(data):
