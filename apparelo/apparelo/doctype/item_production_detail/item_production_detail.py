@@ -578,7 +578,7 @@ def process_based_qty(process,ipd=None,lot=None,qty_based_bom=None):
 	additional_item_list = []
 	for item in items:
 		if item['qty']!=0:
-			final_item_list.append({"item_code": item['item'],"qty":item['qty'] ,"uom": item['uom']})
+			final_item_list.append({"item_code": item['item'],"qty":round(item['qty'],2) ,"uom": item['uom']})
 	for item in additional_item:
 		additional_item_list.append({"item_code": item,"qty":additional_item[item] ,"uom": 'Nos'})
 
