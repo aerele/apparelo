@@ -30,28 +30,45 @@ class LotCreation(Document):
 		for item in self.mr_items:
 			item_doc = frappe.get_cached_doc('Item', item.item_code)
 
-			material_request_type = item.material_request_type or item_doc.default_material_request_type
-
+			material_request_type = item_doc.default_material_request_type
 			# key for Sales Order:Material Request Type:Customer
 			key = '{}:{}:{}'.format(
-			    item.sales_order, material_request_type, item_doc.customer or '')
-			schedule_date = add_days(nowdate(), cint(item_doc.lead_time_days))
+					item.sales_order, material_request_type, item_doc.customer or '')
+			if material_request_type == 'Purchase':
+				if not key in material_request_map:
+					# make a new MR for the combination
+					material_request_map[key] = frappe.new_doc("Material Request")
+					material_request = material_request_map[key]
+					material_request.update({
+						"lot": self.name,
+						"transaction_date": nowdate(),
+						"status": "Draft",
+						"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
+						"requested_by": frappe.session.user,
+						"material_request_type": material_request_type,
+						"customer": item_doc.customer or ""
+					})
+					material_request_list.append(material_request)
+				else:
+					material_request = material_request_map[key]
 
-			if not key in material_request_map:
-				# make a new MR for the combination
-				material_request_map[key] = frappe.new_doc("Material Request")
-				material_request = material_request_map[key]
-				material_request.update({
-					"transaction_date": nowdate(),
-					"status": "Draft",
-					"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
-					"requested_by": frappe.session.user,
-					'material_request_type': material_request_type,
-					'customer': item_doc.customer or ''
-				})
-				material_request_list.append(material_request)
 			else:
-				material_request = material_request_map[key]
+				if not key in material_request_map:
+					# make a new MR for the combination
+					material_request_map[key] = frappe.new_doc("Material Request")
+					material_request = material_request_map[key]
+					material_request.update({
+						"lot": self.name,
+						"transaction_date": nowdate(),
+						"status": "Draft",
+						"company": frappe.db.get_single_value('Global Defaults', 'default_company'),
+						"requested_by": frappe.session.user,
+						"material_request_type": material_request_type,
+						"customer": item_doc.customer or ''
+					})
+					material_request_list.append(material_request)
+				else:
+					material_request = material_request_map[key]
 
 			# add item
 			lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
@@ -61,8 +78,8 @@ class LotCreation(Document):
 				"schedule_date": schedule_date,
 				"warehouse": lot_warehouse,
 				"sales_order": item.sales_order,
-				'lot_creation': self.name,
-				'material_request_plan_item': item.name,
+				"lot_creation": self.name,
+				"material_request_plan_item": item.name,
 				"project": frappe.db.get_value("Sales Order", item.sales_order, "project")
 					if item.sales_order else None
 			})
@@ -72,10 +89,10 @@ class LotCreation(Document):
 			material_request.flags.ignore_permissions = 1
 			material_request.run_method("set_missing_values")
 
-			if self.get('submit_material_request'):
-				material_request.submit()
-			else:
-				material_request.save()
+			# if self.get('submit_material_request'):
+			# 	material_request.submit()
+			# else:
+			material_request.save()
 
 		frappe.flags.mute_messages = False
 
@@ -253,41 +270,61 @@ def cloth_qty(doc):
 	if isinstance(doc, string_types):
 		doc=frappe._dict(json.loads(doc))
 	html_head = '<th>Dia/Colour</th>'
-	html_body = ''
+	html = ''
 	bom_qty = []
 	process = []
 	colour_list = []
 	dia_list = []
+	yarn_list=[]
+	# get bom and planned quantity
 	for item in doc.po_items:
 		bom_qty.append({item['bom_no']:item['planned_qty']})
 
 	ipd = frappe.get_doc('Item Production Detail',doc.item_production_detail)
+	# get yarn, dia and end process list
 	for ipd_process in ipd.processes:
 		if ipd_process.process_name == 'Knitting':
+			dia_list = []
 			for knitting_dia in frappe.get_doc('Knitting',ipd_process.process_record).dia:
 				dia_list.append(knitting_dia.dia)
+			yarn_list.append({'yarn':ipd_process.input_item,'index':ipd_process.idx,'dia':dia_list})
 		elif ipd_process.process_name == 'Compacting' or ipd_process.process_name == 'Steaming':
 			process.append(ipd_process.process_name)
 	process = list(set(process))
+	# get colour list
 	for colour in ipd.colour:
 		colour_list.append(colour.colour)
 		html_head += f'<th>{colour.colour}</th>'
-
+	html_head += '<th>Total</th>'
+	# get item and quantity
 	additional_item,final_item_list = process_based_qty(process = process, ipd = doc.item_production_detail, qty_based_bom = bom_qty)
-	
-	dia_qty_list =[]
-	for dia in dia_list:
-		dia_list = [0]*(len(colour_list)+1)
-		dia_list[0] = dia
-		for colour in colour_list:
-			for item in final_item_list:
-				if colour.upper() in item['item_code'] and str(dia) in item['item_code']:
-					dia_list[colour_list.index(colour)+1] = item['qty']
-		dia_qty_list.append(dia_list)
 
-	for lists in dia_qty_list:
-		for value in lists:
-			html_body += f'<td>{value}</td>'
-		html_body = f'<tr>{html_body}</tr>'
-
-	return f'<table class="table table-bordered"><tbody><tr>{html_head}</tr>{html_body}</tbody></table>'
+	for data in yarn_list:
+		html_body = ''
+		dia_qty_list =[]
+		html += data['yarn']
+		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':'Essdee gym vest'},'name')
+		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
+		ipd_item_list = []
+		for item in ipd_items:
+			ipd_item_list.append(item['item'])
+		for dia in data['dia']:
+			dia_list = [0]*(len(colour_list)+2)
+			dia_list[0] = dia
+			dia_total = 0
+			for colour in colour_list:
+				for item in final_item_list:
+					if (colour.upper() in item['item_code']) and (dia in item['item_code']) and (item['item_code'] in ipd_item_list):
+						dia_list[colour_list.index(colour)+1] = item['qty']
+						dia_total += item['qty']
+						if 'FOLD' in item['item_code']:
+							dia_list[0] = f'{dia} (FOLD)'
+						break
+			dia_list[len(colour_list)+1] = round(dia_total,2)
+			dia_qty_list.append(dia_list)
+		for lists in dia_qty_list:
+			for value in lists:
+				html_body += f'<td>{value}</td>'
+			html_body = f'<tr>{html_body}</tr>'
+		html += f'<table class="table table-bordered"><tbody><tr>{data["yarn"]}</tr><tr>{html_head}</tr>{html_body}</tbody></table>'
+	return html
