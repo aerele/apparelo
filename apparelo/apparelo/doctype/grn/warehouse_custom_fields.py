@@ -29,6 +29,6 @@ def create_warehouse_type():
 	warehouse_type_list=["Actual","Mistake"]
 	for warehouse_type in warehouse_type_list:
 		if not frappe.db.exists("Warehouse Type",warehouse_type):
-			warehouse_type=frappe.new_doc("Warehouse Type")
-			warehouse_type.name=warehouse_type
-			warehouse_type.save()
+			warehouse_type_doc=frappe.new_doc("Warehouse Type")
+			warehouse_type_doc.name=warehouse_type
+			warehouse_type_doc.save()
