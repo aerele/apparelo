@@ -302,7 +302,6 @@ def cloth_qty(doc):
 	for data in yarn_list:
 		html_body = ''
 		dia_qty_list =[]
-		html += data['yarn']
 		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':'Essdee gym vest'},'name')
 		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
 		ipd_item_list = []
