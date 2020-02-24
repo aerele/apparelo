@@ -19,7 +19,7 @@ class GRN(Document):
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
 	def create_purchase_receipt(self):
 		item_list=[]
-		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot},'name')
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Actual'},'name')
 		rejected_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Mistake'},'name')
 		po_doc=frappe.get_doc("Purchase Order",self.po)
 		for item in self.return_materials:
