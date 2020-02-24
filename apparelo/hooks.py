@@ -81,10 +81,10 @@ after_install = "apparelo.install.after_install"
 
 doc_events = {
 	"Location": {
-		"validate": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_surplus_location_warehouse"
+		"after_insert": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_surplus_location_warehouse"
 	},
 	"Supplier": {
-		"validate": "apparelo.apparelo.doctype.lot_creation.surplus_location_warehouse.create_supplier_warehouse"
+		"after_insert": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_supplier_warehouse"
 	},
 	"Item": {
 		"validate": "apparelo.erpnext_hooks.populate_pf_item_code"
