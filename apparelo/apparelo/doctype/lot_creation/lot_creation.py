@@ -71,13 +71,12 @@ class LotCreation(Document):
 					material_request = material_request_map[key]
 
 			# add item
-			default_company = frappe.db.get_single_value(
-				'Global Defaults', 'default_company')
-			abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
+			lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
 			material_request.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
-				"schedule_date": item.req_by_date,
+				"schedule_date": schedule_date,
+				"warehouse": lot_warehouse,
 				"sales_order": item.sales_order,
 				"lot_creation": self.name,
 				"material_request_plan_item": item.name,
@@ -232,26 +231,35 @@ def get_ipd_item(doc):
 	return po_items
 
 def create_parent_warehouse(self,abbr):
-	if not frappe.db.exists("Warehouse", f'{self.name} - {abbr}'):
+	lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
+	if not lot_warehouse:
 		frappe.get_doc({
 			"doctype": "Warehouse",
 			"warehouse_name": self.name,
+			"lot": self.name,
 			"is_group": 1,
 			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
 
 def create_warehouse(self, abbr):
 	for location in self.location:
-		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} - {abbr}"):
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name},'name')
+		mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name,'warehouse_type':'Mistake'},'name')
+		if not lot_warehouse:
 			frappe.get_doc({
 				"doctype": "Warehouse",
+				"location": location.location,
+				"lot": self.name,
 				"warehouse_name": f"{self.name}-{location.location}",
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
 				}).save()
-		if not frappe.db.exists("Warehouse", f"{self.name}-{location.location} Mistake - {abbr}"):
+		if not mistake_warehouse:
 			frappe.get_doc({
 				"doctype": "Warehouse",
+				"location": location.location,
+				"lot": self.name,
+				"warehouse_type":'Mistake',
 				"warehouse_name": f"{self.name}-{location.location} Mistake",
 				"is_group": 0,
 				"parent_warehouse": f"{self.name} - {abbr}"
@@ -266,6 +274,7 @@ def cloth_qty(doc):
 	bom_qty = []
 	process = []
 	colour_list = []
+	dia_list = []
 	yarn_list=[]
 	# get bom and planned quantity
 	for item in doc.po_items:

@@ -28,7 +28,7 @@ frappe.ui.form.on('GRN', {
 		});
 	},
 	get_items: function(frm) {
-		const set_fields = ['item_code','uom','quantity'];
+		const set_fields = ['item_code','uom','qty','pf_item_code',"secondary_uom"];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.grn.grn.get_items",
 			freeze: true,
