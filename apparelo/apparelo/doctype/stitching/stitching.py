@@ -108,7 +108,7 @@ class Stitching(Document):
 							for style in attribute_set["Apparelo Style"]:
 								for colour_mapping in self.colour_mappings:
 									for piece_count in self.parts_per_piece:
-										if style.upper() in input_item and style.upper() in variant and size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+										if style in input_item and style in variant and size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
 											if piece_count.part==colour_mapping.part:
 												item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 						else:

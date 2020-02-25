@@ -18,8 +18,16 @@ class LabelFusing(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
-		return list(set(variants))
+		variants = []
+		parts=attribute_set["Part"]
+		for part in parts:
+			if part==self.part:
+				variant_attribute_set = {}
+				variant_attribute_set['Part'] = [part]
+				variant_attribute_set['Apparelo Colour'] = attribute_set["Apparelo Colour"]
+				variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
+				variants.extend(create_variants(self.item+" Labeled Cloth", variant_attribute_set))
+		return variants
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		boms = []
@@ -30,7 +38,7 @@ class LabelFusing(Document):
 			for input_item in input_item_names:
 				for size in attribute_set["Apparelo Size"]:
 					for colour in attribute_set["Apparelo Colour"]:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant and self.part.upper() in variant and self.part.upper() in input_item:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			if self.enable_additional_parts:
 				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)

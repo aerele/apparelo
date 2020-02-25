@@ -253,7 +253,7 @@ def get_part_colour_combination(doc):
 	else:
 		if doc.get('colour_mapping') != None:
 			for item in doc.get('colour_mapping'):
-				part_colour_combination.append({'part':item['part'],'colour':item['colour']})
+				part_colour_combination.append({'part':item['part'],'colour':item['colour'],'style':item['style']})
 		for colour in doc.get('colours'):
 			for part in doc.get('colour_parts'):
 				for style in doc.get('styles'):
