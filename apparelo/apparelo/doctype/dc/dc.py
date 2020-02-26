@@ -172,13 +172,37 @@ def get_expected_items_in_return(doc):
 	lot_items = frappe.get_list('Lot Creation Plan Item', filters={'parent': lot}, fields=['item_code', 'planned_qty', 'bom_no', 'stock_uom'])
 	expect_return_items_at = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{doc.get("expect_return_items_at")}'}, 'name')
 
-	for lot_item in lot_items:
-		lot_item['warehouse'] = expect_return_items_at
-		if not lot_item['stock_uom']:
-			lot_item['stock_uom'] = frappe.db.get_value('Item', lot_item['item_code'], 'stock_uom')
+	# Invoke
+	receivable_list = get_receivable_list_values(lot_items, receivable_list, expect_return_items_at)
 
+	percentage_in_excess = frappe.db.get_value('Lot Creation', lot, 'percentage')
+	if percentage_in_excess:
+		percentage_in_excess = (flt(percentage_in_excess) / 100)
+
+	for item_to_be_received in items_to_be_received:
+		item = frappe.get_doc('Item', item_to_be_received['item'])
+		item_to_be_received['item_code'] = item_to_be_received['item']
+		item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * percentage_in_excess)
+		# item_to_be_received['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_item.ipd_process_index)
+		item_to_be_received['pf_item_code'] = item.print_code
+		item_to_be_received['uom'] = item.stock_uom
+		item_to_be_received['description'] = item.description
+		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
+
+	return items_to_be_received
+
+def get_receivable_list_values(lot_items, receivable_list, planned_warehouse=None):
+	po_items = []
 	company = get_default_company()
-	po_items = lot_items
+	for lot_item in lot_items:
+		po_item = {}
+		po_item['warehouse'] = planned_warehouse
+		po_item['stock_uom'] = frappe.db.get_value('Item', lot_item['item_code'], 'stock_uom')
+		po_item['item_code'] = lot_item['item_code']
+		po_item['planned_qty'] = lot_item['planned_qty']
+		po_item['bom_no'] = lot_item['bom_no']
+		po_items.append(po_item)
+
 	# Using the production plan function doing the complete traversal of BOM while calculating the
 	# required quantity in the receivable list. There is a scope to improve this if we can stop at
 	# arriving the receivable list.
@@ -203,24 +227,10 @@ def get_expected_items_in_return(doc):
 				po_item['item_code'] = mr_item['item_code']
 				po_item['planned_qty'] = mr_item['quantity']
 				po_item['stock_uom'] = mr_item['stock_uom']
-				po_item['warehouse'] = expect_return_items_at
+				po_item['warehouse'] = planned_warehouse
 				po_items.append(po_item)
 
-	percentage_in_excess = frappe.db.get_value('Lot Creation', lot, 'percentage')
-	if percentage_in_excess:
-		percentage_in_excess = flt(percentage_in_excess / 100)
-
-	for item_to_be_received in items_to_be_received:
-		item = frappe.get_doc('Item', item_to_be_received['item'])
-		item_to_be_received['item_code'] = item_to_be_received['item']
-		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']] + (receivable_list[item_to_be_received['item_code']] * percentage_in_excess)
-		# item_to_be_received['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_item.ipd_process_index)
-		item_to_be_received['pf_item_code'] = item.print_code
-		item_to_be_received['uom'] = item.stock_uom
-		item_to_be_received['description'] = item.description
-		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
-
-	return items_to_be_received
+	return receivable_list
 
 def get_additional_params(ipd_processes, ipd_process_index):
 	ipd_process_array_index = int(ipd_process_index)-1
