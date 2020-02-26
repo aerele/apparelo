@@ -39,7 +39,7 @@ class Steaming(Document):
 						new_variants.append(variant)
 		if len(new_variants)==0:
 			new_variants=variants
-		return new_variants
+		return new_variants, attribute_set
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		input_items = []
@@ -48,7 +48,7 @@ class Steaming(Document):
 		boms = []
 		for item in input_items:
 			for variant in variants:
-				for color in colour:
+				for color in attribute_set['Apparelo Colour']:
 					for dia in self.dia_conversions:
 						if color.upper() in item.name and color.upper() in variant and dia.from_dia in item.name and dia.to_dia in variant:
 							bom_for_variant = frappe.get_doc({
