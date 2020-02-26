@@ -30,10 +30,14 @@ class LabelFusing(Document):
 			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in attribute_set["Apparelo Size"]:
 					for colour in attribute_set["Apparelo Colour"]:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant and self.part.upper() in variant and self.part.upper() in input_item:
+						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
 							input_item_list.append(input_item)
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			if self.enable_additional_parts:

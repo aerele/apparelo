@@ -27,12 +27,16 @@ class PiecePrinting(Document):
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		boms = []
 		for variant in variants:
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			item_list = []
 			input_item_list = []
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in attribute_set["Apparelo Size"]:
 					for colour in attribute_set["Apparelo Colour"]:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant and self.part.upper() in variant and self.part.upper() in input_item:
+						if size in input_attr['Apparelo Size']  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
 							input_item_list.append(input_item)
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')

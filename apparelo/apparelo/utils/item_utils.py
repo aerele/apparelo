@@ -153,23 +153,27 @@ def create_additional_parts(colors,sizes,items):
 
 def matching_additional_part(additional_parts,colors,sizes,items,variant):
 	matched_part=[]
+	variant_doc=frappe.get_doc("Item",variant)
+	variant_attr = get_attr_dict(variant_doc.attributes)
 	for additional_part in additional_parts:
+		input_item_doc=frappe.get_doc("Item",additional_part['item_code'])
+		input_attr = get_attr_dict(input_item_doc.attributes)
 		for item in items:
 			if item.item in additional_part['item_code']:
 				if item.based_on=="Size and Colour":
 					for size in sizes:
 						for color in colors:
 							if item.item == size.item and item.item == color.item:
-								if color.piece_colour.upper() in variant and size.piece_size.upper() in variant and color.part_colour.upper() in additional_part['item_code'] and size.part_size.upper() in additional_part['item_code']:
+								if color.piece_colour in variant_attr["Apparelo Colour"] and size.piece_size in variant_attr["Apparelo Size"] and color.part_colour in input_attr['Apparelo Colour'] and size.part_size in input_attr["Apparelo Size"]:
 									matched_part.append(additional_part)
 				if item.based_on=="Size":
 					for size in sizes:
 						if item.item ==size.item:
-							if size.piece_size.upper()  in variant and size.part_size.upper() in additional_part['item_code']:
+							if size.piece_size in variant_attr["Apparelo Size"] and size.part_size in input_attr["Apparelo Size"]:
 								matched_part.append(additional_part)
 				if item.based_on=="Colour":
 					for color in colors:
 						if item.item ==color.item:
-							if color.piece_colour.upper() in variant and color.part_colour.upper() in additional_part['item_code']:
+							if color.piece_colour in variant_attr["Apparelo Colour"] and color.part_colour in input_attr["Apparelo Colour"]:
 								matched_part.append(additional_part)
 	return matched_part

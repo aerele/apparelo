@@ -91,7 +91,7 @@ class Cutting(Document):
 				for variant in variants:
 					var=frappe.get_doc('Item', variant)
 					attr = get_attr_dict(var.attributes)
-					if part.upper() in variant:
+					if part in attr['Part']:
 						variant_.append(variant)
 						bom=create_common_bom(self,variant,attr,input_items)
 				combined_part['variants']=variant_ 
@@ -265,8 +265,10 @@ def create_combined_bom(combo,input_item):
 	item_doc=frappe.get_doc("Item",input_item)
 	for variant in combo['variants']:
 		item_ = get_attr_dict(item_doc.attributes)
+		variant_doc=frappe.get_doc("Item",variant)
+		variant_attr = get_attr_dict(variant_doc.attributes)
 		if item_["Apparelo Colour"][0] in combo["color"] and item_["Apparelo Size"][0] in combo["Size"]:
-			if item_["Apparelo Colour"][0].upper() in variant and item_["Apparelo Size"][0].upper() in variant:
+			if item_["Apparelo Colour"][0] in variant_attr["Apparelo Colour"] and item_["Apparelo Size"][0] in variant_attr["Apparelo Size"]:
 				existing_bom = frappe.db.get_value('BOM', {'item':input_item}, 'name')
 				if not existing_bom:
 					bom = frappe.get_doc({
