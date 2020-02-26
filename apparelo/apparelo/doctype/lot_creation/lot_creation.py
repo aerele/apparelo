@@ -11,7 +11,8 @@ from six import string_types, iteritems
 from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_exploded_items, get_subitems, get_bin_details, get_material_request_items
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
-from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
+from apparelo.apparelo.doctype.dc.dc import get_receivable_list_values
+from frappe.utils import today
 
 
 class LotCreation(Document):
@@ -71,12 +72,10 @@ class LotCreation(Document):
 					material_request = material_request_map[key]
 
 			# add item
-			lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
 			material_request.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
-				"schedule_date": schedule_date,
-				"warehouse": lot_warehouse,
+				"schedule_date": item.req_by_date,
 				"sales_order": item.sales_order,
 				"lot_creation": self.name,
 				"material_request_plan_item": item.name,
@@ -194,6 +193,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 					ignore_existing_ordered_qty, warehouse, bin_dict)
 				if items:
 					mr_items.append(items)
+	
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):
@@ -202,6 +202,8 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 				item['quantity']=round(item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100)
 		else:
 			item['quantity']=item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100
+
+		item['req_by_date'] = today()
 
 	if not mr_items:
 		frappe.msgprint(_("""As raw materials projected quantity is more than required quantity, there is no need to create material request.
@@ -296,13 +298,31 @@ def cloth_qty(doc):
 		colour_list.append(colour.colour)
 		html_head += f'<th>{colour.colour}</th>'
 	html_head += '<th>Total</th>'
-	# get item and quantity
-	additional_item,final_item_list = process_based_qty(process = process, ipd = doc.item_production_detail, qty_based_bom = bom_qty)
+
+	final_item_list = []
+	if doc['item_production_detail']:
+		ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': doc['item_production_detail']})
+		boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms('Dyeing')
+		boms.extend(frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms('Bleaching'))
+
+		items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields='item')
+		receivable_list = {}
+		for item_to_be_received in items_to_be_received:
+			receivable_list[item_to_be_received['item']] = 0
+		
+		receivable_list = get_receivable_list_values(doc.po_items, receivable_list)
+
+		for item_to_be_received in items_to_be_received:
+			item = frappe.get_doc('Item', item_to_be_received['item'])
+			item_list = {}
+			item_list['item_code'] = item_to_be_received['item']
+			item_list['qty'] = flt(receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * (flt(doc.percentage)/100)), 3)
+			item_list['uom'] = item.stock_uom
+			final_item_list.append(item_list)
 
 	for data in yarn_list:
 		html_body = ''
 		dia_qty_list =[]
-		html += data['yarn']
 		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':'Essdee gym vest'},'name')
 		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
 		ipd_item_list = []
@@ -320,7 +340,7 @@ def cloth_qty(doc):
 						if 'FOLD' in item['item_code']:
 							dia_list[0] = f'{dia} (FOLD)'
 						break
-			dia_list[len(colour_list)+1] = round(dia_total,2)
+			dia_list[len(colour_list)+1] = round(dia_total,3)
 			dia_qty_list.append(dia_list)
 		for lists in dia_qty_list:
 			for value in lists:

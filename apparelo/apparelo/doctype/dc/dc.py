@@ -10,9 +10,13 @@ from frappe.model.document import Document
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from erpnext.stock.report.stock_balance.stock_balance import execute
-from apparelo.apparelo.doctype.item_production_detail.item_production_detail import process_based_qty
 from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
+from erpnext import get_default_company
+from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
+
 class DC(Document):
+
+
 	def on_submit(self):
 		new_po=self.create_purchase_order()
 		rm_items = []
@@ -43,8 +47,6 @@ class DC(Document):
 		supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
 		for item_ in self.return_materials:
 			dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
-		for item in self.items:
-			supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": lot_warehouse})
 		po=frappe.get_doc({
 			"doctype": "Purchase Order",
 			"supplier": self.supplier,
@@ -55,8 +57,11 @@ class DC(Document):
 			"set_reserve_warehouse": lot_warehouse,
 			"is_subcontracted": "Yes",
 			"supplier_warehouse": supplier_warehouse,
-			"items": dc_items,
-			"supplied_items": supplied_items})
+			"items": dc_items})
+		po.save()
+		# set_reserve_warehouse related code does not exist in python hence the following is required
+		for item in po.supplied_items:
+			item.reserve_warehouse = lot_warehouse
 		po.save()
 		po.submit()
 		return po
@@ -146,43 +151,99 @@ def get_ipd_item(doc):
 			item['pf_item_code'] = item_detail.print_code
 	return items_to_be_sent
 
-
 @frappe.whitelist()
-def item_return(doc):
-	index=[]
-	process_list=set()
+def get_expected_items_in_return(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-
-	doc['return_materials'] = []
-
-	items = doc.get('items')
-	if not items:
-		frappe.throw(_("Items are required to calculate return items"))
 
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
 	apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
 	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
-	lot_ipd_doc=frappe.get_doc("Item Production Detail",lot_ipd)
-	for process in lot_ipd_doc.processes:
-		if process.process_name==dc_process:
-			index.append(process.idx)
-	for process in lot_ipd_doc.processes:
-		for idx in index:
-			if process.input_index:
-				if str(idx) == process.input_index:
-					process_list.add(process.process_name)
-	additional_item_list,expected_items_in_return=process_based_qty(process=list(process_list),lot=lot)
-	ipd_item_map = frappe.get_doc("IPD Item Mapping",{'item_production_details': lot_ipd})
-	for item in expected_items_in_return:
-		for ipd_item in ipd_item_map.item_mapping:
-			if ipd_item.item == item['item_code']:
-				item_detail = frappe.get_doc('Item', item['item_code'])
-				item['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_item.ipd_process_index)
-				item['secondary_uom'] = apparelo_process.out_secondary_uom
-				item['pf_item_code'] = item_detail.print_code
-	return expected_items_in_return
+
+	ipd_bom_mapping = frappe.db.get_value('IPD BOM Mapping', {'item_production_details': lot_ipd})
+	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
+
+	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields='item')
+
+	receivable_list = {}
+	for item_to_be_received in items_to_be_received:
+		receivable_list[item_to_be_received['item']] = 0
+
+	lot_items = frappe.get_list('Lot Creation Plan Item', filters={'parent': lot}, fields=['item_code', 'planned_qty', 'bom_no', 'stock_uom'])
+	expect_return_items_at = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{doc.get("expect_return_items_at")}'}, 'name')
+
+	# Invoke
+	receivable_list = get_receivable_list_values(lot_items, receivable_list, expect_return_items_at)
+
+	percentage_in_excess = frappe.db.get_value('Lot Creation', lot, 'percentage')
+	if percentage_in_excess:
+		percentage_in_excess = (flt(percentage_in_excess) / 100)
+
+	lot_ipd_doc = frappe.get_doc("Item Production Detail", lot_ipd)
+	ipd_item_mapping = frappe.get_doc("IPD Item Mapping", {'item_production_details': lot_ipd})
+
+	for item_to_be_received in items_to_be_received:
+		item = frappe.get_doc('Item', item_to_be_received['item'])
+		item_to_be_received['item_code'] = item_to_be_received['item']
+		item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * percentage_in_excess)
+
+		ipd_process_index_of_item = -1
+		for item_mappping in ipd_item_mapping.item_mapping:
+			if item_mappping.item == item.item_code:
+				ipd_process_index_of_item = item_mappping.ipd_process_index
+				break
+		if ipd_process_index_of_item == -1:
+			frappe.throw(_(f"Item:{item.item_code} not found in IPD Item Mapping"))
+		item_to_be_received['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_process_index_of_item)
+		
+		item_to_be_received['pf_item_code'] = item.print_code
+		item_to_be_received['uom'] = item.stock_uom
+		item_to_be_received['description'] = item.description
+		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
+
+	return items_to_be_received
+
+def get_receivable_list_values(lot_items, receivable_list, planned_warehouse=None):
+	po_items = []
+	company = get_default_company()
+	for lot_item in lot_items:
+		po_item = {}
+		po_item['warehouse'] = planned_warehouse
+		po_item['stock_uom'] = frappe.db.get_value('Item', lot_item['item_code'], 'stock_uom')
+		po_item['item_code'] = lot_item['item_code']
+		po_item['planned_qty'] = lot_item['planned_qty']
+		po_item['bom_no'] = lot_item['bom_no']
+		po_items.append(po_item)
+
+	# Using the production plan function doing the complete traversal of BOM while calculating the
+	# required quantity in the receivable list. There is a scope to improve this if we can stop at
+	# arriving the receivable list.
+	while True:
+		if len(po_items) > 0:
+			input = {
+				'company': company,
+				'po_items': po_items
+			}
+			mr_items = get_items_for_material_requests(json.dumps(input))
+		else:
+			break
+		po_items = []
+		for mr_item in mr_items:
+			if mr_item['item_code'] in receivable_list:
+				receivable_list[mr_item['item_code']] += mr_item['quantity']
+		
+			bom_no = frappe.db.get_value('Item', mr_item['item_code'], 'default_bom')
+			po_item = {}
+			if bom_no:
+				po_item['bom_no'] = bom_no
+				po_item['item_code'] = mr_item['item_code']
+				po_item['planned_qty'] = mr_item['quantity']
+				po_item['stock_uom'] = mr_item['stock_uom']
+				po_item['warehouse'] = planned_warehouse
+				po_items.append(po_item)
+
+	return receivable_list
 
 def get_additional_params(ipd_processes, ipd_process_index):
 	ipd_process_array_index = int(ipd_process_index)-1
