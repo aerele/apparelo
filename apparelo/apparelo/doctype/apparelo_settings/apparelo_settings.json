@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "creation": "2020-02-26 15:16:00.450516",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "default_lead_time_in_days"
+ ],
+ "fields": [
+  {
+   "default": "10",
+   "description": "Lead time for raw materials has to be mentioned in specific for each of the Purchase type Item. Otherwise, this will be used while creating material requests",
+   "fieldname": "default_lead_time_in_days",
+   "fieldtype": "Int",
+   "label": "Default Lead Time In Days"
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2020-02-26 15:18:32.804396",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Apparelo Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
