@@ -47,8 +47,6 @@ class DC(Document):
 		supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
 		for item_ in self.return_materials:
 			dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
-		for item in self.items:
-			supplied_items.append({ "main_item_code": item.item_code, "rm_item_code": item.item_code, "required_qty":item.quantity, "reserve_warehouse": lot_warehouse})
 		po=frappe.get_doc({
 			"doctype": "Purchase Order",
 			"supplier": self.supplier,
@@ -59,8 +57,11 @@ class DC(Document):
 			"set_reserve_warehouse": lot_warehouse,
 			"is_subcontracted": "Yes",
 			"supplier_warehouse": supplier_warehouse,
-			"items": dc_items,
-			"supplied_items": supplied_items})
+			"items": dc_items})
+		po.save()
+		# set_reserve_warehouse related code does not exist in python hence the following is required
+		for item in po.supplied_items:
+			item.reserve_warehouse = lot_warehouse
 		po.save()
 		po.submit()
 		return po
