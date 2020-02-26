@@ -12,7 +12,7 @@ from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_exploded_items, get_subitems, get_bin_details, get_material_request_items
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.doctype.dc.dc import get_receivable_list_values
-from frappe.utils import add_days
+from frappe.utils import today
 
 
 class LotCreation(Document):
@@ -72,12 +72,10 @@ class LotCreation(Document):
 					material_request = material_request_map[key]
 
 			# add item
-			lot_warehouse=frappe.db.get_value("Warehouse", {'lot': self.name},'name')
 			material_request.append("items", {
 				"item_code": item.item_code,
 				"qty": item.quantity,
 				"schedule_date": item.req_by_date,
-				"warehouse": lot_warehouse,
 				"sales_order": item.sales_order,
 				"lot_creation": self.name,
 				"material_request_plan_item": item.name,
@@ -196,8 +194,6 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 				if items:
 					mr_items.append(items)
 	
-	default_lead_time = frappe.db.get_single_value('Apparelo Settings', 'default_lead_time_in_days')
-	lot_start_date = doc['start_date']
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):
@@ -207,13 +203,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 		else:
 			item['quantity']=item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100
 
-		# Required by date can be a past date. That's Okay. 
-		# We always want things to be done or procured yesterday :D
-		item_lead_time = frappe.db.get_value('Item', item['item_code'], 'lead_time_days')
-		if item_lead_time:
-			item['req_by_date'] = add_days(lot_start_date, -(item_lead_time))
-		else:
-			item['req_by_date'] = add_days(lot_start_date, -(default_lead_time))
+		item['req_by_date'] = today()
 
 	if not mr_items:
 		frappe.msgprint(_("""As raw materials projected quantity is more than required quantity, there is no need to create material request.
