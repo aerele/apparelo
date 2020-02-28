@@ -312,22 +312,11 @@ class ItemProductionDetail(Document):
 						for item_mapping in ipd_item_doc.item_mapping:
 							if item_mapping.ipd_process_index==index:
 								item_list.append(item_mapping.item)
-								# print(item_mapping.ipd_process_index)
-								# if not "A" in item_mapping.ipd_process_index:
 					for index in range(1,int(max(previous_process_index))+1):
 						previous_variants={}
-						# if int(item_mapping.ipd_process_index)<int(max(previous_process_index)) or int(item_mapping.ipd_process_index)==int(max(previous_process_index)):
 						previous_variants['input_index'],previous_variants['variants'],previous_variants['input_item'],previous_variants['process'],previous_variants['index']=get_variants(index,ipd_item_doc)
 						previous_variants['BOM']=list(set(get_boms(index,ipd_bom_doc)))
-						# process_variants['input_index'].extend(list(set(item_mapping.input_index)))
-						# process_variants['variants'].extend(set(item_mapping.item))
-						# process_variants['input_item'].extend(set(item_mapping.input_item))
-						# for bom_mapping in ipd_bom_doc.bom_mapping:
-						# 	if item_mapping.ipd_process_index == bom_mapping.ipd_process_index:
-								# process_variants['BOM'].extend(set(bom_mapping.bom))
 						ipd.append(previous_variants)
-					print(ipd)
-					print(list(set(item_list)))
 					process_variants['process_record'] = process.process_record
 					label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
 					variants.extend(label_fusing_doc.create_variants(list(set(item_list))))
