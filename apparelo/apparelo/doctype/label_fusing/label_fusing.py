@@ -16,21 +16,31 @@ class LabelFusing(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
-			input_items.append(frappe.get_doc('Item', input_item_name))
+			input_item_name_doc=frappe.get_doc("Item",input_item_name)
+			input_item_name_attr = get_attr_dict(input_item_name_doc.attributes)
+			if self.part in input_item_name_attr['Part']:
+				input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
-		return list(set(variants))
+		variants = []
+		variants.extend(create_variants(self.item+" Labeled Cloth", attribute_set))
+		return variants
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		boms = []
+		input_item_list = []
 		if self.enable_additional_parts:
 			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in attribute_set["Apparelo Size"]:
 					for colour in attribute_set["Apparelo Colour"]:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
+							input_item_list.append(input_item)
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			if self.enable_additional_parts:
 				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
@@ -52,7 +62,7 @@ class LabelFusing(Document):
 				boms.append(bom.name)
 			else:
 				boms.append(existing_bom)
-		return boms
+		return boms, input_item_list
 def create_item_template(self):
 	if not frappe.db.exists("Item", self.item+" Labeled Cloth"):
 		frappe.get_doc({

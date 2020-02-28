@@ -91,10 +91,10 @@ class Cutting(Document):
 				for variant in variants:
 					var=frappe.get_doc('Item', variant)
 					attr = get_attr_dict(var.attributes)
-					if part.upper() in variant:
+					if part in attr['Part']:
 						variant_.append(variant)
 						bom=create_common_bom(self,variant,attr,input_items)
-				combined_part['variants']=variant_ 
+				combined_part['variants']=variant_
 				combo_.append(combined_part)
 		for variant in variants:
 			var=frappe.get_doc('Item', variant)
@@ -253,7 +253,7 @@ def get_part_colour_combination(doc):
 	else:
 		if doc.get('colour_mapping') != None:
 			for item in doc.get('colour_mapping'):
-				part_colour_combination.append({'part':item['part'],'colour':item['colour']})
+				part_colour_combination.append({'part':item['part'],'colour':item['colour'],'style':item['style']})
 		for colour in doc.get('colours'):
 			for part in doc.get('colour_parts'):
 				for style in doc.get('styles'):
@@ -265,8 +265,10 @@ def create_combined_bom(combo,input_item):
 	item_doc=frappe.get_doc("Item",input_item)
 	for variant in combo['variants']:
 		item_ = get_attr_dict(item_doc.attributes)
+		variant_doc=frappe.get_doc("Item",variant)
+		variant_attr = get_attr_dict(variant_doc.attributes)
 		if item_["Apparelo Colour"][0] in combo["color"] and item_["Apparelo Size"][0] in combo["Size"]:
-			if item_["Apparelo Colour"][0].upper() in variant and item_["Apparelo Size"][0].upper() in variant:
+			if item_["Apparelo Colour"][0] in variant_attr["Apparelo Colour"] and item_["Apparelo Size"][0] in variant_attr["Apparelo Size"]:
 				existing_bom = frappe.db.get_value('BOM', {'item':input_item}, 'name')
 				if not existing_bom:
 					bom = frappe.get_doc({
@@ -291,8 +293,9 @@ def create_combined_bom(combo,input_item):
 					return bom.name
 				else:
 					return existing_bom
+
 def create_common_bom(self,variant,attr,input_items):
-	attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))				
+	attr.update(self.get_matching_details(attr["Part"], attr["Apparelo Size"]))
 	for input_item in input_items:
 		input_item_attr = get_attr_dict(input_item.attributes)
 		if input_item_attr["Apparelo Colour"] == attr["Apparelo Colour"]:
@@ -319,6 +322,7 @@ def create_common_bom(self,variant,attr,input_items):
 					return bom.name
 				else:
 					return existing_bom
+	frappe.throw(_('Colour entered in cutting process was not found in IPD colour list.'))
 
 def is_combined_parts(item):
 	item_doc=frappe.get_doc("Item",item)

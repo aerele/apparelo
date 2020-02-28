@@ -25,7 +25,9 @@ class Compacting(Document):
 		variants = create_variants('Compacted Cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if dia in variant:
+				variant_doc=frappe.get_doc("Item",variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
+				if dia in variant_attr['Dia']:
 					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Compacted Cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(dia,dia+" Dia")
@@ -39,7 +41,7 @@ class Compacting(Document):
 						new_variants.append(variant)
 		if len(new_variants)==0:
 			new_variants=variants
-		return new_variants
+		return new_variants, attribute_set
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		input_items = []
@@ -47,10 +49,13 @@ class Compacting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
 		for item in input_items:
+			input_attr = get_attr_dict(item.attributes)
 			for variant in variants:
-				for color in colour:
+				variant_doc=frappe.get_doc("Item",variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
+				for color in attribute_set['Apparelo Colour']:
 					for dia in self.dia_conversions:
-						if color.upper() in item.name and color.upper() in variant and dia.from_dia in item.name and dia.to_dia in variant:
+						if color in input_attr["Apparelo Colour"] and color in variant_attr["Apparelo Colour"] and dia.from_dia in item.name and dia.to_dia in variant:
 							bom_for_variant = frappe.get_doc({
 								"doctype": "BOM",
 								"currency": get_default_currency(),

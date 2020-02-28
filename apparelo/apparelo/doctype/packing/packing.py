@@ -38,9 +38,13 @@ class Packing(Document):
 		if piece_count == self.input_qty:
 			for variant in variants:
 				item_list = []
+				variant_doc=frappe.get_doc("Item",variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
 				for input_item in input_item_names:
+					input_item_doc=frappe.get_doc("Item",input_item)
+					input_attr = get_attr_dict(input_item_doc.attributes)
 					for size in item_size:
-						if size.upper() in input_item and size.upper() in variant:
+						if size in input_attr["Apparelo Size"] and size in variant_attr["Apparelo Size"]:
 							item_list.append({
 								"item_code": input_item,
 								"uom": "Nos"
@@ -70,9 +74,13 @@ class Packing(Document):
 				repeating_count = self.input_qty // piece_count
 				for variant in variants:
 					item_list = []
+					variant_doc=frappe.get_doc("Item",variant)
+					variant_attr = get_attr_dict(variant_doc.attributes)
 					for input_item in input_item_names:
+						input_item_doc=frappe.get_doc("Item",input_item)
+						input_attr = get_attr_dict(input_item_doc.attributes)
 						for size in item_size:
-							if size.upper() in input_item and size.upper() in variant:
+							if size in input_attr["Apparelo Size"] and size in variant_attr["Apparelo Size"]:
 								item_list.append({
 									"item_code": input_item,
 									"uom": "Nos",
@@ -114,17 +122,20 @@ class Packing(Document):
 			combo_variants = create_combo_variant(
 				final_item, colours, item_size)
 			for variant in combo_variants:
-				variant_attribute = frappe.get_doc("Item", variant)
-				for attribute_ in variant_attribute.attributes:
+				variant_doc = frappe.get_doc("Item", variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
+				for attribute_ in variant_doc.attributes:
 					if attribute_.attribute == "Apparelo Size":
 						size = attribute_.attribute_value
 					if attribute_.attribute == "Combo":
 						combo = attribute_.attribute_value
 				item_list_ = []
 				for items in input_item_names:
-					if size.upper() in variant and size.upper() in items:
+					input_item_doc=frappe.get_doc("Item",items)
+					input_attr = get_attr_dict(input_item_doc.attributes)
+					if size in variant_attr["Apparelo Size"] and size in input_attr["Apparelo Size"]:
 						for color in combo.split(","):
-							if color.upper() in items:
+							if color in input_attr["Apparelo Size"]:
 								item_list_.append({
 									"item_code": items,
 									"uom": "Nos"
@@ -154,9 +165,13 @@ class Packing(Document):
 					continue
 			for variant in variants:
 				items_ = []
+				variant_doc = frappe.get_doc("Item", variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
 				for variant_ in combo_variants:
+					combo_variant_doc = frappe.get_doc("Item", variant_)
+					combo_variant_attr = get_attr_dict(combo_variant_doc.attributes)
 					for size in item_size:
-						if size.upper() in variant and size.upper() in variant_:
+						if size in variant_attr["Apparelo Size"] and size in combo_variant_attr["Apparelo Size"]:
 							items_.append({
 								"item_code": variant_,
 								"uom": "Nos",

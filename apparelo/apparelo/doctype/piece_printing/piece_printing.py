@@ -17,28 +17,29 @@ class PiecePrinting(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
-			input_items.append(frappe.get_doc('Item', input_item_name))
+			input_item_name_doc=frappe.get_doc("Item",input_item_name)
+			input_item_name_attr = get_attr_dict(input_item_name_doc.attributes)
+			if self.part in input_item_name_attr['Part']:
+				input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		parts=attribute_set["Part"]
-		for part in parts:
-			if part==self.part:
-				variant_attribute_set = {}
-				variant_attribute_set['Part'] = [part]
-				variant_attribute_set['Apparelo Colour'] = attribute_set["Apparelo Colour"]
-				variant_attribute_set['Apparelo Size'] = attribute_set["Apparelo Size"]
-				variants.extend(create_variants(self.item+" Printed Cloth", variant_attribute_set))
+		variants.extend(create_variants(self.item+" Printed Cloth", attribute_set))
 		return variants
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
-		
 		boms = []
 		for variant in variants:
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			item_list = []
+			input_item_list = []
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in attribute_set["Apparelo Size"]:
 					for colour in attribute_set["Apparelo Colour"]:
-						if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+						if size in input_attr['Apparelo Size']  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
+							input_item_list.append(input_item)
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:
@@ -54,7 +55,7 @@ class PiecePrinting(Document):
 				boms.append(bom.name)
 			else:
 				boms.append(existing_bom)
-		return boms
+		return boms, input_item_list
 
 def create_item_template(self):
 	if not frappe.db.exists("Item",self.item+" Printed Cloth"):

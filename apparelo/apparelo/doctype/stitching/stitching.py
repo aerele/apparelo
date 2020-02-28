@@ -98,23 +98,27 @@ class Stitching(Document):
 			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
 		for variant in variants:
 			item_list = []
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in attribute_set["Apparelo Size"]:
 					if final_process=="Stitching":
-						if size.upper() in input_item  and size.upper() in variant:
+						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"]:
 							item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 					else:
 						if "Apparelo Style" in attribute_set:
 							for style in attribute_set["Apparelo Style"]:
 								for colour_mapping in self.colour_mappings:
 									for piece_count in self.parts_per_piece:
-										if style.upper() in input_item and style.upper() in variant and size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+										if style in input_attr["Apparelo Style"] and style in variant_attr["Apparelo Colour"] and size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour_mapping.piece_colour in variant_attr["Apparelo Colour"] and colour_mapping.part in input_attr["Part"] and colour_mapping.part_colour in input_attr["Apparelo Colour"]:
 											if piece_count.part==colour_mapping.part:
 												item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 						else:
 							for colour_mapping in self.colour_mappings:
 								for piece_count in self.parts_per_piece:
-									if size.upper() in input_item  and size.upper() in variant and colour_mapping.piece_colour.upper() in variant and colour_mapping.part.upper() in input_item and colour_mapping.part_colour.upper() in input_item:
+									if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour_mapping.piece_colour in variant_attr["Apparelo Colour"] and colour_mapping.part in input_attr["Part"] and colour_mapping.part_colour in input_attr["Apparelo Colour"]:
 										if piece_count.part==colour_mapping.part:
 											item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 			if self.enable_additional_parts:

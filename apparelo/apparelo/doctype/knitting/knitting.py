@@ -31,7 +31,9 @@ class Knitting(Document):
 		variants = create_variants('Knitted Cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if dia in variant:
+				variant_doc=frappe.get_doc("Item",variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
+				if dia in variant_attr['Dia']:
 					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Knitted Cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(dia,dia+" Dia")
