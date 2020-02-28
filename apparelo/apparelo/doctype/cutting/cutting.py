@@ -322,7 +322,7 @@ def create_common_bom(self,variant,attr,input_items):
 					return bom.name
 				else:
 					return existing_bom
-	# frappe.throw('Invalid entry of colour in cutting process')
+	frappe.throw(_('Colour entered in cutting process was not found in IPD colour list.'))
 
 def is_combined_parts(item):
 	item_doc=frappe.get_doc("Item",item)
