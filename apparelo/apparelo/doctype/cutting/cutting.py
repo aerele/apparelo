@@ -322,7 +322,7 @@ def create_common_bom(self,variant,attr,input_items):
 					return bom.name
 				else:
 					return existing_bom
-	frappe.throw('BOM Error - Cutting')
+	# frappe.throw('Invalid entry of colour in cutting process')
 
 def is_combined_parts(item):
 	item_doc=frappe.get_doc("Item",item)

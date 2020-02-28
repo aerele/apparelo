@@ -17,7 +17,9 @@ class PiecePrinting(Document):
 	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
-			if self.part.upper() in input_item_name:
+			input_item_name_doc=frappe.get_doc("Item",input_item_name)
+			input_item_name_attr = get_attr_dict(input_item_name_doc.attributes)
+			if self.part in input_item_name_attr['Part']:
 				input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
