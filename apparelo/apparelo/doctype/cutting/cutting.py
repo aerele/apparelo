@@ -67,6 +67,7 @@ class Cutting(Document):
 			return set(self.get_attribute_values(attribute_name)).issubset((set(input_attribute_values)))
 
 	def get_matching_details(self, part, size):
+		# ToDo: Part Size combination may not be unique
 		dia=''
 		weight=''
 		count=1
