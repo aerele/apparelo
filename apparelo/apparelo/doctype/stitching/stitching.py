@@ -108,7 +108,7 @@ class Stitching(Document):
 						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"]:
 							item_list.append({"item_code": input_item,"qty":piece_count.qty ,"uom": "Nos"})
 					else:
-						if "Apparelo Style" in attribute_set:
+						if "Apparelo Style" in attribute_set and "Apparelo Style" in input_attr:
 							for style in attribute_set["Apparelo Style"]:
 								for colour_mapping in self.colour_mappings:
 									for piece_count in self.parts_per_piece:
