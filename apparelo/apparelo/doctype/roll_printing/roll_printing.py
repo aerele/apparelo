@@ -24,10 +24,10 @@ class RollPrinting(Document):
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
 		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Roll Printed cloth', attribute_set)
-		for dia in attribute_set["Dia"]:
-			for variant in variants:
-				variant_doc=frappe.get_doc("Item",variant)
-				variant_attr = get_attr_dict(variant_doc.attributes)
+		for variant in variants:
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
+			for dia in attribute_set["Dia"]:
 				if dia in variant_attr['Dia']:
 					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Roll Printed cloth',"").encode()).hexdigest()

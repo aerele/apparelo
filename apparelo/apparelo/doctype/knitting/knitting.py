@@ -29,10 +29,10 @@ class Knitting(Document):
 		if 'Plain' in attribute_set['Yarn Shade']:
 			attribute_set.pop('Yarn Shade')
 		variants = create_variants('Knitted Cloth', attribute_set)
-		for dia in attribute_set["Dia"]:
-			for variant in variants:
-				variant_doc=frappe.get_doc("Item",variant)
-				variant_attr = get_attr_dict(variant_doc.attributes)
+		for variant in variants:
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
+			for dia in attribute_set["Dia"]:
 				if dia in variant_attr['Dia']:
 					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Knitted Cloth',"").encode()).hexdigest()

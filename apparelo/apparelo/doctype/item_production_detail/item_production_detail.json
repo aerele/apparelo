@@ -101,7 +101,7 @@
    "options": "Combined IPDs"
   },
   {
-   "depends_on": "eval:doc.doc_status == 1",
+   "depends_on": "eval: doc.docstatus == 1",
    "fieldname": "administrator_section_section",
    "fieldtype": "Section Break",
    "label": "Administrator Section"
@@ -115,7 +115,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-28 11:59:10.469082",
+ "modified": "2020-02-28 18:16:33.829374",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
