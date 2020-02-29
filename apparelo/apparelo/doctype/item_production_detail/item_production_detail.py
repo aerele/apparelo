@@ -49,13 +49,17 @@ class ItemProductionDetail(Document):
 		piece_count=None
 		item_size=[]
 		colour=[]
+		style=[]
 		final_process=self.final_process
 		for final_size in self.size:
 			item_size.append(final_size.size)
 		for final_colour in self.colour:
 			colour.append(final_colour.colour)
+		for final_style in self.style:
+			style.append(final_style.style)
 		cutting_attribute["Apparelo Colour"]=colour
 		cutting_attribute["Apparelo Size"]=item_size
+		cutting_attribute["Apparelo Style"]=style
 		for process in self.processes:
 			process_variants = {}
 			if process.process_name == 'Knitting':
@@ -246,6 +250,8 @@ class ItemProductionDetail(Document):
 				process_variants['index']=process.idx
 				if process.input_item:
 					pass
+				if process.ipd_name:
+					ipd.append(get_process_variants(self,process_variants,ipd,process.ipd_process_index,process.ipd_name,'Piece Printing',process.process_record,cutting_attribute,item_size,colour,piece_count))
 				elif process.input_index:
 					input_items_= []
 					variants=[]
@@ -273,24 +279,47 @@ class ItemProductionDetail(Document):
 				process_variants['index']=process.idx
 				if process.input_item:
 					pass
-				elif process.input_index:
-					input_items= []
-					variants=[]
-					boms=[]
-					input_indexs = process.input_index.split(',')
-					process_variants['input_index']=process.input_index
-					for pro in ipd:
-						for input_index in input_indexs:
-							if str(pro['index'])==input_index:
-								input_items.extend(pro['variants'])
-					process_variants['process_record'] = process.process_record
-					stitching_doc = frappe.get_doc('Stitching', process.process_record)
-					variants.extend(stitching_doc.create_variants(input_items,colour,self.item,final_process))
-					boms.extend(stitching_doc.create_boms(input_items, variants,cutting_attribute,item_size,colour,piece_count,final_process))
-					process_variants['variants'] = list(set(variants))
-					process_variants['BOM']=list(set(boms))
-					process_variants['input_item']=list(set(input_items))
-					ipd.append(process_variants)
+				if process.ipd_name:
+					if process.input_index:
+						input_items= []
+						process_variants=get_process_variants(self,process_variants,ipd,process.ipd_process_index,process.ipd_name,'Stitching',process.process_record,cutting_attribute,item_size,colour,piece_count)
+						input_items.extend(process_variants)
+						variants=[]
+						boms=[]
+						input_indexs = process.input_index.split(',')
+						process_variants['input_index']+=process.input_index
+						for pro in ipd:
+							for input_index in input_indexs:
+								if str(pro['index'])==input_index:
+									input_items.extend(pro['variants'])
+						stitching_doc = frappe.get_doc('Stitching', process.process_record)
+						variants.extend(stitching_doc.create_variants(input_items,colour,self.item,final_process))
+						boms.extend(stitching_doc.create_boms(input_items, variants,cutting_attribute,item_size,colour,piece_count,final_process))
+						process_variants['variants'] = list(set(variants))
+						process_variants['BOM']=list(set(boms))
+						process_variants['input_item']=list(set(input_items))
+						ipd.append(process_variants)
+					else:
+						ipd.append(get_process_variants(self,process_variants,ipd,process.ipd_process_index,process.ipd_name,'Stitching',process.process_record,cutting_attribute,item_size,colour,piece_count))
+				else:
+					if process.input_index:
+						input_items= []
+						variants=[]
+						boms=[]
+						input_indexs = process.input_index.split(',')
+						process_variants['input_index']=process.input_index
+						for pro in ipd:
+							for input_index in input_indexs:
+								if str(pro['index'])==input_index:
+									input_items.extend(pro['variants'])
+						process_variants['process_record'] = process.process_record
+						stitching_doc = frappe.get_doc('Stitching', process.process_record)
+						variants.extend(stitching_doc.create_variants(input_items,colour,self.item,final_process))
+						boms.extend(stitching_doc.create_boms(input_items, variants,cutting_attribute,item_size,colour,piece_count,final_process))
+						process_variants['variants'] = list(set(variants))
+						process_variants['BOM']=list(set(boms))
+						process_variants['input_item']=list(set(input_items))
+						ipd.append(process_variants)
 				continue
 
 			if process.process_name == 'Label Fusing':
@@ -299,32 +328,7 @@ class ItemProductionDetail(Document):
 				if process.input_item:
 					pass
 				if process.ipd_name:
-					item_list=[]
-					variants=[]
-					boms=[]
-					process_variants['input_index']=process.ipd_process_index
-					ipd_item_name=frappe.db.get_value('IPD Item Mapping', {'item_production_details': process.ipd_name}, 'name')
-					ipd_item_doc=frappe.get_doc("IPD Item Mapping",ipd_item_name)
-					ipd_bom_name=frappe.db.get_value('IPD BOM Mapping', {'item_production_details': process.ipd_name}, 'name')
-					ipd_bom_doc=frappe.get_doc("IPD BOM Mapping",ipd_bom_name)
-					previous_process_index=process.ipd_process_index.split()
-					for index in previous_process_index:
-						for item_mapping in ipd_item_doc.item_mapping:
-							if item_mapping.ipd_process_index==index:
-								item_list.append(item_mapping.item)
-					for index in range(1,int(max(previous_process_index))+1):
-						previous_variants={}
-						previous_variants['input_index'],previous_variants['variants'],previous_variants['input_item'],previous_variants['process'],previous_variants['index']=get_variants(index,ipd_item_doc)
-						previous_variants['BOM']=list(set(get_boms(index,ipd_bom_doc)))
-						ipd.append(previous_variants)
-					process_variants['process_record'] = process.process_record
-					label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
-					variants.extend(label_fusing_doc.create_variants(list(set(item_list))))
-					boms.extend(label_fusing_doc.create_boms(item_list, variants,cutting_attribute,item_size,colour,piece_count))
-					process_variants['variants'] = list(set(variants))
-					process_variants['BOM']=list(set(boms))
-					process_variants['input_item']=list(set(item_list))
-					ipd.append(process_variants)
+					ipd.append(get_process_variants(self,process_variants,ipd,process.ipd_process_index,process.ipd_name,'Label Fusing',process.process_record,cutting_attribute,item_size,colour,piece_count))
 				elif process.input_index:
 					input_items_= []
 					variants=[]
@@ -628,4 +632,33 @@ def get_variants(index,ipd_item_doc):
 			input_item.append(item_mapping.input_item)
 			variants.append(item_mapping.item)
 	return input_index,list(set(variants)),list(set(input_item)),process,str(index)
+
+def get_process_variants(self,process_variants,ipd,input_index,ipd_name,process,process_record,cutting_attribute,item_size,colour,piece_count):
+	item_list=[]
+	variants=[]
+	boms=[]
+	process_variants['input_index']=input_index
+	ipd_item_name=frappe.db.get_value('IPD Item Mapping', {'item_production_details': ipd_name}, 'name')
+	ipd_item_doc=frappe.get_doc("IPD Item Mapping",ipd_item_name)
+	ipd_bom_name=frappe.db.get_value('IPD BOM Mapping', {'item_production_details': ipd_name}, 'name')
+	ipd_bom_doc=frappe.get_doc("IPD BOM Mapping",ipd_bom_name)
+	previous_process_index=input_index.split()
+	for index in previous_process_index:
+		for item_mapping in ipd_item_doc.item_mapping:
+			if item_mapping.ipd_process_index==index:
+				item_list.append(item_mapping.item)
+	for index in range(1,int(max(previous_process_index))+1):
+		previous_variants={}
+		previous_variants['ipd']=self.name
+		previous_variants['input_index'],previous_variants['variants'],previous_variants['input_item'],previous_variants['process'],previous_variants['index']=get_variants(index,ipd_item_doc)
+		previous_variants['BOM']=list(set(get_boms(index,ipd_bom_doc)))
+		ipd.append(previous_variants)
+	process_variants['process_record'] = process_record
+	process_doc = frappe.get_doc(process, process_record)
+	variants.extend(process_doc.create_variants(list(set(item_list))))
+	boms.extend(process_doc.create_boms(item_list, variants,cutting_attribute,item_size,colour,piece_count))
+	process_variants['variants'] = list(set(variants))
+	process_variants['BOM']=list(set(boms))
+	process_variants['input_item']=list(set(item_list))
+	return process_variants
 	
