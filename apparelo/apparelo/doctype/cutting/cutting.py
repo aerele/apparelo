@@ -88,13 +88,13 @@ class Cutting(Document):
 				combined_part['Part']=part
 				count=len(part_.combined_parts)
 				combined_part['count']=count
-				for variant in variants:
-					var=frappe.get_doc('Item', variant)
-					attr = get_attr_dict(var.attributes)
-					if part in attr['Part']:
-						variant_.append(variant)
-						bom=create_common_bom(self,variant,attr,input_items)
-				combined_part['variants']=variant_
+				# for variant in variants:
+				# 	var=frappe.get_doc('Item', variant)
+				# 	attr = get_attr_dict(var.attributes)
+				# 	if part in attr['Part']:
+				# 		variant_.append(variant)
+				# 		bom=create_common_bom(self,variant,attr,input_items)
+				# combined_part['variants']=variant_
 				combo_.append(combined_part)
 		for variant in variants:
 			var=frappe.get_doc('Item', variant)
@@ -311,7 +311,7 @@ def create_common_bom(self,variant,attr,input_items):
 						"items": [
 							{
 								"item_code": input_item.name,
-								"qty": attr["Weight"],
+								"qty": attr["Weight"]/combo['count'],
 								"uom": 'Gram',
 								"conversion_factor":conversion_factor["conversion_factor"]
 							}
