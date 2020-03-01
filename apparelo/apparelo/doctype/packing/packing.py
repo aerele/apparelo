@@ -19,14 +19,16 @@ class Packing(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names, item):
+	def create_variants(self, input_item_names, colour, item, final_process):
+		piece_count=len(colour)
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(
 			list(map(lambda x: x.attributes, input_items)))
-		piece_count = len(attribute_set["Apparelo Colour"])
-		attribute_set.pop('Apparelo Colour')
+		if attribute_set["Apparelo Colour"]:
+			piece_count = len(attribute_set["Apparelo Colour"])
+			attribute_set.pop('Apparelo Colour')
 		variants = create_variants(item, attribute_set)
 		return list(set(variants)), piece_count
 

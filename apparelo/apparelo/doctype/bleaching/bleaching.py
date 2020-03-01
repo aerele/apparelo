@@ -16,7 +16,7 @@ class Bleaching(Document):
 	def on_submit(self):
 		create_item_template()
 
-	def create_variants(self, input_item_names):
+	def create_variants(self, input_item_names,colour,item,final_process):
 		new_variants=[]
 		input_items = []
 		for input_item_name in input_item_names:
@@ -41,7 +41,7 @@ class Bleaching(Document):
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
+	def create_boms(self, input_item_names, variants, attribute_set, item_size,colour, piece_count, final_process):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
