@@ -30,14 +30,18 @@ class Checking(Document):
 		boms = []
 		for variant in variants:
 			item_list = []
+			variant_doc=frappe.get_doc("Item",variant)
+			variant_attr = get_attr_dict(variant_doc.attributes)
 			for input_item in input_item_names:
+				input_item_doc=frappe.get_doc("Item",input_item)
+				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in item_size:
 					if final_process=="Checking":
-						if size.upper() in input_item  and size.upper() in variant:
+						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"]:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 					else:
 						for colour in colours:
-							if size.upper() in input_item  and size.upper() in variant and colour.upper() in input_item and colour.upper() in variant:
+							if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"]:
 								item_list.append({"item_code": input_item,"uom": "Nos"})
 			existing_bom = frappe.db.get_value('BOM', {'item': variant}, 'name')
 			if not existing_bom:

@@ -137,11 +137,11 @@ def get_ipd_item(doc):
 	ipd_bom_mapping = frappe.db.get_value("IPD BOM Mapping", {'item_production_details': lot_ipd})
 	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
 
-	items_to_be_sent = frappe.get_list("BOM Item", filters={'parent': ['in',boms]}, group_by='item_code', fields='item_code')
-
+	in_delivery_items = frappe.get_list("BOM Item", filters={'parent': ['in',boms]}, group_by='item_code', fields='item_code')
 	from erpnext.stock.dashboard import item_dashboard
 	dc_warehouse = frappe.db.get_value("Warehouse", {'location': location,'lot': lot,'warehouse_type':'Actual'},'name')
-	for item in items_to_be_sent:
+	items_to_be_sent = []
+	for item in in_delivery_items:
 		data = item_dashboard.get_data(item_code = item.item_code, warehouse = dc_warehouse)
 		if len(data):
 			item['available_quantity'] = data[0]['actual_qty']
@@ -149,6 +149,7 @@ def get_ipd_item(doc):
 			item['primary_uom'] = item_detail.stock_uom
 			item['secondary_uom'] = apparelo_process.in_secondary_uom
 			item['pf_item_code'] = item_detail.print_code
+			items_to_be_sent.append(item)
 	return items_to_be_sent
 
 @frappe.whitelist()
@@ -162,17 +163,24 @@ def get_expected_items_in_return(doc):
 	lot_ipd = frappe.db.get_value('Lot Creation', {'name': lot}, 'item_production_detail')
 
 	ipd_bom_mapping = frappe.db.get_value('IPD BOM Mapping', {'item_production_details': lot_ipd})
+	ipd_item_mapping = frappe.get_doc("IPD Item Mapping", {'item_production_details': lot_ipd})
 	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
 
 	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields='item')
 
 	receivable_list = {}
+	item_mapping_validator = [x["item"] for x in frappe.get_list("Item Mapping", {"parent": ipd_item_mapping.name, "process_1": dc_process}, "item")]
+	items_to_be_received_with_removed_invalids_list = []
 	for item_to_be_received in items_to_be_received:
-		receivable_list[item_to_be_received['item']] = 0
+		# Bringing in this condition for cutting to handle the combined parts.
+		if item_to_be_received['item'] in item_mapping_validator:
+			receivable_list[item_to_be_received['item']] = 0
+			items_to_be_received_with_removed_invalids_list.append(item_to_be_received)
+
+	items_to_be_received = items_to_be_received_with_removed_invalids_list
 
 	lot_items = frappe.get_list('Lot Creation Plan Item', filters={'parent': lot}, fields=['item_code', 'planned_qty', 'bom_no', 'stock_uom'])
 	expect_return_items_at = frappe.db.get_value('Warehouse', {'warehouse_name': f'{lot}-{doc.get("expect_return_items_at")}'}, 'name')
-
 	# Invoke
 	receivable_list = get_receivable_list_values(lot_items, receivable_list, expect_return_items_at)
 
@@ -181,12 +189,14 @@ def get_expected_items_in_return(doc):
 		percentage_in_excess = (flt(percentage_in_excess) / 100)
 
 	lot_ipd_doc = frappe.get_doc("Item Production Detail", lot_ipd)
-	ipd_item_mapping = frappe.get_doc("IPD Item Mapping", {'item_production_details': lot_ipd})
 
 	for item_to_be_received in items_to_be_received:
 		item = frappe.get_doc('Item', item_to_be_received['item'])
 		item_to_be_received['item_code'] = item_to_be_received['item']
-		item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * percentage_in_excess)
+		if item.stock_uom == 'Nos':
+			item_to_be_received['qty'] = round(receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * percentage_in_excess))
+		else:
+			item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * percentage_in_excess)
 
 		ipd_process_index_of_item = -1
 		for item_mappping in ipd_item_mapping.item_mapping:
@@ -197,9 +207,8 @@ def get_expected_items_in_return(doc):
 			frappe.throw(_(f"Item:{item.item_code} not found in IPD Item Mapping"))
 		item_to_be_received['additional_parameters'] = get_additional_params(lot_ipd_doc.processes, ipd_process_index_of_item)
 		
-		item_to_be_received['pf_item_code'] = item.print_code
+		item_to_be_received['pf_item_code'] = item.print_code if item.print_code != None and item.print_code != '' else item_to_be_received['item_code']
 		item_to_be_received['uom'] = item.stock_uom
-		item_to_be_received['description'] = item.description
 		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
 
 	return items_to_be_received

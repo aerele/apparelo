@@ -26,7 +26,9 @@ class Bleaching(Document):
 		variants = create_variants('Bleached cloth', attribute_set)
 		for dia in attribute_set["Dia"]:
 			for variant in variants:
-				if str(dia) in variant:
+				variant_doc=frappe.get_doc("Item",variant)
+				variant_attr = get_attr_dict(variant_doc.attributes)
+				if dia in variant_attr['Dia']:
 					if not str(dia)+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Bleached Cloth',"").encode()).hexdigest()
 						new_variant=variant.replace(str(dia),str(dia)+" Dia")
