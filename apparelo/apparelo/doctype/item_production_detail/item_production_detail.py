@@ -223,7 +223,7 @@ class ItemProductionDetail(Document):
 				if process.input_item:
 					pass
 				if process.ipd_name:
-    					if process.input_index:
+					if process.input_index:
 						input_items= []
 						item_list=[]
 						ipd_item_name=frappe.db.get_value('IPD Item Mapping', {'item_production_details': process.ipd_name}, 'name')
