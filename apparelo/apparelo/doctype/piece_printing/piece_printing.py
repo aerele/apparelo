@@ -26,7 +26,7 @@ class PiecePrinting(Document):
 		variants.extend(create_variants(self.item+" Printed Cloth", attribute_set))
 		return variants
 
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour_list,piece_count):
 		boms = []
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
@@ -36,8 +36,8 @@ class PiecePrinting(Document):
 			for input_item in input_item_names:
 				input_item_doc=frappe.get_doc("Item",input_item)
 				input_attr = get_attr_dict(input_item_doc.attributes)
-				for size in attribute_set["Apparelo Size"]:
-					for colour in attribute_set["Apparelo Colour"]:
+				for size in item_size:
+					for colour in colour_list:
 						if size in input_attr['Apparelo Size']  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
 							input_item_list.append(input_item)
 							item_list.append({"item_code": input_item,"uom": "Nos"})
