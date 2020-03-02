@@ -309,9 +309,9 @@ class ItemProductionDetail(Document):
 		if self.is_combined_packing:
 			input_items_=[]
 			process_variants = {}
-			for ipd in self.combined_ipds:
-				item_mapping = frappe.db.get_value("IPD Item Mapping", {'item_production_details': ipd.ipd})
-				ipd_doc=frappe.get_doc("Item Production Detail",ipd.ipd)
+			for combined_ipd in self.combined_ipds:
+				item_mapping = frappe.db.get_value("IPD Item Mapping", {'item_production_details': combined_ipd.ipd})
+				ipd_doc=frappe.get_doc("Item Production Detail",combined_ipd.ipd)
 				variants = frappe.get_doc('IPD Item Mapping', item_mapping).get_process_variants(ipd_doc.final_process)
 				input_items_.extend(variants)
 			if self.process_name == 'Packing':
@@ -323,9 +323,9 @@ class ItemProductionDetail(Document):
 				process_variants['input_index']=''
 				process_variants['process_record'] = self.process_record
 				packing_doc = frappe.get_doc('Packing', self.process_record)
-				variants,piece_count= packing_doc.create_variants(input_items_,self.item)
+				variants,piece_count= packing_doc.create_variants(input_item_names=input_items_, colour=colour, item=self.item, final_process=final_process)
 				new_variants.extend(variants)
-				boms.extend(packing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count,self.item))
+				boms.extend(packing_doc.create_boms(input_items_, variants, colour, attribute_set=cutting_attribute, item_size=item_size, piece_count=piece_count, final_item=self.item, final_process=final_process))
 				process_variants['variants'] = list(set(new_variants))
 				process_variants['BOM']=list(set(boms))
 				process_variants['input_item']=list(set(input_items_))
@@ -549,8 +549,8 @@ def get_default_process_variants(ipd,process,process_variants,attribute_set,item
 				input_items_.extend(input_items)
 				process_variants['process_record'] = process.process_record
 				process_doc = frappe.get_doc(process.process_name, process.process_record)
-				variants.extend(process_doc.create_variants(input_items, item, final_process))
-				boms.extend(process_doc.create_boms(input_items, variants, attribute_set, item_size,colour, piece_count, final_process))
+				variants.extend(process_doc.create_variants(input_item_names=input_items, colour=colour, item=item, final_process=final_process))
+				boms.extend(process_doc.create_boms(input_items, variants, colour, attribute_set=attribute_set, item_size=item_size, piece_count=piece_count, final_item=item, final_process=final_process))
 	process_variants['variants'] = list(set(variants))
 	process_variants['BOM']=list(set(boms))
 	process_variants['input_item']=list(set(input_items_))

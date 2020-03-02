@@ -13,7 +13,7 @@ class LabelFusing(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names,colour,item,final_process):
+	def create_variants(self, input_item_names):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -21,7 +21,7 @@ class LabelFusing(Document):
 		variants =create_variants(self.item+" Labeled Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants, attribute_set, item_size,colour, piece_count, final_process):
+	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
