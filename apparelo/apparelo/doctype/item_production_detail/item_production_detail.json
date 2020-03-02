@@ -9,6 +9,7 @@
   "item",
   "size",
   "colour",
+  "style",
   "processes",
   "final_process",
   "additional_flows",
@@ -85,15 +86,6 @@
    "options": "process_name"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Item Production Detail",
-   "print_hide": 1,
-   "read_only": 1
-  },
-  {
    "depends_on": "is_combined_packing",
    "fieldname": "combined_ipds",
    "fieldtype": "Table MultiSelect",
@@ -111,11 +103,26 @@
    "fieldname": "submit_internal_processes",
    "fieldtype": "Button",
    "label": "Submit Internal Processes"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Item Production Detail",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "style",
+   "fieldtype": "Table",
+   "label": "Styles",
+   "options": "Item Production Detail Style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-28 11:59:10.469082",
+ "modified": "2020-02-29 20:17:54.550619",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",

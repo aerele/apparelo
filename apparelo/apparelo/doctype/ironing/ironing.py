@@ -13,7 +13,7 @@ class Ironing(Document):
 	def on_submit(self):
 		create_item_template(self)
 
-	def create_variants(self, input_item_names,item,final_process):
+	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
@@ -25,7 +25,7 @@ class Ironing(Document):
 			variants = create_variants(self.item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
 
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colours,piece_count,final_process):
+	def create_boms(self, input_item_names, variants, colours, attribute_set=None, item_size=None, piece_count=None, final_item=None, final_process=None):
 		boms = []
 		if self.enable_additional_parts:
 			additional_parts=create_additional_parts(self.additional_parts_colour,self.additional_parts_size,self.additional_parts)
