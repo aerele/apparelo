@@ -93,6 +93,7 @@
    "options": "Combined IPDs"
   },
   {
+   "depends_on": "eval: doc.docstatus == 1",
    "fieldname": "administrator_section_section",
    "fieldtype": "Section Break",
    "label": "Administrator Section"
