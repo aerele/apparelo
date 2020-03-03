@@ -275,7 +275,7 @@ def cloth_qty(doc):
 	html = ''
 	bom_qty = []
 	process = []
-	colour_list = []
+	colour_list = set()
 	dia_list = []
 	yarn_list=[]
 	# get bom and planned quantity
@@ -287,16 +287,25 @@ def cloth_qty(doc):
 	for ipd_process in ipd.processes:
 		if ipd_process.process_name == 'Knitting':
 			dia_list = []
+			knitted_colour = []
 			for knitting_dia in frappe.get_doc('Knitting',ipd_process.process_record).dia:
 				dia_list.append(knitting_dia.dia)
-			yarn_list.append({'yarn':ipd_process.input_item,'index':ipd_process.idx,'dia':dia_list})
+			process_name =  frappe.get_list("Item Production Detail Process", filters={'parent': ['in',doc.item_production_detail],'input_index':ipd_process.idx}, fields=['process_name','process_record'])
+			if process_name[0]['process_name'] == 'Bleaching':
+				table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).types
+			else:
+				table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).colours
+			for colth_colour in table:
+				knitted_colour.append(colth_colour.colour)
+				colour_list.add(colth_colour.colour)
+			yarn_list.append({'yarn': ipd_process.input_item, 'index': ipd_process.idx, 'dia': dia_list})
 		elif ipd_process.process_name == 'Compacting' or ipd_process.process_name == 'Steaming':
 			process.append(ipd_process.process_name)
 	process = list(set(process))
+	colour_list = list(colour_list)
 	# get colour list
-	for colour in ipd.colour:
-		colour_list.append(colour.colour)
-		html_head += f'<th>{colour.colour}</th>'
+	for colour in colour_list:
+		html_head += f'<th>{colour}</th>'
 	html_head += '<th>Total</th>'
 
 	final_item_list = []
@@ -309,7 +318,7 @@ def cloth_qty(doc):
 		receivable_list = {}
 		for item_to_be_received in items_to_be_received:
 			receivable_list[item_to_be_received['item']] = 0
-		
+
 		receivable_list = get_receivable_list_values(doc.po_items, receivable_list)
 
 		for item_to_be_received in items_to_be_received:
@@ -323,7 +332,7 @@ def cloth_qty(doc):
 	for data in yarn_list:
 		html_body = ''
 		dia_qty_list =[]
-		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':'Essdee gym vest'},'name')
+		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':doc.item_production_detail},'name')
 		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
 		ipd_item_list = []
 		for item in ipd_items:
