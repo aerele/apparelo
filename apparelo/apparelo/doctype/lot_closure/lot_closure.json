@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "creation": "2020-03-03 12:03:08.637048",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lot",
+  "verify_lot_status",
+  "section_break_3",
+  "lot_closure_details",
+  "section_break_6",
+  "item_group",
+  "lot_closure_items",
+  "warehouse",
+  "move_to_actual_warehouse",
+  "move_to_surplus_warehouse"
+ ],
+ "fields": [
+  {
+   "fieldname": "lot",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lot",
+   "options": "Lot Creation",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "verify_lot_status",
+   "fieldtype": "Button",
+   "label": "Verify Lot Status"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lot_closure_details",
+   "fieldtype": "Table",
+   "label": "Lot Closure Details",
+   "options": "Lot Closure Details"
+  },
+  {
+   "fieldname": "lot_closure_items",
+   "fieldtype": "Table",
+   "label": "Lot Closure Items",
+   "options": "Lot Closure Items"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval: doc.item_group=='Products' || doc.item_group=='Intermediate Product'",
+   "fieldname": "move_to_actual_warehouse",
+   "fieldtype": "Button",
+   "label": "Move To Actual Warehouse"
+  },
+  {
+   "depends_on": "eval: doc.item_group=='Sub Assemblies' || doc.item_group=='Raw Material'",
+   "fieldname": "move_to_surplus_warehouse",
+   "fieldtype": "Button",
+   "label": "Move To Surplus Warehouse"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  }
+ ],
+ "links": [],
+ "modified": "2020-03-03 15:30:58.568018",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Closure",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
