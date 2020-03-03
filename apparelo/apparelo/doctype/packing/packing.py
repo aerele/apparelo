@@ -30,7 +30,7 @@ class Packing(Document):
 			piece_count = len(attribute_set["Apparelo Colour"])
 			attribute_set.pop('Apparelo Colour')
 		variants = create_variants(item, attribute_set)
-		return list(set(variants)), piece_count
+		return variants
 
 	def create_boms(self, input_item_names, variants, colour, attribute_set=None, item_size=None, piece_count=None, final_item=None, final_process=None):
 		boms = []
