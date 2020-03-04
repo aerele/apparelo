@@ -55,7 +55,7 @@ class Steaming(Document):
 				variant_attr = get_attr_dict(variant_doc.attributes)
 				for color in attribute_set['Apparelo Colour']:
 					for dia in self.dia_conversions:
-						if color in input_attr["Apparelo Colour"] and color in variant_attr["Apparelo Colour"] and dia.from_dia in item.name and dia.to_dia in variant:
+						if color in input_attr["Apparelo Colour"] and color in variant_attr["Apparelo Colour"] and dia.from_dia in input_attr["Dia"] and dia.to_dia in variant_attr["Dia"]:
 							bom_for_variant = frappe.get_doc({
 								"doctype": "BOM",
 								"currency": get_default_currency(),
