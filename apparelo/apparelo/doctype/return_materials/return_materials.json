@@ -7,6 +7,7 @@
  "field_order": [
   "pf_item_code",
   "item_code",
+  "bom",
   "qty",
   "uom",
   "secondary_qty",
@@ -67,11 +68,18 @@
    "fieldtype": "Small Text",
    "label": "Additional Parameters",
    "read_only": 1
+  },
+  {
+   "fieldname": "bom",
+   "fieldtype": "Link",
+   "label": "Item BOM",
+   "options": "BOM",
+   "read_only": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-26 21:47:42.381992",
+ "modified": "2020-02-29 15:47:04.594613",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",

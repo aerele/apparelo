@@ -46,7 +46,13 @@ class DC(Document):
 		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type': "Actual"},'name')
 		supplier_warehouse=frappe.db.get_value("Warehouse", {'supplier': self.supplier},'name')
 		for item_ in self.return_materials:
-			dc_items.append({ "item_code": item_.item_code,"schedule_date": add_days(nowdate(), 7),"qty": item_.qty})
+			dc_items.append(
+				{ "item_code": item_.item_code,
+					"schedule_date": add_days(nowdate(), 7),
+					"qty": item_.qty,
+					"bom": item_.bom,
+					"rate": 1
+				})
 		po=frappe.get_doc({
 			"doctype": "Purchase Order",
 			"supplier": self.supplier,
@@ -165,8 +171,7 @@ def get_expected_items_in_return(doc):
 	ipd_bom_mapping = frappe.db.get_value('IPD BOM Mapping', {'item_production_details': lot_ipd})
 	ipd_item_mapping = frappe.get_doc("IPD Item Mapping", {'item_production_details': lot_ipd})
 	boms = frappe.get_doc('IPD BOM Mapping', ipd_bom_mapping).get_process_boms(dc_process)
-
-	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields='item')
+	items_to_be_received = frappe.get_list('BOM', filters={'name': ['in', boms]}, group_by='item', fields=['item', 'name as bom'])
 
 	receivable_list = {}
 	item_mapping_validator = [x["item"] for x in frappe.get_list("Item Mapping", {"parent": ipd_item_mapping.name, "process_1": dc_process}, "item")]
