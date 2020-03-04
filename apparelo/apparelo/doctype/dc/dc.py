@@ -49,8 +49,9 @@ class DC(Document):
 			dc_items.append(
 				{ "item_code": item_.item_code,
 					"schedule_date": add_days(nowdate(), 7),
-					"qty": item_.qty
-					"bom": item_.bom
+					"qty": item_.qty,
+					"bom": item_.bom,
+					"rate": 1
 				})
 		po=frappe.get_doc({
 			"doctype": "Purchase Order",
