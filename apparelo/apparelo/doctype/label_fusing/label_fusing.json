@@ -8,6 +8,7 @@
  "field_order": [
   "item",
   "part",
+  "based_on_style",
   "additional_information",
   "section_break_4",
   "enable_additional_parts",
@@ -181,11 +182,17 @@
    "fieldtype": "Table MultiSelect",
    "label": "Size Additional Items",
    "options": "Additional Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "based_on_style",
+   "fieldtype": "Check",
+   "label": "Based On Style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-03-05 12:39:22.256807",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Label Fusing",
