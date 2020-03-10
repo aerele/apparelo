@@ -7,7 +7,8 @@
  "field_order": [
   "item",
   "stock_qty",
-  "sub_warehouse"
+  "current_warehouse",
+  "target_warehouse"
  ],
  "fields": [
   {
@@ -26,17 +27,25 @@
    "reqd": 1
   },
   {
-   "fieldname": "sub_warehouse",
+   "fieldname": "current_warehouse",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Sub Warehouse",
+   "label": "Current Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Target Warehouse",
    "options": "Warehouse",
    "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-03-03 15:27:17.246810",
+ "modified": "2020-03-06 08:08:16.100575",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure Items",

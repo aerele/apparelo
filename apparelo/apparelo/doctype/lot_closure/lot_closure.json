@@ -11,8 +11,11 @@
   "lot_closure_details",
   "section_break_6",
   "item_group",
-  "lot_closure_items",
+  "get_lot_closure_items",
+  "column_break_7",
   "warehouse",
+  "section_break_10",
+  "lot_closure_items",
   "move_to_actual_warehouse",
   "move_to_surplus_warehouse"
  ],
@@ -74,10 +77,23 @@
    "fieldtype": "Link",
    "label": "Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_lot_closure_items",
+   "fieldtype": "Button",
+   "label": "Get Lot Closure Items"
   }
  ],
  "links": [],
- "modified": "2020-03-03 15:30:58.568018",
+ "modified": "2020-03-10 17:55:09.210113",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure",
@@ -92,6 +108,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
    "share": 1,
    "write": 1
   }

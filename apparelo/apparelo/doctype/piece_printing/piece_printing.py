@@ -28,11 +28,11 @@ class PiecePrinting(Document):
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour_list,piece_count):
 		boms = []
+		input_item_list = []
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
 			variant_attr = get_attr_dict(variant_doc.attributes)
 			item_list = []
-			input_item_list = []
 			for input_item in input_item_names:
 				input_item_doc=frappe.get_doc("Item",input_item)
 				input_attr = get_attr_dict(input_item_doc.attributes)

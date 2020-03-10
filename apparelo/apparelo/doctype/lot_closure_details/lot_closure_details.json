@@ -5,37 +5,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
+  "rm_item_code",
   "supplier",
-  "in_qty",
-  "out_qty",
+  "supplied_qty",
+  "consumed_qty",
   "difference",
-  "dc",
-  "grn"
+  "po",
+  "pr"
  ],
  "fields": [
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "in_qty",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "In Qty",
-   "reqd": 1
-  },
-  {
-   "fieldname": "out_qty",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Out Qty",
-   "reqd": 1
-  },
   {
    "fieldname": "difference",
    "fieldtype": "Float",
@@ -52,23 +30,45 @@
    "reqd": 1
   },
   {
-   "fieldname": "dc",
-   "fieldtype": "Link",
-   "label": "DC",
-   "options": "DC",
-   "read_only": 1
+   "fieldname": "po",
+   "fieldtype": "Data",
+   "label": "PO",
+   "read_only": 1,
+   "reqd": 1
   },
   {
-   "fieldname": "grn",
+   "fieldname": "pr",
+   "fieldtype": "Data",
+   "label": "PR",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "rm_item_code",
    "fieldtype": "Link",
-   "label": "GRN",
-   "options": "GRN",
-   "read_only": 1
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplied_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Supplied Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "consumed_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Consumed Qty",
+   "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-03-03 15:21:23.001634",
+ "modified": "2020-03-10 17:52:08.097288",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure Details",
