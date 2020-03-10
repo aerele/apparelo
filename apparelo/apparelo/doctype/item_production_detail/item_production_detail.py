@@ -329,7 +329,7 @@ class ItemProductionDetail(Document):
 				process_variants['input_index']=''
 				process_variants['process_record'] = self.process_record
 				packing_doc = frappe.get_doc('Packing', self.process_record)
-				variants,piece_count= packing_doc.create_variants(input_item_names=input_items_, colour=colour, item=self.item, final_process=final_process)
+				variants = packing_doc.create_variants(input_item_names=input_items_, colour=colour, item=self.item, final_process=final_process)
 				new_variants.extend(variants)
 				boms.extend(packing_doc.create_boms(input_items_, variants, colour, attribute_set=cutting_attribute, item_size=item_size, piece_count=piece_count, final_item=self.item, final_process=final_process))
 				process_variants['variants'] = list(set(new_variants))

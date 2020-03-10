@@ -64,53 +64,42 @@ class PiecePrinting(Document):
 
 def create_item_template(self):
 	if self.based_on_style == 0:
-		if not frappe.db.exists("Item",self.item+" Printed Cloth"):
-			frappe.get_doc({
-			"doctype": "Item",
-			"item_code": self.item+" Printed Cloth",
-			"item_name": self.item+" Printed Cloth",
-			"description":self.item+" Printed Cloth",
-			"item_group": "Sub Assemblies",
-			"stock_uom" : "Nos",
-			"has_variants" : "1",
-			"variant_based_on" : "Item Attribute",
-			"is_sub_contracted_item": "1",
-			"attributes" : [
-				{
-					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Part"
-				},
-				{
-					"attribute" : "Apparelo Size"
-				}
-			]
-		}).save()
+		attribute = [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					}
+				]
 	else:
-		if not frappe.db.exists("Item",self.item+" Printed Cloth"):
-			frappe.get_doc({
-			"doctype": "Item",
-			"item_code": self.item+" Printed Cloth",
-			"item_name": self.item+" Printed Cloth",
-			"description":self.item+" Printed Cloth",
-			"item_group": "Sub Assemblies",
-			"stock_uom" : "Nos",
-			"has_variants" : "1",
-			"variant_based_on" : "Item Attribute",
-			"is_sub_contracted_item": "1",
-			"attributes" : [
-				{
-					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Part"
-				},
-				{
-					"attribute" : "Apparelo Size"
-				},
-				{
-					"attribute" : "Apparelo Style"
-				}
-			]
-		}).save()
+		attribute = [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					},
+					{
+						"attribute" : "Apparelo Style"
+					}
+				]
+	if not frappe.db.exists("Item",self.item+" Printed Cloth"):
+		frappe.get_doc({
+		"doctype": "Item",
+		"item_code": self.item+" Printed Cloth",
+		"item_name": self.item+" Printed Cloth",
+		"description":self.item+" Printed Cloth",
+		"item_group": "Sub Assemblies",
+		"stock_uom" : "Nos",
+		"has_variants" : "1",
+		"variant_based_on" : "Item Attribute",
+		"is_sub_contracted_item": "1",
+		"attributes" : attribute
+	}).save()

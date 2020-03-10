@@ -70,18 +70,7 @@ class LabelFusing(Document):
 		return boms, input_item_list
 def create_item_template(self):
 	if self.based_on_style == 0:
-		if not frappe.db.exists("Item", self.item+" Labeled Cloth"):
-			frappe.get_doc({
-				"doctype": "Item",
-				"item_code": self.item+" Labeled Cloth",
-				"item_name": self.item+" Labeled Cloth",
-				"description":self.item+" Labeled Cloth",
-				"item_group": "Sub Assemblies",
-				"stock_uom" : "Nos",
-				"has_variants" : "1",
-				"variant_based_on" : "Item Attribute",
-				"is_sub_contracted_item": "1",
-				"attributes" : [
+		attribute = [
 					{
 						"attribute" : "Apparelo Colour"
 					},
@@ -92,20 +81,8 @@ def create_item_template(self):
 						"attribute" : "Apparelo Size"
 					}
 				]
-			}).save()
 	else:
-		if not frappe.db.exists("Item", self.item+" Labeled Cloth"):
-			frappe.get_doc({
-				"doctype": "Item",
-				"item_code": self.item+" Labeled Cloth",
-				"item_name": self.item+" Labeled Cloth",
-				"description":self.item+" Labeled Cloth",
-				"item_group": "Sub Assemblies",
-				"stock_uom" : "Nos",
-				"has_variants" : "1",
-				"variant_based_on" : "Item Attribute",
-				"is_sub_contracted_item": "1",
-				"attributes" : [
+		attribute = [
 					{
 						"attribute" : "Apparelo Colour"
 					},
@@ -119,4 +96,16 @@ def create_item_template(self):
 						"attribute" : "Apparelo Style"
 					}
 				]
-			}).save()
+	if not frappe.db.exists("Item", self.item+" Labeled Cloth"):
+		frappe.get_doc({
+			"doctype": "Item",
+			"item_code": self.item+" Labeled Cloth",
+			"item_name": self.item+" Labeled Cloth",
+			"description":self.item+" Labeled Cloth",
+			"item_group": "Sub Assemblies",
+			"stock_uom" : "Nos",
+			"has_variants" : "1",
+			"variant_based_on" : "Item Attribute",
+			"is_sub_contracted_item": "1",
+			"attributes" : attribute
+		}).save()
