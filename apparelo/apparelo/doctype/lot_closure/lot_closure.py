@@ -6,10 +6,33 @@ from __future__ import unicode_literals
 import frappe, json
 from six import string_types
 from frappe.model.document import Document
-import collections 
+import collections
+from erpnext.stock.report.stock_balance.stock_balance import execute
+from datetime import datetime
+from frappe.utils import getdate, now_datetime, nowdate
+
 
 class LotClosure(Document):
-	pass
+	def on_submit(self):
+		self.make_stock_entry()
+		lot_doc=frappe.get_doc("Lot Creation",self.lot)
+		lot_doc.cancel()
+	def make_stock_entry(self):
+		stock_entry = frappe.new_doc("Stock Entry")
+		stock_entry.stock_entry_type='Send to Warehouse'
+		rm_items = []
+		for item in self.lot_closure_items:
+				item_list = {}
+				item_list['item_code'] = item.item_code
+				item_list['s_warehouse'] = item.warehouse
+				item_list['t_warehouse'] = item.target_warehouse
+				item_list['qty'] = item.bal_qty
+				item_list['uom']=item.stock_uom
+				rm_items.append(item_list)
+		stock_entry.items=rm_items
+		stock_entry.save()
+		stock_entry.submit()
+		
 @frappe.whitelist()
 def get_lot_closure_details(doc):
 	if isinstance(doc, string_types):
@@ -54,12 +77,32 @@ def get_final_list(item_list):
 				item_list[next_index]['difference']=''
 				item_list[next_index]['difference']=str((round(item_list[next_index]['consumed_qty']-item_list[index]['supplied_qty']))*100)
 				po_list=frappe.get_list("Purchase Order",filters={'supplier': ['in',item_list[next_index]['supplier']]})
-				po_names=[po["name"] for po in po_list]
+				po_names=''
+				pr_names=''
+				for po in po_list:
+					po_names=",".join(po["name"])
 				pr_list=frappe.get_list("Purchase Receipt",filters={'supplier': ['in',item_list[next_index]['supplier']]})
-				pr_names=[pr["name"] for pr in pr_list]
+				for pr in pr_list:
+					pr_names=",".join(pr["name"])
 				item_list[next_index]['po']=po_names
 				item_list[next_index]['pr']=pr_names
 				item_list[index].update(item_list[next_index])
 				item_list.remove(item_list[next_index])
 				break
 	return item_list
+
+@frappe.whitelist()
+def get_lot_closure_items(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	doc['lot_closure_items'] = []
+	item_group=doc.get('item_group')
+	lot=doc.get('lot')
+	target_warehouse=doc.get('warehouse')
+	lot_start_date=frappe.db.get_value("Lot Creation",{'name':'GY-1'},'start_date').strftime("%d-%m-%Y")
+	now_date = getdate(nowdate()).strftime("%d-%m-%Y")
+	lot_warehouse= frappe.db.get_value("Warehouse",{'warehouse_name': lot},"name")
+	col, datas = execute(filters=frappe._dict({'item_group': item_group,'warehouse':lot_warehouse,'from_date':frappe.utils.get_datetime(lot_start_date),'to_date':frappe.utils.get_datetime(now_date)}))
+	for data in datas:
+		data['target_warehouse']=target_warehouse
+	return datas

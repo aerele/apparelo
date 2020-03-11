@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "field:lot",
  "creation": "2020-03-03 12:03:08.637048",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -16,8 +17,7 @@
   "warehouse",
   "section_break_10",
   "lot_closure_items",
-  "move_to_actual_warehouse",
-  "move_to_surplus_warehouse"
+  "amended_from"
  ],
  "fields": [
   {
@@ -26,7 +26,8 @@
    "in_list_view": 1,
    "label": "Lot",
    "options": "Lot Creation",
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "columns": 1,
@@ -55,18 +56,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "depends_on": "eval: doc.item_group=='Products' || doc.item_group=='Intermediate Product'",
-   "fieldname": "move_to_actual_warehouse",
-   "fieldtype": "Button",
-   "label": "Move To Actual Warehouse"
-  },
-  {
-   "depends_on": "eval: doc.item_group=='Sub Assemblies' || doc.item_group=='Raw Material'",
-   "fieldname": "move_to_surplus_warehouse",
-   "fieldtype": "Button",
-   "label": "Move To Surplus Warehouse"
-  },
-  {
    "fieldname": "item_group",
    "fieldtype": "Link",
    "label": "Item Group",
@@ -90,10 +79,20 @@
    "fieldname": "get_lot_closure_items",
    "fieldtype": "Button",
    "label": "Get Lot Closure Items"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Closure",
+   "print_hide": 1,
+   "read_only": 1
   }
  ],
+ "is_submittable": 1,
  "links": [],
- "modified": "2020-03-10 17:55:09.210113",
+ "modified": "2020-03-11 17:26:23.337418",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure",

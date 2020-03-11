@@ -5,35 +5,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
-  "stock_qty",
-  "current_warehouse",
-  "target_warehouse"
+  "item_code",
+  "bal_qty",
+  "warehouse",
+  "target_warehouse",
+  "stock_uom"
  ],
  "fields": [
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
-  },
-  {
-   "fieldname": "stock_qty",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Stock Qty",
-   "reqd": 1
-  },
-  {
-   "fieldname": "current_warehouse",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Current Warehouse",
-   "options": "Warehouse",
-   "reqd": 1
-  },
   {
    "fieldname": "target_warehouse",
    "fieldtype": "Link",
@@ -41,11 +19,40 @@
    "label": "Target Warehouse",
    "options": "Warehouse",
    "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bal_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Balance Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Current Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_uom",
+   "fieldtype": "Data",
+   "label": "Stock UOM",
+   "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-03-06 08:08:16.100575",
+ "modified": "2020-03-11 17:36:07.840963",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure Items",
