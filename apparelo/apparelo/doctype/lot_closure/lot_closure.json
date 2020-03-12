@@ -15,6 +15,7 @@
   "get_lot_closure_items",
   "column_break_7",
   "warehouse",
+  "enable_repack_items",
   "section_break_10",
   "lot_closure_items",
   "amended_from"
@@ -31,9 +32,13 @@
   },
   {
    "columns": 1,
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "verify_lot_status",
    "fieldtype": "Button",
-   "label": "Verify Lot Status"
+   "label": "Verify Lot Status",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "section_break_3",
@@ -52,6 +57,7 @@
    "options": "Lot Closure Items"
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "section_break_6",
    "fieldtype": "Section Break"
   },
@@ -76,9 +82,13 @@
    "fieldtype": "Section Break"
   },
   {
+   "depends_on": "eval:doc.docstatus == 0",
    "fieldname": "get_lot_closure_items",
    "fieldtype": "Button",
-   "label": "Get Lot Closure Items"
+   "label": "Get Lot Closure Items",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
   },
   {
    "fieldname": "amended_from",
@@ -88,11 +98,18 @@
    "options": "Lot Closure",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_repack_items",
+   "fieldtype": "Check",
+   "label": "Enable Repack Items",
+   "reqd": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-11 17:26:23.337418",
+ "modified": "2020-03-12 22:07:59.270041",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure",
