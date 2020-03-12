@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe, json
+from frappe import _
 from six import string_types
 from frappe.model.document import Document
 import collections
@@ -16,20 +17,27 @@ class LotClosure(Document):
 	def on_submit(self):
 		self.make_stock_entry()
 		lot_doc=frappe.get_doc("Lot Creation",self.lot)
-		lot_doc.cancel()
+		lot_doc.lot_status='Closed'
+		lot_doc.save()
 	def make_stock_entry(self):
 		stock_entry = frappe.new_doc("Stock Entry")
 		stock_entry.stock_entry_type='Send to Warehouse'
 		rm_items = []
 		for item in self.lot_closure_items:
 				item_list = {}
-				item_list['item_code'] = item.item_code
+				if item.new_item_code:
+					if is_valid_item(item.item_code,item.new_item_code):
+						item_list['item_code'] = item.new_item_code
+					else:
+						frappe.throw(_("Invalid new item code selected in the row {0}".format(self.lot_closure_items.index(item))))
+				else:
+					item_list['item_code'] = item.item_code
 				item_list['s_warehouse'] = item.warehouse
 				item_list['t_warehouse'] = item.target_warehouse
 				item_list['qty'] = item.bal_qty
 				item_list['uom']=item.stock_uom
 				rm_items.append(item_list)
-		stock_entry.items=rm_items
+				stock_entry.append('items',item_list)
 		stock_entry.save()
 		stock_entry.submit()
 		
@@ -95,7 +103,7 @@ def get_final_list(item_list):
 def get_lot_closure_items(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-	doc['lot_closure_items'] = []
+	lot_closure_items=[]
 	item_group=doc.get('item_group')
 	lot=doc.get('lot')
 	target_warehouse=doc.get('warehouse')
@@ -103,6 +111,18 @@ def get_lot_closure_items(doc):
 	now_date = getdate(nowdate()).strftime("%d-%m-%Y")
 	lot_warehouse= frappe.db.get_value("Warehouse",{'warehouse_name': lot},"name")
 	col, datas = execute(filters=frappe._dict({'item_group': item_group,'warehouse':lot_warehouse,'from_date':frappe.utils.get_datetime(lot_start_date),'to_date':frappe.utils.get_datetime(now_date)}))
+	if doc.get('lot_closure_items') != None:
+		for item in doc.get('lot_closure_items'):
+			lot_closure_items.append({'item_code':item['item_code'],'bal_qty':item['bal_qty'],'warehouse':item['warehouse'],'target_warehouse':item['target_warehouse'],'stock_uom':item['stock_uom']})
 	for data in datas:
 		data['target_warehouse']=target_warehouse
-	return datas
+	lot_closure_items.extend(datas)
+	return lot_closure_items
+
+def is_valid_item(old_item,new_item):
+	old_item_attribute_list=frappe.get_list("Item", filters={'name': ['in',old_item]}, fields=["`tabItem Variant Attribute`.attribute","`tabItem Variant Attribute`.attribute_value"])
+	new_item_attribute_list=frappe.get_list("Item", filters={'name': ['in',new_item]}, fields=["`tabItem Variant Attribute`.attribute","`tabItem Variant Attribute`.attribute_value"])
+	if old_item_attribute_list==new_item_attribute_list:
+		return True
+	else:
+		return False
