@@ -55,5 +55,17 @@ frappe.ui.form.on('DC', {
 				refresh_field('return_materials');
 			}
 		});
+
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.dc_cloth_quantity",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('dc_cloth_quantity', r.message);
+				}
+				refresh_field('dc_cloth_quantity');
+			}
+		});
 	},
 });
