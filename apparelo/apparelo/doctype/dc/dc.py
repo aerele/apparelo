@@ -321,11 +321,11 @@ def dc_cloth_quantity(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 	return_material_qty = []
-	item_size_list = []
-	colours_list = []
-	html_head = '<tr><th>Dia/Colour</th>'
-	html_body = ''
-	html = ''
+	item_size_list = set()
+	colours_list = set()
+	dia_list=set()
+	knitting_type_list=set()
+	
 	return_material=doc.get('return_materials')
 	for item in return_material:
 		print(item)
@@ -335,31 +335,48 @@ def dc_cloth_quantity(doc):
 		for attribute in attribute_list:
 			if attribute['attribute'] == 'Apparelo Colour':
 				attribute_qty['colour'] = attribute['attribute_value']
+				colours_list.add(attribute['attribute_value'][0])
 			if attribute['attribute'] == 'Apparelo Size':
 				attribute_qty['size'] = attribute['attribute_value']
+				item_size_list.add(attribute['attribute_value'][0])
+			if attribute['attribute'] == 'Dia':
+				attribute_qty['size'] = attribute['attribute_value']
+				dia_list.add(attribute['attribute_value'][0])
+			if attribute['attribute'] == 'Knitting Type':
+				attribute_qty['size'] = attribute['attribute_value']
+				knitting_type_list.add(attribute['attribute_value'][0])
+			
 		attribute_qty['qty'] = item['qty']
 		return_material_qty.append(attribute_qty)
 	
-	lot = doc.get('lot')
-	lot_doc = frappe.get_doc('Lot Creation', lot)
-	ipd_doc = frappe.get_doc(
-		'Item Production Detail', lot_doc.item_production_detail)
-	for final_size in ipd_doc.size:
-		item_size_list.append(final_size.size)
-	for final_colour in ipd_doc.colour:
-		colours_list.append(final_colour.colour)
+	# lot = doc.get('lot')
+	# lot_doc = frappe.get_doc('Lot Creation', lot)
+	# ipd_doc = frappe.get_doc(
+	# 	'Item Production Detail', lot_doc.item_production_detail)
+	# for final_size in ipd_doc.size:
+	# 	item_size_list.append(final_size.size)
+	# for final_colour in ipd_doc.colour:
+	# 	colours_list.append(final_colour.colour)
+	
 
-	for colour in colours_list:
-		html_head += f'<th>{colour}</th>'
+
+def html_generator(col,row,return_material_qty):
+	row_key = list(row.keys())[0]
+	col_key = list(col.keys())[0]
+	html_head = f'<tr><th>{row_key}/{col_key}</th>'
+	html_body = ''
+	html = ''
+
+	for row_data in row[row_key]:
+		html_head += f'<th>{row_data}</th>'
 	html_head += '</tr>'
 
-	for size in item_size_list:
-		html_body += f'<tr><th>{size}</th>'
-		for colour in colours_list:
+	for col_data in col[col_key]:
+		html_body += f'<tr><th>{col_data}</th>'
+		for row_data in row[row_key]:
 			for items in return_material_qty:
-				if ((items['size'] == size) & (items['colour'] == colour)):
-					s = items["qty"]
-					html_body += f'<th>{s}</th>'
+				if ((items[col_key] == col_data) & (items[row_key] == row_data)):
+					html_body += f'<th>{items["qty"]}</th>'
 		html_body += f'</tr>'
 
 	html += f'<table class="table table-bordered"><tbody><tr>{html_head}</tr>{html_body}</tbody></table>'
