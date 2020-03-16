@@ -210,8 +210,8 @@ class ItemProductionDetail(Document):
 								input_items_.extend(input_items)
 					process_variants['process_record'] = process.process_record
 					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
-					variants.extend(piece_printing_doc.create_variants(input_items))
-					bom_list,existing_item = piece_printing_doc.create_boms(input_items, variants,cutting_attribute,item_size,colour,piece_count)
+					variants.extend(piece_printing_doc.create_variants(input_items_))
+					bom_list,existing_item = piece_printing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count)
 					boms.extend(bom_list)
 					existing_item_list.extend(existing_item)
 					process_variants['variants'] = list(set(variants))
