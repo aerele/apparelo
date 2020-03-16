@@ -38,7 +38,7 @@ class PiecePrinting(Document):
 				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in item_size:
 					for colour in colour_list:
-						if not 'Apparelo Style' in input_attr and 'Apparelo Style' in variant_attr:
+						if not ('Apparelo Style' in input_attr and 'Apparelo Style' in variant_attr):
 							if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
 								input_item_list.append(input_item)
 								item_list.append({"item_code": input_item,"uom": "Nos"})
