@@ -320,70 +320,81 @@ def get_additional_params(ipd_processes, ipd_process_index):
 def dc_cloth_quantity(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-	return_material_qty = []
-	item_size_list = set()
-	colours_list = set()
-	dia_list=set()
-	knitting_type_list=set()
-	attribute_qty={}
-
-	
+	return_material_qty = {}
+	column_list = set()
+	column_dict = {}
+	row_list = set()
+	row_dict = {}
 	return_material=doc.get('return_materials')
 	for item in return_material:
 		attribute_list = frappe.get_list("Item", filters={'name': ['in', item["item_code"]]}, fields=[
 										"`tabItem Variant Attribute`.attribute", "`tabItem Variant Attribute`.attribute_value"])
-				for attribute in attribute_list:
-					if (len(attribute_qty)<=2):
-						if attribute['attribute'] == 'Apparelo Colour' :
-							attribute_qty['colour'] = attribute['attribute_value']
-							colours_list.add(attribute['attribute_value'][0])
-						if attribute['attribute'] == 'Apparelo Size':
-							attribute_qty['size'] = attribute['attribute_value']
-							item_size_list.add(attribute['attribute_value'][0])
-						if attribute['attribute'] == 'Dia':
-							attribute_qty['Dia'] = attribute['attribute_value']
-							dia_list.add(attribute['attribute_value'][0])
-						if attribute['attribute'] == 'Knitting Type':
-							attribute_qty['Knitting Type'] = attribute['attribute_value']
-							knitting_type_list.add(attribute['attribute_value'][0])
-					else:
-						attribute_name_list=['Apparelo Colour','Apparelo Size']
-						attribute_key = ''
-						if attribute['attribute'] not in attribute_name_list and attribute['attribute'] not in attribute_qty:
-							attribute_key += attribute['attribute_value']
-				attribute_qty['qty'] = item['qty']
-				
-		return_material_qty.append({attribute_key: attribute_qty})
-
-	# lot = doc.get('lot')
-	# lot_doc = frappe.get_doc('Lot Creation', lot)
-	# ipd_doc = frappe.get_doc(
-	# 	'Item Production Detail', lot_doc.item_production_detail)
-	# for final_size in ipd_doc.size:
-	# 	item_size_list.append(final_size.size)
-	# for final_colour in ipd_doc.colour:
-	# 	colours_list.append(final_colour.colour)
-	
+		attribute_key = frappe.db.get_value('Item', {'name': item['item_code']},'variant_of')
+		attribute_qty={}
+		print(attribute_list)
+		attribute_list=sorted(attribute_list,key=lambda attr: attr['attribute'])
+		for attribute in attribute_list:
+			if (len(attribute_qty)<2):
+				if attribute['attribute'] == 'Apparelo Colour' :
+					attribute_qty['colour'] = attribute['attribute_value']
+					row_list.add(attribute['attribute_value'])
+					row_dict ['colour'] = row_list
+				if attribute['attribute'] == 'Apparelo Size':
+					attribute_qty['size'] = attribute['attribute_value']
+					column_list.add(attribute['attribute_value'])
+					column_dict['size'] = column_list
+				if attribute['attribute'] == 'Dia':
+					attribute_qty['Dia'] = attribute['attribute_value']
+					column_list.add(attribute['attribute_value'])
+					column_dict['Dia'] = column_list
+				if attribute['attribute'] == 'Knitting Type':
+					attribute_qty['Knitting Type'] = attribute['attribute_value']
+					row_list.add(attribute['attribute_value'])
+					row_dict ['Knitting Type'] = row_list
+			else:
+				attribute_name_list=['Apparelo Colour','Apparelo Size']
+				attribute_key += ' '
+				if attribute['attribute'] not in attribute_name_list and attribute['attribute'] not in attribute_qty:
+					attribute_key += attribute['attribute_value']
+		attribute_qty['qty'] = item['qty']
+		if attribute_key not in return_material_qty:
+			return_material_qty[attribute_key] = [attribute_qty]
+		else:
+			return_material_qty[attribute_key].append(attribute_qty)
+	html = ''
+	for key,val in return_material_qty.items():
+		html += f'<table class="table table-bordered"><tbody>{key}'
+		html += html_generator(column_dict,row_dict,val)
+		html += '</tbody></table>'
+	return html
 
 
 def html_generator(col,row,return_material_qty):
+	print(col,row,return_material_qty)
 	row_key = list(row.keys())[0]
 	col_key = list(col.keys())[0]
-	html_head = f'<tr><th>{row_key}/{col_key}</th>'
+	html_head = f'<tr><th>{col_key}/{row_key}</th>'
 	html_body = ''
 	html = ''
-
-	for row_data in row[row_key]:
+	for row_data in list(row[row_key]):
 		html_head += f'<th>{row_data}</th>'
 	html_head += '</tr>'
-
-	for col_data in col[col_key]:
-		html_body += f'<tr><th>{col_data}</th>'
-		for row_data in row[row_key]:
+	row_list =[]
+	for col_data in list(col[col_key]):
+		sub_row_list = [0]*(len(list(row[row_key]))+1)
+		sub_row_list[0] = col_data
+		for row_data in list(row[row_key]):
 			for items in return_material_qty:
-				if ((items[col_key] == col_data) & (items[row_key] == row_data)):
-					html_body += f'<th>{items["qty"]}</th>'
-		html_body += f'</tr>'
-
-	html += f'<table class="table table-bordered"><tbody><tr>{html_head}</tr>{html_body}</tbody></table>'
+				if ((items[col_key] == col_data) and (items[row_key] == row_data)):
+					sub_row_list[list(row[row_key]).index(row_data) +1] = items['qty']
+					break
+		row_list.append(sub_row_list)
+	for sub_row_data in row_list:
+		html_body_data = ''
+		if sum(map(int,sub_row_data[1:])) != 0:
+			for sub_row_value in sub_row_data:
+				html_body_data += f'<td>{sub_row_value}</td>'
+		html_body += f'<tr>{html_body_data}</tr>'
+		print(html_body)
+	html += f'<tr>{html_head}</tr>{html_body}'
 	return html
