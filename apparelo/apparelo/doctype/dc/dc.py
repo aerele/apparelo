@@ -325,30 +325,36 @@ def dc_cloth_quantity(doc):
 	colours_list = set()
 	dia_list=set()
 	knitting_type_list=set()
+	attribute_qty={}
+
 	
 	return_material=doc.get('return_materials')
 	for item in return_material:
-		print(item)
-		attribute_qty = {'colour': "", 'size': "", 'qty': 1}
 		attribute_list = frappe.get_list("Item", filters={'name': ['in', item["item_code"]]}, fields=[
 										"`tabItem Variant Attribute`.attribute", "`tabItem Variant Attribute`.attribute_value"])
-		for attribute in attribute_list:
-			if attribute['attribute'] == 'Apparelo Colour':
-				attribute_qty['colour'] = attribute['attribute_value']
-				colours_list.add(attribute['attribute_value'][0])
-			if attribute['attribute'] == 'Apparelo Size':
-				attribute_qty['size'] = attribute['attribute_value']
-				item_size_list.add(attribute['attribute_value'][0])
-			if attribute['attribute'] == 'Dia':
-				attribute_qty['size'] = attribute['attribute_value']
-				dia_list.add(attribute['attribute_value'][0])
-			if attribute['attribute'] == 'Knitting Type':
-				attribute_qty['size'] = attribute['attribute_value']
-				knitting_type_list.add(attribute['attribute_value'][0])
-			
-		attribute_qty['qty'] = item['qty']
-		return_material_qty.append(attribute_qty)
-	
+				for attribute in attribute_list:
+					if (len(attribute_qty)<=2):
+						if attribute['attribute'] == 'Apparelo Colour' :
+							attribute_qty['colour'] = attribute['attribute_value']
+							colours_list.add(attribute['attribute_value'][0])
+						if attribute['attribute'] == 'Apparelo Size':
+							attribute_qty['size'] = attribute['attribute_value']
+							item_size_list.add(attribute['attribute_value'][0])
+						if attribute['attribute'] == 'Dia':
+							attribute_qty['Dia'] = attribute['attribute_value']
+							dia_list.add(attribute['attribute_value'][0])
+						if attribute['attribute'] == 'Knitting Type':
+							attribute_qty['Knitting Type'] = attribute['attribute_value']
+							knitting_type_list.add(attribute['attribute_value'][0])
+					else:
+						attribute_name_list=['Apparelo Colour','Apparelo Size']
+						attribute_key = ''
+						if attribute['attribute'] not in attribute_name_list and attribute['attribute'] not in attribute_qty:
+							attribute_key += attribute['attribute_value']
+				attribute_qty['qty'] = item['qty']
+				
+		return_material_qty.append({attribute_key: attribute_qty})
+
 	# lot = doc.get('lot')
 	# lot_doc = frappe.get_doc('Lot Creation', lot)
 	# ipd_doc = frappe.get_doc(
