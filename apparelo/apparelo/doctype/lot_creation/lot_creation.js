@@ -2,6 +2,15 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Lot Creation', {
+	onload: function(frm) {
+		frm.set_query('item_production_detail', function(doc) {
+			return {
+				filters: {
+					"docstatus": 1
+				}
+			}
+		});
+	},
 	setup: function(frm) {
 		frm.custom_make_buttons = {
 			'Work Order': 'Work Order',
