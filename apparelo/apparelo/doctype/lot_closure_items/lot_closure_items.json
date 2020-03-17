@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "creation": "2020-03-03 12:37:47.533566",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "bal_qty",
+  "warehouse",
+  "target_warehouse",
+  "stock_uom",
+  "new_item_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Target Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bal_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Balance Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Current Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_uom",
+   "fieldtype": "Data",
+   "label": "Stock UOM",
+   "reqd": 1
+  },
+  {
+   "fieldname": "new_item_code",
+   "fieldtype": "Link",
+   "label": "New Item Code",
+   "options": "Item"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-03-12 15:12:22.808144",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Closure Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

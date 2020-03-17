@@ -39,9 +39,14 @@ class LabelFusing(Document):
 				input_attr = get_attr_dict(input_item_doc.attributes)
 				for size in item_size:
 					for colour in colour_list:
-						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
-							input_item_list.append(input_item)
-							item_list.append({"item_code": input_item,"uom": "Nos"})
+						if not ('Apparelo Style' in input_attr and 'Apparelo Style' in variant_attr):
+							if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
+								input_item_list.append(input_item)
+								item_list.append({"item_code": input_item,"uom": "Nos"})
+						else:
+							if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Style"] and colour in variant_attr["Apparelo Style"] and self.part in variant_attr["Part"] and self.part in input_attr["Part"]:
+								input_item_list.append(input_item)
+								item_list.append({"item_code": input_item,"uom": "Nos"})
 			if self.enable_additional_parts:
 				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
 				for additional_part in self.additional_parts:
@@ -64,6 +69,33 @@ class LabelFusing(Document):
 				boms.append(existing_bom)
 		return boms, input_item_list
 def create_item_template(self):
+	if self.based_on_style == 0:
+		attribute = [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					}
+				]
+	else:
+		attribute = [
+					{
+						"attribute" : "Apparelo Colour"
+					},
+					{
+						"attribute" : "Part"
+					},
+					{
+						"attribute" : "Apparelo Size"
+					},
+					{
+						"attribute" : "Apparelo Style"
+					}
+				]
 	if not frappe.db.exists("Item", self.item+" Labeled Cloth"):
 		frappe.get_doc({
 			"doctype": "Item",
@@ -75,15 +107,5 @@ def create_item_template(self):
 			"has_variants" : "1",
 			"variant_based_on" : "Item Attribute",
 			"is_sub_contracted_item": "1",
-			"attributes" : [
-				{
-					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Part"
-				},
-				{
-					"attribute" : "Apparelo Size"
-				}
-			]
+			"attributes" : attribute
 		}).save()

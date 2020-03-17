@@ -8,6 +8,7 @@
  "field_order": [
   "item",
   "part",
+  "based_on_style",
   "additional_information",
   "amended_from"
  ],
@@ -42,11 +43,17 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "based_on_style",
+   "fieldtype": "Check",
+   "label": "Based On Style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-03-05 12:40:13.449967",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Piece Printing",

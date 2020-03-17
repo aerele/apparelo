@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "creation": "2020-03-03 12:18:17.187831",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rm_item_code",
+  "supplier",
+  "supplied_qty",
+  "consumed_qty",
+  "difference",
+  "po",
+  "pr"
+ ],
+ "fields": [
+  {
+   "fieldname": "difference",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Difference(%)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "reqd": 1
+  },
+  {
+   "fieldname": "po",
+   "fieldtype": "Data",
+   "label": "PO",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "pr",
+   "fieldtype": "Data",
+   "label": "PR",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "rm_item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplied_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Supplied Qty",
+   "reqd": 1
+  },
+  {
+   "fieldname": "consumed_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Consumed Qty",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-03-11 17:06:59.199568",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Closure Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

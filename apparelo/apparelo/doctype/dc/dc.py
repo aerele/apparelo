@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 import json
+import math
 from frappe import _, msgprint
 from six import string_types, iteritems
 from frappe.model.document import Document
@@ -14,6 +15,7 @@ from erpnext.stock.report.stock_balance.stock_balance import execute
 from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_entry
 from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
+from erpnext.stock.doctype.item.item import get_uom_conv_factor
 
 
 class DC(Document):
@@ -300,8 +302,59 @@ def get_expected_items_in_return(doc):
 	if percentage_in_excess:
 		percentage_in_excess = (flt(percentage_in_excess) / 100)
 
-	lot_ipd_doc = frappe.get_doc("Item Production Detail", lot_ipd)
+	for item_to_be_received in items_to_be_received:
+		item = item_to_be_received['item']
+		stock_uom = frappe.db.get_value('Item', item, 'stock_uom')
+		if frappe.db.get_value('UOM', stock_uom, 'must_be_whole_number'):
+			receivable_list[item] = int(receivable_list[item] + (receivable_list[item] * percentage_in_excess))
+		else:
+			receivable_list[item] = receivable_list[item] + (receivable_list[item] * percentage_in_excess)
 
+		item_to_be_received['raw_materials'] = frappe.get_list('BOM Item', filters={'parent': item_to_be_received['bom']}, fields=['item_code', 'uom', 'qty', f'{receivable_list[item]} as req', 'conversion_factor'])
+
+	# Stock validation starts
+	for in_stock_item in doc.get('items'):
+		in_stock_item_consumable_indexes = []
+		for i, item_to_be_received in enumerate(items_to_be_received):
+			for rm in item_to_be_received['raw_materials']:
+				if rm['item_code'] == in_stock_item['item_code']:
+					if rm['uom'] == in_stock_item['primary_uom'] or get_uom_conv_factor(rm['uom'], in_stock_item['primary_uom']):
+						in_stock_item_consumable_indexes.append(i)
+					else:
+						frappe.throw(_(f"Items expected in return and delivery have different UOMs"))
+		
+		if len(in_stock_item_consumable_indexes) == 0:
+			frappe.throw(_(f"{in_stock_item} is not used to manufacture any of the items. Do no supply it"))
+
+		total = 0
+		for stock_item_consumable_index in in_stock_item_consumable_indexes:
+			qty = receivable_list[items_to_be_received[stock_item_consumable_index]['item']]
+			for rm in items_to_be_received[stock_item_consumable_index]['raw_materials']:
+				if rm['item_code'] == in_stock_item['item_code']:
+					if rm['uom'] == in_stock_item['primary_uom']:
+						qty = rm['qty'] * qty
+						break
+					elif get_uom_conv_factor(rm['uom'], in_stock_item['primary_uom']):
+						qty = (rm['qty'] * get_uom_conv_factor(rm['uom'], in_stock_item['primary_uom'])) * qty
+						break
+			total += qty
+
+		if total == 0:
+			continue
+
+		for stock_item_consumable_index in in_stock_item_consumable_indexes:
+			for i, rm in enumerate(items_to_be_received[stock_item_consumable_index]['raw_materials']):
+				supply_qty = (rm['req'] * in_stock_item['available_quantity'])/total
+
+				if frappe.db.get_value('UOM', rm['uom'], 'must_be_whole_number'):
+					supply_qty = int(math.floor(supply_qty))
+				
+				if supply_qty > rm['req']:
+					supply_qty = rm['req']
+
+				items_to_be_received[stock_item_consumable_index]['raw_materials'][i]['supply_qty'] = supply_qty
+
+	lot_ipd_doc = frappe.get_doc("Item Production Detail", lot_ipd)
 	for item_to_be_received in items_to_be_received:
 		item = frappe.get_doc('Item', item_to_be_received['item'])
 		item_to_be_received['item_code'] = item_to_be_received['item']
@@ -312,6 +365,14 @@ def get_expected_items_in_return(doc):
 			item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (
 				receivable_list[item_to_be_received['item']] * percentage_in_excess)
 
+		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
+		for rm in item_to_be_received['raw_materials']:
+			if item_to_be_received['qty'] >= rm['supply_qty']:
+				item_to_be_received['qty'] = rm['supply_qty']
+		
+		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
+			item_to_be_received['qty'] = int(item_to_be_received['qty'])
+		print(receivable_list[item_to_be_received['item_code']], item_to_be_received['qty'])
 		ipd_process_index_of_item = -1
 		for item_mappping in ipd_item_mapping.item_mapping:
 			if item_mappping.item == item.item_code:
