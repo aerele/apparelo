@@ -20,11 +20,18 @@ class DC(Document):
 	def validate(self):
 		self.dc_cloth_quantity = f'<h4>Delivery Items</h4>{self.get_dc_cloth_quantity(self.items)}'
 		self.dc_cloth_quantity += f'<h4>Expected Items</h4>{self.get_dc_cloth_quantity(self.return_materials)}'
-		
-		
-			
+		get_supplier_address(self)
+
+	def get_supplier_address(self):
+		address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Supplier' and link_name = %s and parenttype = 'Address')""", self.supplier, as_dict=1)
+		address = address[0]
+		if not address.address_line2:
+			supplier_address =f'{address.address_line1},<br>{address.city},<br>{address.state},<br>GSTIN : {address.gstin}'
+		else:
+			supplier_address =f'{address.address_line1},<br>{address.address_line2},<br> {address.city},<br> GSTIN : {address.state}'
+		self.address = supplier_address
+
 	def on_submit(self):
-		
 		new_po = self.create_purchase_order()
 		rm_items = []
 		for item in new_po.supplied_items:
@@ -400,7 +407,6 @@ def html_generator(col,row,return_material_qty):
 		sub_row_list[0] = col_data
 		for row_data in list(row[row_key]):
 			for items in return_material_qty:
-				
 				if ((items[col_key] == col_data) and (items[row_key] == row_data)):
 					sub_row_list[list(row[row_key]).index(row_data) +1] = items['qty']
 					break
@@ -411,6 +417,5 @@ def html_generator(col,row,return_material_qty):
 			for sub_row_value in sub_row_data:
 				html_body_data += f'<td>{sub_row_value}</td>'
 		html_body += f'<tr>{html_body_data}</tr>'
-		
 	html += f'<tr>{html_head}</tr>{html_body}'
 	return html

@@ -24,10 +24,6 @@ class Knitting(Document):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		attribute_set.update(self.get_variant_values())
-		attribute_set.pop('Yarn Count')
-		attribute_set.pop('Yarn Category')
-		if 'Plain' in attribute_set['Yarn Shade']:
-			attribute_set.pop('Yarn Shade')
 		variants = create_variants('Knitted Cloth', attribute_set)
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
@@ -60,10 +56,6 @@ class Knitting(Document):
 			attr.update(doc_values)
 			args_set = generate_keyed_value_combinations(attr)
 			for attribute_values in args_set:
-				attribute_values.pop('Yarn Count')
-				attribute_values.pop('Yarn Category')
-				if 'Plain' in attribute_values['Yarn Shade']:
-					attribute_values.pop('Yarn Shade')
 				variant = get_variant("Knitted Cloth", args=attribute_values)
 				if variant in variants:
 					bom_for_variant = frappe.get_doc({
