@@ -17,7 +17,9 @@
   "section_break_5",
   "expect_return_items_at",
   "return_materials",
-  "amended_from"
+  "dc_cloth_quantity",
+  "amended_from",
+  "address"
  ],
  "fields": [
   {
@@ -99,11 +101,22 @@
    "fieldtype": "Link",
    "label": "Expect Return Items At",
    "options": "Location"
+  },
+  {
+   "fieldname": "dc_cloth_quantity",
+   "fieldtype": "HTML Editor",
+   "label": "Dc Cloth Quantity"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Long Text",
+   "hidden": 1,
+   "label": "Address"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-20 19:53:33.275639",
+ "modified": "2020-03-17 15:38:00.715653",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
