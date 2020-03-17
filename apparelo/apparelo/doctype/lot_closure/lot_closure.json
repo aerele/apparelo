@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "autoname": "field:lot",
+ "creation": "2020-03-03 12:03:08.637048",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lot",
+  "verify_lot_status",
+  "section_break_3",
+  "lot_closure_details",
+  "section_break_6",
+  "item_group",
+  "get_lot_closure_items",
+  "column_break_7",
+  "warehouse",
+  "enable_repack_items",
+  "section_break_10",
+  "lot_closure_items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "lot",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lot",
+   "options": "Lot Creation",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "columns": 1,
+   "depends_on": "eval:doc.docstatus == 0",
+   "fieldname": "verify_lot_status",
+   "fieldtype": "Button",
+   "label": "Verify Lot Status",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lot_closure_details",
+   "fieldtype": "Table",
+   "label": "Lot Closure Details",
+   "options": "Lot Closure Details"
+  },
+  {
+   "fieldname": "lot_closure_items",
+   "fieldtype": "Table",
+   "label": "Lot Closure Items",
+   "options": "Lot Closure Items"
+  },
+  {
+   "depends_on": "eval:doc.docstatus == 0",
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_10",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.docstatus == 0",
+   "fieldname": "get_lot_closure_items",
+   "fieldtype": "Button",
+   "label": "Get Lot Closure Items",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Lot Closure",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_repack_items",
+   "fieldtype": "Check",
+   "label": "Enable Repack Items",
+   "reqd": 1
+  }
+ ],
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2020-03-12 22:07:59.270041",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Lot Closure",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

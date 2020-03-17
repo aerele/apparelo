@@ -19,6 +19,7 @@
   "section_break_5",
   "mr_items",
   "cloth_quantity",
+  "lot_status",
   "amended_from"
  ],
  "fields": [
@@ -26,7 +27,6 @@
    "fieldname": "item_production_detail",
    "fieldtype": "Link",
    "in_filter": 1,
-   "in_list_view": 1,
    "label": "Item Production Detail",
    "options": "Item Production Detail",
    "reqd": 1
@@ -70,7 +70,6 @@
    "default": "0.0",
    "fieldname": "percentage",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Percentage",
    "reqd": 1
   },
@@ -103,18 +102,29 @@
    "allow_on_submit": 1,
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Start Date"
+   "label": "Start Date",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
    "fieldname": "no_of_days_to_complete",
    "fieldtype": "Int",
    "label": "No. of days to complete"
+  },
+  {
+   "allow_on_submit": 1,
+   "default": "Open",
+   "fieldname": "lot_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Lot Status",
+   "options": "\nClosed\nOpen",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-20 12:51:47.810574",
+ "modified": "2020-03-12 14:45:05.861189",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
