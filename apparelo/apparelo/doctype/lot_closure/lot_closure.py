@@ -66,59 +66,72 @@ class LotClosure(Document):
 def get_lot_closure_details(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-	doc['lot_closure_details'] = []
-	lot_closure_details = []
 	lot = doc.get('lot')
-	pr_list = []
-	po_list = frappe.get_list("Purchase Order", filters={'lot':lot})
-	po_names = [po["name"] for po in po_list]
-	po_items = frappe.get_list("Purchase Order", filters={'name': ['in',po_names], 'is_subcontracted':['in','yes']}, fields=['supplier',"`tabPurchase Order Item Supplied`.rm_item_code","`tabPurchase Order Item Supplied`.supplied_qty"])
-	for po in po_names:
-		pr_list.extend(frappe.get_list("Purchase Receipt Item", filters={'purchase_order': ['in',po]}, fields=['parent'], group_by='parent'))
+	po_items = frappe.get_list(
+		"Purchase Order",
+		filters={'lot':lot, 'is_subcontracted':'yes'},
+		fields=[
+			'name',
+			'supplier',
+			"`tabPurchase Order Item Supplied`.rm_item_code",
+			"`tabPurchase Order Item Supplied`.supplied_qty"
+			])
+	po_names = list(set([po["name"] for po in po_items]))
+	pr_list = frappe.get_list(
+		"Purchase Receipt Item",
+		filters={'purchase_order': ['in', po_names]},
+		fields=['parent'], group_by='parent'
+		)
 	pr_names = [pr["parent"] for pr in pr_list]
-	pr_items = frappe.get_list("Purchase Receipt", filters={'name': ['in',pr_names], 'is_subcontracted':['in','yes']}, fields=['supplier',"`tabPurchase Receipt Item Supplied`.rm_item_code","`tabPurchase Receipt Item Supplied`.consumed_qty"])
-	po_items = get_combined_item_list(po_items, 'supplied_qty')
-	pr_items = get_combined_item_list(pr_items, 'consumed_qty')
-	po_items.extend(pr_items)
-	lot_closure_details = get_final_list(po_items)
-	lot_closure_details = sorted(lot_closure_details, key = lambda item: item['difference'])
+	pr_items = frappe.get_list(
+		"Purchase Receipt",
+		filters={'name': ['in', pr_names], 'is_subcontracted': 'yes'},
+		fields=[
+			'name',
+			'supplier',
+			"`tabPurchase Receipt Item Supplied`.rm_item_code",
+			"`tabPurchase Receipt Item Supplied`.consumed_qty"
+			])
+	lot_closure_details = get_combined_final_list(po_items, pr_items)
+	lot_closure_details = sorted(lot_closure_details, key = lambda item: abs(item['difference']), reverse=True)
 	return lot_closure_details
 
-def get_combined_item_list(item_list,qty_field):
-	combined_list = [list(item.values()) for item in item_list]
-	combined_list = [[items[0],items[1],items[2]] for items in combined_list]
-	collection_list = collections.defaultdict(list)
-	for fields in combined_list:
-		collection_list[fields[0],fields[1]].append(fields[2])
-	final_items = list(collection_list.items())
-	final_list = []
-	for field in final_items:
-		new_list = list(field[0])
-		new_list.append(sum(field[1]))
-		final_list.append(new_list)
-	final_item_list = [{'rm_item_code':final_item[1],qty_field:final_item[2],'supplier':final_item[0]}for final_item in final_list]
+
+def get_combined_final_list(po_items, pr_items):
+	all_items = sorted(po_items+pr_items, key=lambda x: (x['supplier'], x['rm_item_code']))
+	final_item_list = []
+	import itertools
+	for key, group in itertools.groupby(all_items, key=lambda x: (x['supplier'], x['rm_item_code'])):
+		total_supplied_qty = 0
+		total_consumed_qty = 0
+		po_list = []
+		pr_list = []
+		for item in group:
+			print(item)
+			if 'supplied_qty' in item:
+				print('in sup')
+				total_supplied_qty += item['supplied_qty']
+				if item['name'] not in po_list:
+					po_list.append(item['name'])
+				print(po_list)
+			elif 'consumed_qty' in item:
+				print('in cons')
+				total_consumed_qty += item['consumed_qty']
+				if item['name'] not in pr_list:
+					pr_list.append(item['name'])
+				print(pr_list)
+		final_item = {
+			'supplier': key[0],
+			'rm_item_code': key[1],
+			'supplied_qty': total_supplied_qty,
+			'consumed_qty': total_consumed_qty,
+			'po': ','.join(po_list),
+			'pr': ','.join(pr_list),
+			'difference': -((total_supplied_qty - total_consumed_qty)/total_supplied_qty)*100 if total_supplied_qty else 0
+		}
+		final_item_list.append(final_item)
 	return final_item_list
 
-def get_final_list(item_list):
-	for index in range(len(item_list)):                                                              
-		for next_index in range(index+1,len(item_list)):
-			if index != next_index and item_list[index]['rm_item_code'] == item_list[next_index]['rm_item_code'] and item_list[index]['supplier'] == item_list[next_index]['supplier']:
-				item_list[next_index]['difference'] = ''
-				item_list[next_index]['difference'] = str((round(item_list[next_index]['consumed_qty']-item_list[index]['supplied_qty']))*100)
-				po_list = frappe.get_list("Purchase Order",filters={'supplier': ['in',item_list[next_index]['supplier']]})
-				po_names = ''
-				pr_names = ''
-				for po in po_list:
-					po_names = ",".join(po["name"])
-				pr_list = frappe.get_list("Purchase Receipt", filters={'supplier': ['in',item_list[next_index]['supplier']]})
-				for pr in pr_list:
-					pr_names = ",".join(pr["name"])
-				item_list[next_index]['po'] = po_names
-				item_list[next_index]['pr'] = pr_names
-				item_list[index].update(item_list[next_index])
-				item_list.remove(item_list[next_index])
-				break
-	return item_list
 
 @frappe.whitelist()
 def get_lot_closure_items(doc):
