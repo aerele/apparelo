@@ -22,7 +22,7 @@ class DC(Document):
 	def validate(self):
 		self.dc_cloth_quantity = f'<h4>Delivery Items</h4>{self.get_dc_cloth_quantity(self.items)}'
 		self.dc_cloth_quantity += f'<h4>Expected Items</h4>{self.get_dc_cloth_quantity(self.return_materials)}'
-		get_supplier_address(self)
+		self.get_supplier_address()
 
 	def get_supplier_address(self):
 		address = frappe.db.sql(""" select name, address_line1, address_line2, city, state,gstin from `tabAddress` where name in (select parent from `tabDynamic Link` where link_doctype = 'Supplier' and link_name = %s and parenttype = 'Address')""", self.supplier, as_dict=1)
