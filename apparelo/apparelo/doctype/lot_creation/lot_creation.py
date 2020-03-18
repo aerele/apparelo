@@ -17,11 +17,8 @@ from frappe.utils import today
 
 class LotCreation(Document):
 	def on_submit(self):
-		default_company = frappe.db.get_single_value(
-		    'Global Defaults', 'default_company')
-		abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
-		create_parent_warehouse(self, abbr)
-		create_warehouse(self, abbr)
+		create_parent_warehouse(self)
+		create_warehouse(self)
 
 	def make_material_request(self):
 		'''Create Material Requests grouped by Sales Order and Material Request Type'''
@@ -102,6 +99,9 @@ class LotCreation(Document):
 		else:
 			msgprint(_("No material request created"))
 
+default_company = frappe.db.get_single_value(
+		    'Global Defaults', 'default_company')
+abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 
 @frappe.whitelist()
 def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
@@ -193,7 +193,7 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 					ignore_existing_ordered_qty, warehouse, bin_dict)
 				if items:
 					mr_items.append(items)
-	
+
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):
@@ -232,7 +232,7 @@ def get_ipd_item(doc):
 				break
 	return po_items
 
-def create_parent_warehouse(self,abbr):
+def create_parent_warehouse(self):
 	lot_warehouse=frappe.db.get_value("Warehouse", {'warehouse_name': self.name,'parent_warehouse': f"Lot Warehouse - {abbr}"},'name')
 	if not lot_warehouse:
 		frappe.get_doc({
@@ -242,7 +242,7 @@ def create_parent_warehouse(self,abbr):
 			"parent_warehouse": f"Lot Warehouse - {abbr}"
 			}).save()
 
-def create_warehouse(self, abbr):
+def create_warehouse(self):
 	for location in self.location:
 		lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name,'warehouse_type': 'Actual'},'name')
 		mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': self.name,'warehouse_type':'Mistake'},'name')
@@ -357,3 +357,30 @@ def cloth_qty(doc):
 			html_body = f'<tr>{html_body}</tr>'
 		html += f'<table class="table table-bordered"><tbody><tr>{data["yarn"]}</tr><tr>{html_head}</tr>{html_body}</tbody></table>'
 	return html
+
+@frappe.whitelist()
+def create_new_warehouse(doc):
+		for location in doc.new_location:
+			lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': doc.name,'warehouse_type': 'Actual'},'name')
+			mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': doc.name,'warehouse_type':'Mistake'},'name')
+			if not lot_warehouse:
+				frappe.get_doc({
+					"doctype": "Warehouse",
+					"location": location.location,
+					"lot": doc.name,
+					"warehouse_type":'Actual',
+					"warehouse_name": f"{doc.name}-{location.location}",
+					"is_group": 0,
+					"parent_warehouse": f"{doc.name} - {abbr}"
+					}).save()
+			if not mistake_warehouse:
+				frappe.get_doc({
+					"doctype": "Warehouse",
+					"location": location.location,
+					"lot": doc.name,
+					"warehouse_type":'Mistake',
+					"warehouse_name": f"{doc.name}-{location.location} Mistake",
+					"is_group": 0,
+					"parent_warehouse": f"{doc.name} - {abbr}"
+					}).save()
+

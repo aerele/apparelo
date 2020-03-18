@@ -11,3 +11,4 @@ apparelo.apparelo.patches.v1.create_roll_uom
 apparelo.apparelo.patches.v1.create_item_group
 apparelo.apparelo.patches.v1.warehouse_custom_fields
 apparelo.apparelo.patches.v1.create_custom_fields
+apparelo.apparelo.patches.v1.warehouse_update
