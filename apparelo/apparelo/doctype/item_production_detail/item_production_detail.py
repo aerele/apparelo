@@ -46,6 +46,7 @@ class ItemProductionDetail(Document):
 		common_process_list=['Dyeing', 'Roll Printing', 'Bleaching', 'Ironing', 'Checking', 'Packing']
 		ipd = []
 		attribute_set={}
+		final_attribute={}
 		cutting_attribute={}
 		item_size=[]
 		colour=[]
@@ -59,9 +60,9 @@ class ItemProductionDetail(Document):
 		if self.style:
 			for final_style in self.style:
 				style.append(final_style.style)
-			cutting_attribute["Apparelo Style"]=style
-		cutting_attribute["Apparelo Colour"]=colour
-		cutting_attribute["Apparelo Size"]=item_size
+			final_attribute["Apparelo Style"]=style
+		final_attribute["Apparelo Colour"]=colour
+		final_attribute["Apparelo Size"]=item_size
 		piece_count=len(colour)
 		for process in self.processes:
 			process_variants = {}
@@ -90,7 +91,7 @@ class ItemProductionDetail(Document):
 				if process.input_item:
 					pass
 				if process.ipd_name:
-					ipd.append(get_process_variants(process_variants,ipd,process,cutting_attribute,item_size,colour,piece_count,self.item,final_process))
+					ipd.append(get_process_variants(process_variants,ipd,process,final_attribute,item_size,colour,piece_count,self.item,final_process))
 				elif process.input_index:
 					ipd.append(get_default_process_variants(self.name,ipd,process,process_variants,attribute_set,item_size,colour,piece_count,self.item,final_process))
 				continue
@@ -173,7 +174,6 @@ class ItemProductionDetail(Document):
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
 					variants,attribute_set = cutting_doc.create_variants(input_items_,item_size)
 					boms,new_variants=cutting_doc.create_boms(input_items_, variants, attribute_set,item_size,colour,piece_count)
-					cutting_attribute={}
 					counter_attr=Counter(cutting_attribute)
 					attr_set=Counter(attribute_set)
 					counter_attr.update(attr_set)
@@ -183,7 +183,6 @@ class ItemProductionDetail(Document):
 					process_variants['variants'] = list(set(new_variants))
 					process_variants['BOM']=boms
 					process_variants['input_item']=list(set(input_items_))
-
 					ipd.append(process_variants)
 				continue
 			if process.process_name == 'Piece Printing':
@@ -193,7 +192,7 @@ class ItemProductionDetail(Document):
 				if process.input_item:
 					pass
 				if process.ipd_name:
-					process_variants,existing_item=get_existing_process_variants(process_variants,ipd,process,cutting_attribute,item_size,colour,piece_count,self.item,final_process)
+					process_variants,existing_item=get_existing_process_variants(process_variants,ipd,process,cutting_attribute,item_size,cutting_attribute['Apparelo Colour'],piece_count,self.item,final_process)
 					ipd.append(process_variants)
 					existing_item_list.extend(existing_item)					
 				elif process.input_index:
@@ -211,7 +210,7 @@ class ItemProductionDetail(Document):
 					process_variants['process_record'] = process.process_record
 					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
 					variants.extend(piece_printing_doc.create_variants(input_items_))
-					bom_list,existing_item = piece_printing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count)
+					bom_list,existing_item = piece_printing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,cutting_attribute['Apparelo Colour'],piece_count)
 					boms.extend(bom_list)
 					existing_item_list.extend(existing_item)
 					process_variants['variants'] = list(set(variants))
@@ -283,7 +282,7 @@ class ItemProductionDetail(Document):
 				if process.input_item:
 					pass
 				if process.ipd_name:
-					process_variants,existing_item=get_existing_process_variants(process_variants,ipd,process,cutting_attribute,item_size,colour,piece_count,self.item,final_process)
+					process_variants,existing_item=get_existing_process_variants(process_variants,ipd,process,cutting_attribute,item_size,cutting_attribute['Apparelo Colour'],piece_count,self.item,final_process)
 					ipd.append(process_variants)
 					existing_item_list.extend(existing_item)
 				elif process.input_index:
@@ -301,7 +300,7 @@ class ItemProductionDetail(Document):
 					process_variants['process_record'] = process.process_record
 					label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
 					variants.extend(label_fusing_doc.create_variants(input_items_))
-					bom_list,existing_item = label_fusing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count)
+					bom_list,existing_item = label_fusing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,cutting_attribute['Apparelo Colour'],piece_count)
 					boms.extend(bom_list)
 					existing_item_list.extend(existing_item)
 					process_variants['variants'] = list(set(variants))
@@ -331,7 +330,7 @@ class ItemProductionDetail(Document):
 				packing_doc = frappe.get_doc('Packing', self.process_record)
 				variants = packing_doc.create_variants(input_item_names=input_items_, colour=colour, item=self.item, final_process=final_process)
 				new_variants.extend(variants)
-				boms.extend(packing_doc.create_boms(input_items_, variants, colour, attribute_set=cutting_attribute, item_size=item_size, piece_count=piece_count, final_item=self.item, final_process=final_process))
+				boms.extend(packing_doc.create_boms(input_items_, variants, colour, attribute_set=final_attribute, item_size=item_size, piece_count=piece_count, final_item=self.item, final_process=final_process))
 				process_variants['variants'] = list(set(new_variants))
 				process_variants['BOM']=list(set(boms))
 				process_variants['input_item']=list(set(input_items_))
