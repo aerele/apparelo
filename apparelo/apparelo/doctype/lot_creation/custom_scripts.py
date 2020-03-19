@@ -19,7 +19,7 @@ def create_surplus_location_warehouse(doc, action):
 			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Surplus Mistake - {doc.name}","location": doc.name,"warehouse_type": "Mistake",
 							"is_group": 0, "parent_warehouse": f"Surplus Mistake Warehouse - {abbr}"}).save()
 		if not stores_location_warehouse:
-			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": doc.name,"location": doc.name,"warehouse_type": "Actual",
+			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"Stores - {doc.name}","location": doc.name,"warehouse_type": "Actual",
 							"is_group": 0, "parent_warehouse": f"Stores - {abbr}"}).save()
 
 
