@@ -20,6 +20,7 @@ from erpnext.stock.doctype.item.item import get_uom_conv_factor
 
 class DC(Document):
 	def validate(self):
+
 		self.dc_cloth_quantity = f'<h4>Delivery Items</h4>{self.get_dc_cloth_quantity(self.items)}'
 		self.dc_cloth_quantity += f'<h4>Expected Items</h4>{self.get_dc_cloth_quantity(self.return_materials)}'
 		self.get_supplier_address()
@@ -34,7 +35,7 @@ class DC(Document):
 				supplier_address =f'{address.address_line1},<br>{address.address_line2},<br> {address.city},<br> GSTIN : {address.state}'
 			self.address = supplier_address
 		else :
-			frappe.msgprint(_("""Supplier Address not submitted """))
+			frappe.msgprint(_("""Please add address and other details for {0}""".format(self.supplier)))
 
 	def on_submit(self):
 		new_po = self.create_purchase_order()
@@ -109,8 +110,14 @@ class DC(Document):
 			
 			if table==self.return_materials:
 				attribute_qty['qty'] = item.qty
+				attribute_qty['uom']=item.uom
+				attribute_qty['secondary_qty'] = item.secondary_qty
+				attribute_qty['secondary_uom']=item.secondary_uom
 			if table==self.items:
 				attribute_qty['qty'] = item.available_quantity
+				attribute_qty['uom']=item.primary_uom
+				attribute_qty['secondary_qty'] = item.secondary_qty
+				attribute_qty['secondary_uom']=item.secondary_uom
 			if attribute_key not in return_material_qty:
 				return_material_qty[attribute_key] = [attribute_qty]
 			else:
@@ -456,30 +463,60 @@ def get_additional_params(ipd_processes, ipd_process_index):
 			_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))
 
 def html_generator(col,row,return_material_qty):
-	
 	row_key = list(row.keys())[0]
 	col_key = list(col.keys())[0]
 	html_head = f'<tr><th>{col_key}/{row_key}</th>'
 	html_body = ''
+	coloum_value=0
 	html = ''
 	for row_data in list(row[row_key]):
 		html_head += f'<th>{row_data}</th>'
-	html_head += '</tr>'
-	row_list =[]
+	html_head += '<th>Total</th></tr>'
+	row_list = []
+	uom_list = []
+	secondary_qty_list = []
+	secondary_uom_list = []
 	for col_data in list(col[col_key]):
 		sub_row_list = [0]*(len(list(row[row_key]))+1)
+		sub_uom_list= [0]*(len(list(row[row_key]))+1)
+		sub_secondary_qty_list=[0]*(len(list(row[row_key]))+1)
+		sub_secondary_uom_list=[0]*(len(list(row[row_key]))+1)
 		sub_row_list[0] = col_data
+		sub_uom_list[0] = ''
+		sub_secondary_qty_list[0]=''
+		sub_secondary_uom_list[0]=''
 		for row_data in list(row[row_key]):
 			for items in return_material_qty:
 				if ((items[col_key] == col_data) and (items[row_key] == row_data)):
 					sub_row_list[list(row[row_key]).index(row_data) +1] = items['qty']
+					sub_uom_list[list(row[row_key]).index(row_data) +1] = items['uom']
+					sub_secondary_qty_list[list(row[row_key]).index(row_data) +1] = items['secondary_qty']
+					sub_secondary_uom_list[list(row[row_key]).index(row_data) +1] = items['secondary_uom']
 					break
 		row_list.append(sub_row_list)
-	for sub_row_data in row_list:
+		uom_list.append(sub_uom_list)
+		secondary_qty_list.append(sub_secondary_qty_list)
+		secondary_uom_list.append(sub_secondary_uom_list)
+	for sub_row_data , sub_uom_data ,sub_secondary_qty_data,sub_secondary_uom_data in zip(row_list,uom_list,secondary_qty_list,secondary_uom_list):
 		html_body_data = ''
 		if sum(map(int,sub_row_data[1:])) != 0:
-			for sub_row_value in sub_row_data:
-				html_body_data += f'<td>{sub_row_value}</td>'
+			for sub_row_value,sub_uom_value,secondary_qty_value,secondary_uom_value in zip(sub_row_data,sub_uom_data,sub_secondary_qty_data,sub_secondary_uom_data):
+				html_body_data += f'<td>{sub_row_value} {sub_uom_value} <br> {secondary_qty_value} {secondary_uom_value}</td>'
+				print(sub_row_data[1:])
+				print(sub_secondary_qty_data[1:])
+			if sum(map(int,sub_secondary_qty_data[1:]))==None:
+				html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>-0 {secondary_uom_value}</td>'
+			else:
+				html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>{sum(map(int,sub_secondary_qty_data[1:]))} {secondary_uom_value}</td>'	
 		html_body += f'<tr>{html_body_data}</tr>'
+	html_body+=f'<td>Total</td>'
+	
+
+	for row_data in list(row[row_key]):
+		for color in return_material_qty:
+			if row_data==color[row_key]:
+				coloum_value+=color['qty']
+		html_body+=f'<td>{coloum_value} {sub_uom_value}<br> </td>'
+		coloum_value=0
 	html += f'<tr>{html_head}</tr>{html_body}'
 	return html
