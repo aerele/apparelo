@@ -468,6 +468,7 @@ def html_generator(col,row,return_material_qty):
 	html_head = f'<tr><th>{col_key}/{row_key}</th>'
 	html_body = ''
 	coloum_value=0
+	sec_coloum_value=0
 	html = ''
 	for row_data in list(row[row_key]):
 		html_head += f'<th>{row_data}</th>'
@@ -502,12 +503,9 @@ def html_generator(col,row,return_material_qty):
 		if sum(map(int,sub_row_data[1:])) != 0:
 			for sub_row_value,sub_uom_value,secondary_qty_value,secondary_uom_value in zip(sub_row_data,sub_uom_data,sub_secondary_qty_data,sub_secondary_uom_data):
 				html_body_data += f'<td>{sub_row_value} {sub_uom_value} <br> {secondary_qty_value} {secondary_uom_value}</td>'
-				print(sub_row_data[1:])
-				print(sub_secondary_qty_data[1:])
-			if sum(map(int,sub_secondary_qty_data[1:]))==None:
-				html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>-0 {secondary_uom_value}</td>'
-			else:
-				html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>{sum(map(int,sub_secondary_qty_data[1:]))} {secondary_uom_value}</td>'	
+				if secondary_qty_value == None:
+					sub_secondary_qty_data[sub_secondary_qty_data.index(secondary_qty_value)] = 0
+			html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>{sum(map(int,sub_secondary_qty_data[1:]))} {secondary_uom_value}</td>'	
 		html_body += f'<tr>{html_body_data}</tr>'
 	html_body+=f'<td>Total</td>'
 	
@@ -516,7 +514,11 @@ def html_generator(col,row,return_material_qty):
 		for color in return_material_qty:
 			if row_data==color[row_key]:
 				coloum_value+=color['qty']
-		html_body+=f'<td>{coloum_value} {sub_uom_value}<br> </td>'
+				if color['secondary_qty'] == None:
+					color['secondary_qty']=0
+				sec_coloum_value+=color['secondary_qty']
+		html_body+=f'<td>{coloum_value} {sub_uom_value}<br>{sec_coloum_value} {secondary_uom_value} </td>'
 		coloum_value=0
+		sec_coloum_value=0
 	html += f'<tr>{html_head}</tr>{html_body}'
 	return html
