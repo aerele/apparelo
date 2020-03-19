@@ -81,7 +81,7 @@ after_install = "apparelo.install.after_install"
 
 doc_events = {
 	"Location": {
-		"after_insert": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_surplus_location_warehouse"
+		"after_insert": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_location_based_warehouse"
 	},
 	"Supplier": {
 		"after_insert": "apparelo.apparelo.doctype.lot_creation.custom_scripts.create_supplier_warehouse"
