@@ -140,7 +140,13 @@ frappe.ui.form.on('Lot Creation', {
 			}
 		});
 	},
-
+	add_new_location:function(frm) {
+		frappe.call({
+			method: "apparelo.apparelo.doctype.lot_creation.lot_creation.create_new_warehouse",
+			freeze: true,
+			args: {doc: frm.doc}
+		});
+	},
 	get_items:function(frm) {
 		const set_fields =['item_code','bom_no'];
 		frappe.call({
