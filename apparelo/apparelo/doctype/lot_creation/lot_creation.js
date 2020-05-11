@@ -173,7 +173,7 @@ frappe.ui.form.on('Lot Creation', {
 		const set_fields = ['actual_qty', 'item_code','item_name', 'description', 'uom',
 			'min_order_qty', 'quantity', 'sales_order', 'warehouse', 'projected_qty', 'material_request_type', 'req_by_date'];
 		frappe.call({
-			method: "apparelo.apparelo.doctype.lot_creation.lot_creation.get_items_for_material_requests",
+			method: "apparelo.apparelo.doctype.lot_creation.lot_creation.get_base_materials",
 			freeze: true,
 			args: {doc: frm.doc},
 			callback: function(r) {

@@ -12,6 +12,7 @@ from erpnext.manufacturing.doctype.work_order.work_order import get_item_details
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_exploded_items, get_subitems, get_bin_details, get_material_request_items
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.doctype.dc.dc import get_receivable_list_values
+from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from frappe.utils import today
 
 
@@ -103,95 +104,14 @@ default_company = frappe.db.get_single_value('Global Defaults', 'default_company
 abbr = frappe.db.get_value("Company", f"{default_company}", "abbr")
 
 @frappe.whitelist()
-def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
+def get_base_materials(doc, ignore_existing_ordered_qty=None):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-
-	doc['mr_items'] = []
-	po_items = doc.get('po_items') if doc.get('po_items') else doc.get('items')
-	if not po_items:
-		frappe.throw(_("Items are required to pull the raw materials which is associated with it."))
-
-	company = doc.get('company')
-	warehouse = doc.get('for_warehouse')
-
-	if not ignore_existing_ordered_qty:
-		ignore_existing_ordered_qty = 1
-
-	so_item_details = frappe._dict()
-	for data in po_items:
-		planned_qty = data.get('required_qty') or data.get('planned_qty')
-		ignore_existing_ordered_qty = 1
-		warehouse = data.get("warehouse") or warehouse
-
-		item_details = {}
-		if data.get("bom") or data.get("bom_no"):
-			if data.get('required_qty'):
-				bom_no = data.get('bom')
-				include_non_stock_items = 1
-				include_subcontracted_items = 1
-				# if data.get('include_exploded_items') else 0
-			else:
-				bom_no = data.get('bom_no')
-				include_subcontracted_items = 1
-				include_non_stock_items = 1
-
-			if bom_no:
-				if include_subcontracted_items:
-					# fetch exploded items from BOM
-					item_details = get_exploded_items(item_details,
-						company, bom_no, include_non_stock_items, planned_qty=planned_qty)
-				else:
-					item_details = get_subitems(doc, data, item_details, bom_no, company,
-						include_non_stock_items, include_subcontracted_items, 1, planned_qty=planned_qty)
-		elif data.get('item_code'):
-			item_master = frappe.get_doc('Item', data['item_code']).as_dict()
-			purchase_uom = item_master.purchase_uom or item_master.stock_uom
-			conversion_factor = 0
-			for d in item_master.get("uoms"):
-				if d.uom == purchase_uom:
-					conversion_factor = d.conversion_factor
-
-			item_details[item_master.name] = frappe._dict(
-				{
-					'item_name': item_master.item_name,
-					'default_bom': doc.bom,
-					'purchase_uom': purchase_uom,
-					'default_warehouse': item_master.default_warehouse,
-					'min_order_qty': item_master.min_order_qty,
-					'default_material_request_type': item_master.default_material_request_type,
-					'qty': planned_qty or 1,
-					'is_sub_contracted': item_master.is_subcontracted_item,
-					'item_code': item_master.name,
-					'description': item_master.description,
-					'stock_uom': item_master.stock_uom,
-					'conversion_factor': conversion_factor,
-				}
-			)
-
-		sales_order = doc.get("sales_order")
-
-		for item_code, details in iteritems(item_details):
-			so_item_details.setdefault(sales_order, frappe._dict())
-			if item_code in so_item_details.get(sales_order, {}):
-				so_item_details[sales_order][item_code]['qty'] = so_item_details[sales_order][item_code].get(
-				    "qty", 0) + flt(details.qty)
-			else:
-				so_item_details[sales_order][item_code] = details
-
-	mr_items = []
-	for sales_order, item_code in iteritems(so_item_details):
-		item_dict = so_item_details[sales_order]
-		for details in item_dict.values():
-			bin_dict = get_bin_details(details, doc.company, warehouse)
-			bin_dict = bin_dict[0] if bin_dict else {}
-
-			if details.qty > 0:
-				items = get_material_request_items(details, sales_order, company,
-					ignore_existing_ordered_qty, warehouse, bin_dict)
-				if items:
-					mr_items.append(items)
-
+	if frappe.db.get_value('Item Production Detail', doc['item_production_detail'], 'is_combined_packing'):
+		for idx, po_item in enumerate(doc.po_items):
+			doc.po_items[idx]['include_exploded_items'] = 0
+	
+	mr_items = get_items_for_material_requests(doc, ignore_existing_ordered_qty=True)
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):
@@ -202,11 +122,6 @@ def get_items_for_material_requests(doc, ignore_existing_ordered_qty=None):
 			item['quantity']=item['quantity'] +(item['quantity'] * float(doc.get('percentage')))/100
 
 		item['req_by_date'] = today()
-
-	if not mr_items:
-		frappe.msgprint(_("""As raw materials projected quantity is more than required quantity, there is no need to create material request.
-			Still if you want to make material request, kindly enable <b>Ignore Existing Projected Quantity</b> checkbox"""))
-
 	return mr_items
 
 @frappe.whitelist()
