@@ -463,6 +463,8 @@ def get_additional_params(ipd_processes, ipd_process_index):
 			_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))
 
 def html_generator(col,row,return_material_qty):
+	if not row or not col:
+		return "<tr><th>no row or col found here</th></tr>"
 	row_key = list(row.keys())[0]
 	col_key = list(col.keys())[0]
 	html_head = f'<tr><th>{col_key}/{row_key}</th>'
@@ -500,12 +502,12 @@ def html_generator(col,row,return_material_qty):
 		secondary_uom_list.append(sub_secondary_uom_list)
 	for sub_row_data , sub_uom_data ,sub_secondary_qty_data,sub_secondary_uom_data in zip(row_list,uom_list,secondary_qty_list,secondary_uom_list):
 		html_body_data = ''
-		if sum(map(int,sub_row_data[1:])) != 0:
+		if sum(map(cint,sub_row_data[1:])) != 0:
 			for sub_row_value,sub_uom_value,secondary_qty_value,secondary_uom_value in zip(sub_row_data,sub_uom_data,sub_secondary_qty_data,sub_secondary_uom_data):
 				html_body_data += f'<td>{sub_row_value} {sub_uom_value} <br> {secondary_qty_value} {secondary_uom_value}</td>'
 				if secondary_qty_value == None:
 					sub_secondary_qty_data[sub_secondary_qty_data.index(secondary_qty_value)] = 0
-			html_body_data += f'<td>{sum(map(int,sub_row_data[1:]))} {sub_uom_value} <br>{sum(map(int,sub_secondary_qty_data[1:]))} {secondary_uom_value}</td>'	
+			html_body_data += f'<td>{sum(map(cint,sub_row_data[1:]))} {sub_uom_value} <br>{sum(map(cint,sub_secondary_qty_data[1:]))} {secondary_uom_value}</td>'	
 		html_body += f'<tr>{html_body_data}</tr>'
 	html_body+=f'<td>Total</td>'
 	
@@ -516,7 +518,7 @@ def html_generator(col,row,return_material_qty):
 				coloum_value+=color['qty']
 				if color['secondary_qty'] == None:
 					color['secondary_qty']=0
-				sec_coloum_value+=color['secondary_qty']
+				sec_coloum_value += cint(color['secondary_qty'])
 		html_body+=f'<td>{coloum_value} {sub_uom_value}<br>{sec_coloum_value} {secondary_uom_value} </td>'
 		coloum_value=0
 		sec_coloum_value=0
