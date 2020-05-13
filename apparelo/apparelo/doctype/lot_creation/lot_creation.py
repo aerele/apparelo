@@ -111,7 +111,9 @@ def get_base_materials(doc, ignore_existing_ordered_qty=None):
 		for idx, po_item in enumerate(doc.po_items):
 			doc.po_items[idx]['include_exploded_items'] = 0
 	
-	mr_items = get_items_for_material_requests(doc, ignore_existing_ordered_qty=True)
+	doc['ignore_existing_ordered_qty'] = True
+	doc['include_subcontracted_items'] = True
+	mr_items = get_items_for_material_requests(doc)
 	for item in mr_items:
 		if item['uom'] == 'Nos':
 			if round(item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100) < (item['quantity'] + (item['quantity'] * float(doc.get('percentage')))/100):

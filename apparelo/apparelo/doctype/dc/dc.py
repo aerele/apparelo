@@ -271,6 +271,12 @@ def get_expected_items_in_return(doc):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
 
+	
+	# Delivery quantity has to be present
+	for item in doc.get('items'):
+		if not 'quantity' in item:
+			frappe.throw(_(f"Enter quantity for {item['item_code']}"))
+
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
 	apparelo_process = frappe.get_doc("Apparelo Process", dc_process)
@@ -354,7 +360,7 @@ def get_expected_items_in_return(doc):
 
 		for stock_item_consumable_index in in_stock_item_consumable_indexes:
 			for i, rm in enumerate(items_to_be_received[stock_item_consumable_index]['raw_materials']):
-				supply_qty = (rm['req'] * in_stock_item['available_quantity'])/total
+				supply_qty = (rm['req'] * in_stock_item['quantity'])/total
 
 				if frappe.db.get_value('UOM', rm['uom'], 'must_be_whole_number'):
 					supply_qty = int(math.floor(supply_qty))
