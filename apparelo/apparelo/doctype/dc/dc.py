@@ -20,7 +20,8 @@ from erpnext.stock.doctype.item.item import get_uom_conv_factor
 
 class DC(Document):
 	def validate(self):
-
+		self.items = list(filter(lambda x: x.quantity != 0, self.items))
+		self.return_materials = list(filter(lambda x: x.qty != 0, self.return_materials))
 		self.dc_cloth_quantity = f'<h4>Delivery Items</h4>{self.get_dc_cloth_quantity(self.items)}'
 		self.dc_cloth_quantity += f'<h4>Expected Items</h4>{self.get_dc_cloth_quantity(self.return_materials)}'
 		self.get_supplier_address()
@@ -114,7 +115,7 @@ class DC(Document):
 				attribute_qty['secondary_qty'] = item.secondary_qty
 				attribute_qty['secondary_uom']=item.secondary_uom
 			if table==self.items:
-				attribute_qty['qty'] = item.available_quantity
+				attribute_qty['qty'] = item.quantity
 				attribute_qty['uom']=item.primary_uom
 				attribute_qty['secondary_qty'] = item.secondary_qty
 				attribute_qty['secondary_uom']=item.secondary_uom
@@ -506,6 +507,7 @@ def html_generator(col,row,return_material_qty):
 		uom_list.append(sub_uom_list)
 		secondary_qty_list.append(sub_secondary_qty_list)
 		secondary_uom_list.append(sub_secondary_uom_list)
+	sub_uom_value = secondary_uom_value = None
 	for sub_row_data , sub_uom_data ,sub_secondary_qty_data,sub_secondary_uom_data in zip(row_list,uom_list,secondary_qty_list,secondary_uom_list):
 		html_body_data = ''
 		if sum(map(cint,sub_row_data[1:])) != 0:
@@ -524,7 +526,7 @@ def html_generator(col,row,return_material_qty):
 				coloum_value+=color['qty']
 				if color['secondary_qty'] == None:
 					color['secondary_qty']=0
-				sec_coloum_value += cint(color['secondary_qty'])
+				sec_coloum_value += float(color['secondary_qty'])
 		html_body+=f'<td>{coloum_value} {sub_uom_value}<br>{sec_coloum_value} {secondary_uom_value} </td>'
 		coloum_value=0
 		sec_coloum_value=0

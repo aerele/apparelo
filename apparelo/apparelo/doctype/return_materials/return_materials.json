@@ -40,6 +40,7 @@
   },
   {
    "columns": 1,
+   "default": "0",
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -57,6 +58,7 @@
   },
   {
    "columns": 1,
+   "default": "0",
    "depends_on": "eval: doc.secondary_uom",
    "fieldname": "secondary_qty",
    "fieldtype": "Data",
@@ -79,7 +81,7 @@
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-02-29 15:47:04.594613",
+ "modified": "2020-05-13 16:19:10.689735",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Return Materials",
