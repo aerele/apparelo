@@ -20,6 +20,7 @@
   "process_record",
   "administrator_section_section",
   "submit_internal_processes",
+  "ipd_submission_done",
   "amended_from"
  ],
  "fields": [
@@ -118,11 +119,18 @@
    "fieldtype": "Table",
    "label": "Styles",
    "options": "Item Production Detail Style"
+  },
+  {
+   "default": "0",
+   "fieldname": "ipd_submission_done",
+   "fieldtype": "Check",
+   "label": "IPD Submission Done",
+   "read_only": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-03 16:35:21.895442",
+ "modified": "2020-05-17 00:45:16.852360",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",

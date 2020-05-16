@@ -11,13 +11,32 @@ from apparelo.apparelo.doctype.ipd_item_mapping.ipd_item_mapping import ipd_item
 from apparelo.apparelo.doctype.ipd_bom_mapping.ipd_bom_mapping import ipd_bom_mapping
 from frappe.utils import comma_and,get_link_to_form
 from collections import Counter
+from frappe.core.page.background_jobs.background_jobs import get_info
+from frappe.utils.background_jobs import enqueue
 
 class ItemProductionDetail(Document):
 	def on_submit(self):
+		if self.ipd_submission_done:
+			return
 		self.validate_process_records()
-		ipd_list=self.create_process_details()
-		ipd_item_mapping(ipd_list,self.name,self.item)
-		ipd_bom_mapping(ipd_list,self.name,self.item)
+
+		enqueued_jobs = [d.get("job_name") for d in get_info()]
+		if self.name in enqueued_jobs:
+			frappe.throw(
+				_("Submission already in progress. Please wait for sometime.")
+			)
+		else:
+			enqueue(
+				submit_ipd,
+				queue="default",
+				timeout=6000,
+				event="ipd_submission",
+				job_name=self.name,
+				ipd=self.name,
+			)
+			frappe.throw(
+				_("Submission job added to queue. Please check after sometime.")
+			)
 
 	def validate_process_records(self):
 		count = 0
@@ -542,3 +561,17 @@ def get_existing_process_variants(process_variants,ipd,process,cutting_attribute
 	process_variants['BOM']=list(set(boms))
 	process_variants['input_item']=list(set(item_list))
 	return process_variants, existing_item_list
+
+def submit_ipd(ipd):
+	try:
+		ipd_doc = frappe.get_doc("Item Production Detail", ipd)
+		ipd_list=ipd_doc.create_process_details()
+		ipd_item_mapping(ipd_list,ipd_doc.name,ipd_doc.item)
+		ipd_bom_mapping(ipd_list,ipd_doc.name,ipd_doc.item)
+		ipd_doc.ipd_submission_done = 1
+		ipd_doc.docstatus = 1
+		ipd_doc.save()
+	except:
+		error_message = frappe.get_traceback()+"\n\n IPD Name: \n"+ipd
+		frappe.log_error(error_message, "IPD Submission Error")
+		raise
