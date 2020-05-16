@@ -136,6 +136,10 @@ class DC(Document):
 		supplied_items = []
 		lot_warehouse = frappe.db.get_value("Warehouse", {
 											'location': self.location, 'lot': self.lot, 'warehouse_type': "Actual"}, 'name')
+		if not self.expect_return_items_at:
+			self.expect_return_items_at = self.location
+		expect_return_items_at = frappe.db.get_value("Warehouse", {
+											'location': self.expect_return_items_at, 'lot': self.lot, 'warehouse_type': "Actual"}, 'name')
 		supplier_warehouse = frappe.db.get_value(
 			"Warehouse", {'supplier': self.supplier}, 'name')
 		for item_ in self.return_materials:
@@ -152,7 +156,7 @@ class DC(Document):
 			"dc": self.name,
 			"lot": self.lot,
 			"schedule_date": add_days(nowdate(), 7),
-			"set_warehouse": lot_warehouse,
+			"set_warehouse": expect_return_items_at,
 			"set_reserve_warehouse": lot_warehouse,
 			"is_subcontracted": "Yes",
 			"supplier_warehouse": supplier_warehouse,
