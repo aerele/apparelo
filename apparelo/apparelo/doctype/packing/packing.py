@@ -137,7 +137,7 @@ class Packing(Document):
 					input_attr = get_attr_dict(input_item_doc.attributes)
 					if size in variant_attr["Apparelo Size"] and size in input_attr["Apparelo Size"]:
 						for color in combo.split(","):
-							if color in input_attr["Apparelo Size"]:
+							if color in input_attr["Apparelo Colour"]:
 								item_list_.append({
 									"item_code": items,
 									"uom": "Nos"
