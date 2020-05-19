@@ -23,7 +23,7 @@ class GRN(Document):
 		rejected_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Mistake'},'name')
 		po_doc=frappe.get_doc("Purchase Order",self.po)
 		for item in self.return_materials:
-			item_list.append({"item_code": item.item_code, "received_qty":item.qty, "qty": item.received_qty, "uom": item.uom, "stock_uom": item.uom, "rejected_qty": item.rejected_qty, "schedule_date": add_days(nowdate(), 7), "warehouse": lot_warehouse, "purchase_order": self.po})
+			item_list.append({"item_code": item.item_code, "received_qty": item.received_qty, "qty": item.received_qty - item.rejected_qty, "uom": item.uom, "stock_uom": item.uom, "rejected_qty": item.rejected_qty, "schedule_date": add_days(nowdate(), 7), "warehouse": lot_warehouse, "purchase_order": self.po})
 		pr=frappe.get_doc({
 			"supplier": self.supplier,
 			"rejected_warehouse": rejected_warehouse,
