@@ -11,12 +11,14 @@
   "process_1",
   "supplier",
   "location",
+  "expect_return_items_at",
   "get_items",
   "items",
   "get_return_item",
   "section_break_5",
-  "expect_return_items_at",
   "return_materials",
+  "calculate_delivery_quantity",
+  "printable_section_section",
   "dc_cloth_quantity",
   "amended_from",
   "address"
@@ -45,7 +47,7 @@
   {
    "fieldname": "get_items",
    "fieldtype": "Button",
-   "label": "Get delivery items"
+   "label": "Make DC"
   },
   {
    "fieldname": "naming_series",
@@ -60,11 +62,12 @@
   {
    "fieldname": "get_return_item",
    "fieldtype": "Button",
-   "label": "Get items expected in return"
+   "label": "Calculate Expected Qty from Delivery Qty"
   },
   {
    "fieldname": "section_break_5",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Return Materials"
   },
   {
    "fieldname": "return_materials",
@@ -112,11 +115,21 @@
    "fieldtype": "Long Text",
    "hidden": 1,
    "label": "Address"
+  },
+  {
+   "fieldname": "calculate_delivery_quantity",
+   "fieldtype": "Button",
+   "label": "Calculate Delivery Qty from Expected Qty"
+  },
+  {
+   "fieldname": "printable_section_section",
+   "fieldtype": "Section Break",
+   "label": "Printable Section"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-17 15:38:00.715653",
+ "modified": "2020-05-18 21:07:30.333982",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

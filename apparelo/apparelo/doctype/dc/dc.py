@@ -20,6 +20,7 @@ from erpnext.stock.doctype.item.item import get_uom_conv_factor
 
 class DC(Document):
 	def validate(self):
+		self.validate_delivery()
 		self.items = list(filter(lambda x: x.quantity != 0, self.items))
 		self.return_materials = list(filter(lambda x: x.qty != 0, self.return_materials))
 
@@ -86,6 +87,10 @@ class DC(Document):
 		po.submit()
 		return po
 
+	def validate_delivery(self):
+		for item in self.items:
+			if item.quantity > item.available_quantity:
+				frappe.throw(_(f'Cannot deliver more than we have for {item.item_code}'))
 
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers = []
@@ -190,15 +195,9 @@ def get_ipd_item(doc):
 
 
 @frappe.whitelist()
-def get_expected_items_in_return(doc):
+def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=False):
 	if isinstance(doc, string_types):
 		doc = frappe._dict(json.loads(doc))
-
-	
-	# Delivery quantity has to be present
-	for item in doc.get('items'):
-		if not 'quantity' in item:
-			frappe.throw(_(f"Enter quantity for {item['item_code']}"))
 
 	lot = doc.get('lot')
 	dc_process = doc.get('process_1')
@@ -252,7 +251,10 @@ def get_expected_items_in_return(doc):
 		item_to_be_received['raw_materials'] = frappe.get_list('BOM Item', filters={'parent': item_to_be_received['bom']}, fields=['item_code', 'uom', 'qty', f'{receivable_list[item]} as req', 'conversion_factor'])
 
 	# Stock validation starts
-	for in_stock_item in doc.get('items'):
+	if not items_to_be_sent:
+		items_to_be_sent = doc.get('items')
+
+	for in_stock_item in items_to_be_sent:
 		in_stock_item_consumable_indexes = []
 		for i, item_to_be_received in enumerate(items_to_be_received):
 			for rm in item_to_be_received['raw_materials']:
@@ -283,7 +285,10 @@ def get_expected_items_in_return(doc):
 
 		for stock_item_consumable_index in in_stock_item_consumable_indexes:
 			for i, rm in enumerate(items_to_be_received[stock_item_consumable_index]['raw_materials']):
-				supply_qty = (rm['req'] * in_stock_item['quantity'])/total
+				if use_delivery_qty:
+					supply_qty = (rm['req'] * in_stock_item['quantity'])/total
+				else:
+					supply_qty = (rm['req'] * in_stock_item['available_quantity'])/total
 
 				if frappe.db.get_value('UOM', rm['uom'], 'must_be_whole_number'):
 					supply_qty = int(math.floor(supply_qty))
@@ -311,7 +316,6 @@ def get_expected_items_in_return(doc):
 		
 		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
 			item_to_be_received['qty'] = int(item_to_be_received['qty'])
-		print(receivable_list[item_to_be_received['item_code']], item_to_be_received['qty'])
 		ipd_process_index_of_item = -1
 		for item_mappping in ipd_item_mapping.item_mapping:
 			if item_mappping.item == item.item_code:
@@ -326,6 +330,10 @@ def get_expected_items_in_return(doc):
 		item_to_be_received['pf_item_code'] = item.print_code if item.print_code != None and item.print_code != '' else item_to_be_received['item_code']
 		item_to_be_received['uom'] = item.stock_uom
 		item_to_be_received['secondary_uom'] = apparelo_process.out_secondary_uom
+
+		if not use_delivery_qty:
+			item_to_be_received['projected_qty'] = item_to_be_received['qty']
+			item_to_be_received['qty'] = 0
 
 	return items_to_be_received
 
@@ -390,3 +398,67 @@ def get_additional_params(ipd_processes, ipd_process_index):
 	else:
 		frappe.throw(
 			_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))
+
+@frappe.whitelist()
+def get_delivery_qty_from_return_materials(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+
+	po_items = []
+	company = get_default_company()
+
+	items = doc.get('return_materials')
+	for item in items:
+		po_item = {}
+		po_item['stock_uom'] = item['uom']
+		po_item['item_code'] = item['item_code']
+		po_item['planned_qty'] = item['qty']
+		po_item['bom_no'] = item['bom']
+
+		if po_item['planned_qty'] != 0:
+			po_items.append(po_item)
+
+	input = {
+		'company': company,
+		'po_items': po_items
+	}
+	required_raw_materials = get_items_for_material_requests(json.dumps(input))
+	delivery_items = doc.get('items')
+	for delivery_item in delivery_items:
+		for required_raw_material in required_raw_materials:
+			if required_raw_material['item_code'] == delivery_item['item_code'] \
+				and required_raw_material['uom'] == delivery_item['primary_uom']:
+				delivery_item['quantity'] = required_raw_material['quantity']
+	
+	return delivery_items
+
+@frappe.whitelist()
+def make_dc(doc):
+	items_to_be_sent = get_ipd_item(doc)
+	items_to_be_received = get_expected_items_in_return(doc, items_to_be_sent=items_to_be_sent, use_delivery_qty=False)
+	dc = {
+		'items': items_to_be_sent,
+		'return_materials': items_to_be_received
+	}
+
+	return dc
+
+@frappe.whitelist()
+def calculate_expected_qty_from_delivery_qty(doc):
+	raw_doc = doc
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+
+	for item in doc.get('items'):
+		if not 'quantity' in item or item['quantity'] == 0:
+			frappe.throw(_(f'Enter delivery quantity for {item["item_code"]}'))
+	
+	items_to_be_received = get_expected_items_in_return(raw_doc, items_to_be_sent=doc.get('items'), use_delivery_qty=True)
+
+	return_items = doc.get('return_materials')
+	for return_item in return_items:
+		for item_to_be_received in items_to_be_received:
+			if item_to_be_received['item_code'] == return_item['item_code']:
+				return_item['qty'] = item_to_be_received['qty']
+
+	return return_items
