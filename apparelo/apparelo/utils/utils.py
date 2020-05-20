@@ -68,13 +68,14 @@ def get_bom_diff(bom1, bom2):
 
 	return out
 
+
 def generate_printable_list(items, grouping_params):
 	""" This function generates simple printable objects from items list with quantities
 	by applying the parameters provided.
 
 	:param items: list of items containing following keys- item_code, qty, uom, secondary_qty, secondary_uom
 	:param grouping_params: A list of dicts with the following keys: dimension, group_by, attribute_list
-	
+
 	Description for the keys in the grouping_params dict:
 	dimension: item attributes by which qty should be calculated. format - (dimension1, dimension2)
 	group_by: list of item attributes for which sepearate tables should be generated
@@ -83,7 +84,7 @@ def generate_printable_list(items, grouping_params):
 	# getting item attributes for all the items
 	item_attributes_serial_list = frappe.get_list(
 		"Item",
-		filters={'item_code' : ['in', [x.item_code for x in items]]},
+		filters={'item_code': ['in', [x.item_code for x in items]]},
 		fields=[
 			"item_code",
 			"`tabItem Variant Attribute`.attribute",
@@ -93,9 +94,9 @@ def generate_printable_list(items, grouping_params):
 	item_list_with_attributes = {}
 	for single_item_attribute in item_attributes_serial_list:
 		if single_item_attribute.item_code not in item_list_with_attributes:
-			item_list_with_attributes[single_item_attribute.item_code] = {single_item_attribute.attribute:single_item_attribute.attribute_value, 'attribute_list':[single_item_attribute.attribute]}
+			item_list_with_attributes[single_item_attribute.item_code] = {single_item_attribute.attribute: single_item_attribute.attribute_value, 'attribute_list': [single_item_attribute.attribute]}
 		else:
-			item_list_with_attributes[single_item_attribute.item_code].update({single_item_attribute.attribute:single_item_attribute.attribute_value})
+			item_list_with_attributes[single_item_attribute.item_code].update({single_item_attribute.attribute: single_item_attribute.attribute_value})
 			item_list_with_attributes[single_item_attribute.item_code]['attribute_list'].append(single_item_attribute.attribute)
 
 	# generating the desired item format
@@ -198,28 +199,31 @@ def groupby_unsorted(seq, key=lambda x: x):
 	for k, idxs in indexes.items():
 		yield k, (seq[i] for i in idxs)
 
-def get_values_as_tuple(dict, keys):
+
+def get_values_as_tuple(input_dict, keys):
 	values_list = []
 	for key in keys:
-		if key and key in dict:
-			values_list.append(dict[key])
+		if key and key in input_dict:
+			values_list.append(input_dict[key])
 		else:
 			values_list.append(key)
 	return tuple(values_list)
+
 
 def sort_and_return(l):
 	l.sort()
 	return l
 
+
 def get_sum_from_dict_list(dict_list, key):
-	sum = 0
+	val_sum = 0
 	for elem in dict_list:
 		try:
 			val = float(elem[key])
 		except:
 			val = cint(elem[key])
-		sum += val
-	return sum
+		val_sum += val
+	return val_sum
 
 
 def check_if_same_value_dict_list(dict_list, key):
