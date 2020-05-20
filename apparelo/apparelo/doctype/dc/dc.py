@@ -50,7 +50,6 @@ class DC(Document):
 
 	def create_purchase_order(self):
 		dc_items = []
-		supplied_items = []
 		lot_warehouse = frappe.db.get_value("Warehouse", {
 											'location': self.location, 'lot': self.lot, 'warehouse_type': "Actual"}, 'name')
 		if not self.expect_return_items_at:
@@ -86,6 +85,28 @@ class DC(Document):
 		po.submit()
 		return po
 
+@frappe.whitelist()
+def get_location_based_address(location,company):
+	return frappe.get_list("Address", filters={'location': ['in',location],'link_doctype':['in','Company'],'link_name':['in',company]}, fields=["name"])[0]['name']
+
+@frappe.whitelist()
+def get_supplier_based_address(supplier):
+	address = frappe.db.sql(
+		'SELECT dl.parent '
+		'from `tabDynamic Link` dl join `tabAddress` ta on dl.parent=ta.name '
+		'where '
+		'dl.link_doctype=%s '
+		'and dl.link_name=%s '
+		'and dl.parenttype="Address" '
+		'and ifnull(ta.disabled, 0) = 0 and'
+		'(ta.address_type="Shipping" or ta.is_shipping_address=1) '
+		'order by ta.is_shipping_address desc, ta.address_type desc limit 1',
+		("Supplier", supplier)
+	)
+	if address:
+		return address[0][0]
+	else:
+		return ''
 
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers = []
@@ -96,7 +117,6 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 			if process.processes == filters['supplier_process.processes']:
 				suppliers.append([supplier.name])
 	return suppliers
-
 
 def make_item_fields(update=True):
 	# todo: combine with make_custom_fields if possible
@@ -311,7 +331,6 @@ def get_expected_items_in_return(doc):
 		
 		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
 			item_to_be_received['qty'] = int(item_to_be_received['qty'])
-		print(receivable_list[item_to_be_received['item_code']], item_to_be_received['qty'])
 		ipd_process_index_of_item = -1
 		for item_mappping in ipd_item_mapping.item_mapping:
 			if item_mappping.item == item.item_code:

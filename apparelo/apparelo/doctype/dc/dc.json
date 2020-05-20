@@ -17,9 +17,16 @@
   "section_break_5",
   "expect_return_items_at",
   "return_materials",
+  "address_and_contact_section",
+  "supplier_address_name",
+  "supplier_address",
+  "column_break_14",
+  "company",
+  "company_address_name",
+  "company_address",
+  "section_break_15",
   "dc_cloth_quantity",
-  "amended_from",
-  "address"
+  "amended_from"
  ],
  "fields": [
   {
@@ -108,15 +115,53 @@
    "label": "Dc Cloth Quantity"
   },
   {
-   "fieldname": "address",
-   "fieldtype": "Long Text",
-   "hidden": 1,
-   "label": "Address"
+   "fieldname": "section_break_15",
+   "fieldtype": "Section Break"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "address_and_contact_section",
+   "fieldtype": "Section Break",
+   "label": "Address and Contact"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company_address_name",
+   "fieldtype": "Link",
+   "label": "Company Address Name",
+   "options": "Address"
+  },
+  {
+   "fieldname": "company_address",
+   "fieldtype": "Small Text",
+   "label": "Company Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supplier_address_name",
+   "fieldtype": "Link",
+   "label": "Supplier Address Name",
+   "options": "Address"
+  },
+  {
+   "fieldname": "supplier_address",
+   "fieldtype": "Small Text",
+   "label": "Supplier Address",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-17 15:38:00.715653",
+ "modified": "2020-05-20 16:39:15.362085",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
