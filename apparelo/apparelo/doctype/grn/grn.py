@@ -36,25 +36,28 @@ class GRN(Document):
 		pr.submit()
 		return pr
 	def get_po(self):
-		if self.against_document.startswith("D"):
+		dc_doc = frappe.get_doc("DC",self.against_document)
+		if dc_doc.doctype.startswith("D"):
 			self.po = frappe.db.get_value("Purchase Order",{'dc':self.against_document},'name')
 
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':
-		DC = []
-		[DC.append([dc['name']]) for dc in frappe.get_list("DC", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
+		DC = [[dc['name']] for dc in frappe.get_list("DC", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
 		return DC
 	else:
-		PO=[]
-		[PO.append([po['name']]) for po in frappe.get_list("Purchase Order", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
+		PO = [[po['name']] for po in frappe.get_list("Purchase Order", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
 		return PO
 def get_Lot(doctype, txt, searchfield, start, page_len, filters):
-	lot_list=[]
-	[lot_list.append([lot['lot']]) for lot in frappe.get_list("Purchase Order", fields=["lot"]) if not lot['lot'] in lot_list]
+	lot_list = []
+	for lot in frappe.get_list("Purchase Order", fields=["lot"]):
+		if not lot['lot'] in lot_list:
+			lot_list.append([lot['lot']])
 	return lot_list
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
-	supplier_list = [] 
-	[supplier_list.append([supplier['supplier']]) for supplier in frappe.get_list("Purchase Order", fields=["supplier"]) if not supplier['supplier'] in supplier_list]
+	supplier_list = []
+	for supplier in frappe.get_list("Purchase Order", fields=["supplier"]):
+		if not supplier['supplier'] in supplier_list:
+			supplier_list.append([supplier['supplier']])
 	return supplier_list
 @frappe.whitelist()
 def get_items(doc):
@@ -65,8 +68,8 @@ def get_items(doc):
 	doc_=doc.get("against_document")
 	dc_process=None
 	apparelo_process=None
-	if doc_.startswith("D"):
-		dc_doc=frappe.get_doc("DC",doc_)
+	dc_doc = frappe.get_doc("DC",doc_)
+	if dc_doc.doctype.startswith("D"):
 		dc_process=dc_doc.process_1
 		doc_ = frappe.db.get_value("Purchase Order",{'dc':doc_},'name')
 	PO=frappe.get_doc("Purchase Order",doc_)
