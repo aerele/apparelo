@@ -117,7 +117,13 @@ def generate_printable_list(items, grouping_params):
 	# generating the printable list
 	final_printable_list = []
 	for attribute_list, group in groupby_unsorted(item_dict_list, key=lambda x: tuple(x['attribute_list'])):
-		grouping_param = next(param for param in grouping_params if sort_and_return(param['attribute_list']) == list(attribute_list))
+		try:
+			grouping_param = next(param for param in grouping_params if sort_and_return(param['attribute_list']) == list(attribute_list))
+		except StopIteration:
+			grouping_param = {
+			"dimension": (None, None),
+			"group_by": [],
+			"attribute_list": attribute_list}
 		group_by = grouping_param['group_by']
 		dimension = grouping_param['dimension']
 		for key, group2 in groupby_unsorted(list(group), key=lambda x: get_values_as_tuple(x, group_by)):

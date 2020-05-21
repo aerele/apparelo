@@ -16,6 +16,7 @@ from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_e
 from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
+from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list
 
 
 class DC(Document):
@@ -23,6 +24,13 @@ class DC(Document):
 		self.validate_delivery()
 		self.items = list(filter(lambda x: x.quantity != 0, self.items))
 		self.return_materials = list(filter(lambda x: x.qty != 0, self.return_materials))
+
+		# printable table creation
+		printable_list_d = generate_printable_list(self.items, self.get_grouping_params())
+		printable_list_d[0]['section_title'] = 'Delivery Items'
+		printable_list_r = generate_printable_list(self.return_materials, self.get_grouping_params())
+		printable_list_r[0]['section_title'] = 'Expected Return Items'
+		self.dc_cloth_quantity = generate_html_from_list(printable_list_d+printable_list_r)
 
 	def on_submit(self):
 		new_po = self.create_purchase_order()
@@ -85,6 +93,114 @@ class DC(Document):
 		po.save()
 		po.submit()
 		return po
+
+	def get_grouping_params(self):
+		gp_list = {
+			'Knitting': [
+				{
+					"dimension": ('Dia', None),
+					"group_by": ['Knitting Type', 'Yarn Category'],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+				},
+				{
+					"dimension": (None, None),
+					"group_by": [],
+					"attribute_list": ['Yarn Category', 'Yarn Count', 'Yarn Shade']
+				},
+			],
+			'Dyeing': [
+				{
+					"dimension": ('Dia', None),
+					"group_by": [],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+				},
+				{
+					"dimension": ('Dia', 'Apparelo Colour'),
+					"group_by": ['Knitting Type'],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+				}
+			],
+			'Bleaching': [
+				{
+					"dimension": ('Dia', None),
+					"group_by": [],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+				},
+				{
+					"dimension": ('Dia', 'Apparelo Colour'),
+					"group_by": ['Knitting Type'],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+				}
+			],
+			'Compacting': [
+				{
+					"dimension": ('Dia', 'Apparelo Colour'),
+					"group_by": ['Knitting Type'],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+				}
+			],
+			'Cutting': [
+				{
+					"dimension": ('Dia', 'Apparelo Colour'),
+					"group_by": ['Knitting Type'],
+					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+				},
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+				},
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+				}
+			],
+			'Label Fusing': [
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+				},
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+				}
+			],
+			'Stitching': [
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+				},
+				{
+					"dimension": ('Part', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+				},
+				{
+					"dimension": ('Apparelo Colour', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size']
+				}
+			],
+			'Ironing': [
+				{
+					"dimension": ('Apparelo Colour', 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": ['Apparelo Colour', 'Apparelo Size']
+				}
+			],
+			'Packing': [
+				{
+					"dimension": (None, 'Apparelo Size'),
+					"group_by": [],
+					"attribute_list": [ 'Apparelo Size']
+				}
+			]
+		}
+		return gp_list[self.process_1]
 
 	def validate_delivery(self):
 		for item in self.items:
