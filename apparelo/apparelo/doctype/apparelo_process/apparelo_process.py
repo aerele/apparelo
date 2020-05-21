@@ -13,7 +13,7 @@ def create_apparelo_process(from_process=None,to_process=None):
 	apparelo_process=frappe.get_all("Apparelo Process",fields=['name'])
 	for process_name in apparelo_process:
 		apparelo_process_list.append(process_name.name)
-	processes={'Knitting':['Roll','Roll'],'Dyeing':['Roll','Roll'],'Bleaching':['Roll','Roll'],'Compacting':['Roll','Roll'],'Steaming':['Roll','Roll'],'Roll Printing':['Roll','Roll'],'Cutting':['Roll','Kg'],'Stitching':['Kg','Kg'],'Piece Printing':['Kg','Kg'],'Label Fusing':['Kg','Kg'],'Checking':['Kg','Kg'],'Ironing':['Kg','Kg'],'Packing':['','']}
+	processes={'Knitting':['Bags','Roll'],'Dyeing':['Roll','Roll'],'Bleaching':['Roll','Roll'],'Compacting':['Roll','Roll'],'Steaming':['Roll','Roll'],'Roll Printing':['Roll','Roll'],'Cutting':['Roll','Kg'],'Stitching':['Kg','Kg'],'Piece Printing':['Kg','Kg'],'Label Fusing':['Kg','Kg'],'Checking':['Kg','Kg'],'Ironing':['Kg','Kg'],'Packing':['','']}
 	for process in processes:
 		if from_process and to_process:
 			process_name=from_process+"-"+to_process

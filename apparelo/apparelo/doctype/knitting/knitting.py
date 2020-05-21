@@ -33,9 +33,9 @@ class Knitting(Document):
 					if not dia+" Dia" in variant:
 						hash_=hashlib.sha256(variant.replace('Knitted Cloth',"").encode()).hexdigest()
 						if variant_attr['Yarn Shade'][0]=='Plain':
-							new_variant=variant.replace(dia,dia+" Dia").replace('-'+variant_attr['Yarn Shade'][0].upper(),'').replace('-'+variant_attr['Yarn Count'][0],'')
+							new_variant='Knitted Cloth-'+variant_attr['Yarn Category'][0]+'-'+variant_attr['Dia'][0]+' Dia'+variant_attr['Knitting Type'][0]+'-'+variant_attr['Apparelo Colour'][0]
 						else:
-							new_variant=variant.replace(dia,dia+" Dia").replace('-'+variant_attr['Yarn Count'][0],'')
+							new_variant='Knitted Cloth-'+variant_attr['Yarn Shade'][0]+'-'+variant_attr['Yarn Category'][0]+'-'+variant_attr['Dia'][0]+' Dia'+variant_attr['Knitting Type'][0]+'-'+variant_attr['Apparelo Colour'][0]
 						doc=frappe.get_doc("Item",variant)
 						doc.print_code=new_variant
 						doc.save()

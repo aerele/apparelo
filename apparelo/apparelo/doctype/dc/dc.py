@@ -51,7 +51,6 @@ class DC(Document):
 
 	def create_purchase_order(self):
 		dc_items = []
-		supplied_items = []
 		lot_warehouse = frappe.db.get_value("Warehouse", {
 											'location': self.location, 'lot': self.lot, 'warehouse_type': "Actual"}, 'name')
 		if not self.expect_return_items_at:
@@ -92,6 +91,29 @@ class DC(Document):
 			if item.quantity > item.available_quantity:
 				frappe.throw(_(f'Cannot deliver more than we have for {item.item_code}'))
 
+@frappe.whitelist()
+def get_location_based_address(location,company):
+	return frappe.get_list("Address", filters={'location': ['in',location],'link_doctype':['in','Company'],'link_name':['in',company]}, fields=["name"])[0]['name']
+
+@frappe.whitelist()
+def get_supplier_based_address(supplier):
+	address = frappe.db.sql(
+		'SELECT dl.parent '
+		'from `tabDynamic Link` dl join `tabAddress` ta on dl.parent=ta.name '
+		'where '
+		'dl.link_doctype=%s '
+		'and dl.link_name=%s '
+		'and dl.parenttype="Address" '
+		'and ifnull(ta.disabled, 0) = 0 and'
+		'(ta.address_type="Shipping" or ta.is_shipping_address=1) '
+		'order by ta.is_shipping_address desc, ta.address_type desc limit 1',
+		("Supplier", supplier)
+	)
+	if address:
+		return address[0][0]
+	else:
+		return ''
+
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers = []
 	all_supplier = frappe.db.get_all("Supplier")
@@ -101,7 +123,6 @@ def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 			if process.processes == filters['supplier_process.processes']:
 				suppliers.append([supplier.name])
 	return suppliers
-
 
 def make_item_fields(update=True):
 	# todo: combine with make_custom_fields if possible
@@ -392,8 +413,7 @@ def get_additional_params(ipd_processes, ipd_process_index):
 		else:
 			return None
 	else:
-		frappe.throw(
-			_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))
+		frappe.throw(_("Unexpected error in getting additional params. IPD processes list was probably not sorted during fetch."))
 
 @frappe.whitelist()
 def get_delivery_qty_from_return_materials(doc):

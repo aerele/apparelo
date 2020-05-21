@@ -10,7 +10,7 @@ from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
-import hashlib
+from apparelo.apparelo.common_scripts import customize_pf_item_code
 
 class Bleaching(Document):
 	def on_submit(self):
@@ -27,22 +27,11 @@ class Bleaching(Document):
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
 			variant_attr = get_attr_dict(variant_doc.attributes)
-			for dia in attribute_set["Dia"]:
-				if dia in variant_attr['Dia']:
-					if not str(dia)+" Dia" in variant:
-						hash_=hashlib.sha256(variant.replace('Bleached Cloth',"").encode()).hexdigest()
-						new_variant=variant.replace(str(dia),str(dia)+" Dia")
-						doc=frappe.get_doc("Item",variant)
-						doc.print_code=new_variant
-						doc.save()
-						new_variant=new_variant+" "+hash_[0:7]
-						r_variant=frappe.rename_doc("Item",variant,new_variant)
-						new_variants.append(r_variant)
-					else:
-						new_variants.append(variant)
+			new_variants.append(customize_pf_item_code('Bleached Cloth', attribute_set, variant_attr, variant))
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
+
 	def create_boms(self, input_item_names, variants, colour, attribute_set=None, item_size=None, piece_count=None, final_item=None, final_process=None):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -97,7 +86,6 @@ class Bleaching(Document):
 		return attribute_set
 
 def create_item_template():
-	dia = frappe.get_doc('Item Attribute', 'Dia')
 	if not frappe.db.exists("Item","Bleached Cloth"):
 		frappe.get_doc({
 		"doctype": "Item",
@@ -120,11 +108,7 @@ def create_item_template():
 				"attribute" : "Yarn Count"
 			},
 			{
-				"attribute" : "Dia" ,
-				"numeric_values": 1,
-				"from_range": dia.from_range,
-				"to_range": dia.to_range,
-				"increment": dia.increment
+				"attribute" : "Dia" 
 			},
 			{
 				"attribute" : "Knitting Type"
