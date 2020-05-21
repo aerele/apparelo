@@ -292,9 +292,10 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 
 				if frappe.db.get_value('UOM', rm['uom'], 'must_be_whole_number'):
 					supply_qty = int(math.floor(supply_qty))
-				
-				if supply_qty > rm['req']:
-					supply_qty = rm['req']
+
+				# If we have in excess, we will make in excess.
+				# if supply_qty > rm['req']:
+				# 	supply_qty = rm['req']
 
 				items_to_be_received[stock_item_consumable_index]['raw_materials'][i]['supply_qty'] = supply_qty
 
@@ -302,17 +303,12 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 	for item_to_be_received in items_to_be_received:
 		item = frappe.get_doc('Item', item_to_be_received['item'])
 		item_to_be_received['item_code'] = item_to_be_received['item']
-		if item.stock_uom == 'Nos':
-			item_to_be_received['qty'] = round(receivable_list[item_to_be_received['item']] + (
-				receivable_list[item_to_be_received['item']] * percentage_in_excess))
-		else:
-			item_to_be_received['qty'] = receivable_list[item_to_be_received['item']] + (
-				receivable_list[item_to_be_received['item']] * percentage_in_excess)
-
 		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
+
+		# TODO: What will happen if an item has been made out of multiple raw materials?
 		for rm in item_to_be_received['raw_materials']:
-			if item_to_be_received['qty'] >= rm['supply_qty']:
-				item_to_be_received['qty'] = rm['supply_qty']
+			# if item_to_be_received['qty'] >= rm['supply_qty']:
+			item_to_be_received['qty'] = rm['supply_qty']
 		
 		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
 			item_to_be_received['qty'] = int(item_to_be_received['qty'])
