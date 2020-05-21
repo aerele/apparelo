@@ -36,54 +36,26 @@ class GRN(Document):
 		pr.submit()
 		return pr
 	def get_po(self):
-		doc_=self.against_document
-		if doc_.startswith("D"):
-			all_po=frappe.db.get_all("Purchase Order")
-			for po in all_po:
-				po_=frappe.get_doc("Purchase Order",po.name)
-				if po_.dc==doc_:
-					doc_=po_.name
-		PO=frappe.get_doc("Purchase Order",doc_)
-		self.po=PO.name
-		return PO.name
+		if self.against_document.startswith("D"):
+			self.po = frappe.db.get_value("Purchase Order",{'dc':self.against_document},'name')
 
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':
-		DC=[]
-		all_dc=frappe.db.get_all("DC")
-		for dc in all_dc:
-			dc_=frappe.get_doc("DC",dc.name)
-			if dc_.supplier == filters['supplier']:
-				if dc_.lot == filters['lot']:
-					DC.append([dc_.name])
+		DC = []
+		[DC.append([dc['name']]) for dc in frappe.get_list("DC", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
 		return DC
 	else:
 		PO=[]
-		all_po=frappe.db.get_all("Purchase Order")
-		for po in all_po:
-			po_=frappe.get_doc("Purchase Order",po.name)
-			if po_.supplier == filters['supplier']:
-				if po_.lot == filters['lot']:
-					PO.append([po_.name])
+		[PO.append([po['name']]) for po in frappe.get_list("Purchase Order", filters={'supplier': ['in',filters['supplier']],'lot':['in',filters['lot']]}, fields=["name"])]
 		return PO
 def get_Lot(doctype, txt, searchfield, start, page_len, filters):
-	Lot=set()
-	lot=[]
-	all_po=frappe.db.get_all("Purchase Order")
-	for po in all_po:
-		po_=frappe.get_doc("Purchase Order",po.name)
-		if po_.lot:
-			Lot.add(po_.lot)
-	for lot_ in Lot:
-		lot.append([lot_])
-	return lot
+	lot_list=[]
+	[lot_list.append([lot['lot']]) for lot in frappe.get_list("Purchase Order", fields=["lot"]) if not lot['lot'] in lot_list]
+	return lot_list
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
-	supplier=[]
-	all_po=frappe.db.get_all("Purchase Order")
-	for po in all_po:
-		po_=frappe.get_doc("Purchase Order",po.name)
-		supplier.append([po_.supplier])
-	return supplier
+	supplier_list = [] 
+	[supplier_list.append([supplier['supplier']]) for supplier in frappe.get_list("Purchase Order", fields=["supplier"]) if not supplier['supplier'] in supplier_list]
+	return supplier_list
 @frappe.whitelist()
 def get_items(doc):
 	return_materials=[]
@@ -94,14 +66,9 @@ def get_items(doc):
 	dc_process=None
 	apparelo_process=None
 	if doc_.startswith("D"):
-		all_po=frappe.db.get_all("Purchase Order")
-		for po in all_po:
-			po_=frappe.get_doc("Purchase Order",po.name)
-			if po_.dc==doc_:
-				doc_=po_.name
-				dc_doc=frappe.get_doc("DC",po_.dc)
-				dc_process=dc_doc.process_1
-				break
+		dc_doc=frappe.get_doc("DC",doc_)
+		dc_process=dc_doc.process_1
+		doc_ = frappe.db.get_value("Purchase Order",{'dc':doc_},'name')
 	PO=frappe.get_doc("Purchase Order",doc_)
 	if dc_process:
 		apparelo_process=frappe.get_doc("Apparelo Process",dc_process)
