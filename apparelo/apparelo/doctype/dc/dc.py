@@ -88,8 +88,12 @@ class DC(Document):
 			"items": dc_items})
 		po.save()
 		# set_reserve_warehouse related code does not exist in python hence the following is required
+		supplied_items_reserve_warehouse = self.get_supplied_items_reserve_warehouse()
 		for item in po.supplied_items:
-			item.reserve_warehouse = lot_warehouse
+			if item.rm_item_code in supplied_items_reserve_warehouse:
+				item.reserve_warehouse = supplied_items_reserve_warehouse[item.rm_item_code]
+			else:
+				item.reserve_warehouse = lot_warehouse
 		po.save()
 		po.submit()
 		return po
@@ -207,9 +211,29 @@ class DC(Document):
 			if item.quantity > item.available_quantity:
 				frappe.throw(_(f'Cannot deliver more than we have for {item.item_code}'))
 
+			if item.deliver_later and not item.delivery_location:
+				frappe.throw(_(f'Mention <b> Delivery Location </b> to deliver later for {item.pf_item_code}'))
+	
+	def get_supplied_items_reserve_warehouse(self):
+		item_reserve_warehouse_location = {}
+		for item in self.items:
+			if item.delivery_location:
+				reserver_warehouse = frappe.db.get_value("Warehouse", {
+											'location': item.delivery_location, 'lot': self.lot, 'warehouse_type': "Actual"}, 'name')
+				item_reserve_warehouse_location[item.item_code] = reserver_warehouse
+		
+		return item_reserve_warehouse_location
+
+
+
+
 @frappe.whitelist()
 def get_location_based_address(location,company):
-	return frappe.get_list("Address", filters={'location': ['in',location],'link_doctype':['in','Company'],'link_name':['in',company]}, fields=["name"])[0]['name']
+	address_list = frappe.get_list("Address", filters={'location': ['in',location],'link_doctype':['in','Company'],'link_name':['in',company]}, fields=["name"])
+	location_based_address = None
+	if address_list:
+		location_based_address = address_list[0]['name']
+	return location_based_address
 
 @frappe.whitelist()
 def get_supplier_based_address(supplier):

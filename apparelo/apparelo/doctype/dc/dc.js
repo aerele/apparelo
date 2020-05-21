@@ -160,7 +160,7 @@ var update_company_address = function(frm){
 		})
 	}
 	refresh_field('company_address_name');
-},
+}
 
 var update_supplier_and_company_address = function(address_name,address_field){
 	if(address_field) {

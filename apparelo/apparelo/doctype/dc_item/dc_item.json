@@ -5,13 +5,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "deliver_later",
   "pf_item_code",
   "item_code",
   "available_quantity",
   "quantity",
   "primary_uom",
   "secondary_qty",
-  "secondary_uom"
+  "secondary_uom",
+  "delivery_location"
  ],
  "fields": [
   {
@@ -70,11 +72,25 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Secondary Qty"
+  },
+  {
+   "default": "0",
+   "fieldname": "deliver_later",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Deliver Later"
+  },
+  {
+   "fieldname": "delivery_location",
+   "fieldtype": "Link",
+   "label": "Delivery Location",
+   "mandatory_depends_on": "deliver_later",
+   "options": "Location"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-05-18 12:31:58.596851",
+ "modified": "2020-05-21 20:23:48.317302",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC Item",
