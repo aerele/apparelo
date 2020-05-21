@@ -122,10 +122,10 @@ def generate_printable_list(items, grouping_params):
 		dimension = grouping_param['dimension']
 		for key, group2 in groupby_unsorted(list(group), key=lambda x: get_values_as_tuple(x, group_by)):
 			# this table_title data structure to be changed later as per jinja requirements
-			table_title = {
-				'keys': group_by,
-				'values': key
-			}
+			table_title = frappe._dict({
+				'attributes': group_by,
+				'attribute_values': key
+			})
 			section_title = None
 			header_column = []
 			header_row = []
@@ -168,12 +168,12 @@ def generate_printable_list(items, grouping_params):
 				uom = check_if_same_value_dict_list(table_group, 'uom')
 				secondary_uom = check_if_same_value_dict_list(table_group, 'secondary_uom')
 				if f'r{column_index}c{row_index}' not in temp_data:
-					temp_data[f'r{column_index}c{row_index}'] = {
+					temp_data[f'r{column_index}c{row_index}'] = frappe._dict({
 						'qty': qty,
 						'uom': uom,
 						'secondary_qty': secondary_qty,
 						'secondary_uom': secondary_uom
-					}
+					})
 				else:
 					frappe.throw(_(f"Data overlap when generation print table for position r{column_index}c{row_index}. Key: ({key[0]},{key[1]}). Dimension: ({dimension[0]},{dimension[1]})."))
 			for row_index in range(1, len(header_column)):
@@ -181,15 +181,24 @@ def generate_printable_list(items, grouping_params):
 				for column_index in range(1, len(header_row)):
 					tmp_column.append(temp_data[f'r{column_index}c{row_index}'] if f'r{column_index}c{row_index}' in temp_data else None)
 				data.append(tmp_column)
-			table_object = {
+			table_object = frappe._dict({
 				'data': data,
 				'header_row': header_row,
 				'header_column': header_column,
 				'table_title': table_title,
 				'section_title': section_title
-			}
+			})
 			final_printable_list.append(table_object)
 	return final_printable_list
+
+
+def generate_html_from_list(printable_list):
+	context = frappe._dict({'context':printable_list})
+	return frappe.utils.jinja.render_template(
+		"apparelo/apparelo/utils/items_table_print.html",
+		context,
+		is_path=True
+		)
 
 
 def groupby_unsorted(seq, key=lambda x: x):

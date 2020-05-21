@@ -1,0 +1,41 @@
+
+<div>
+	{% for obj in context %}
+		{% if obj.section_title != None %}<h2>{{obj.section_title}}</h2>{% endif %}
+		{% for attribute in obj.table_title.attributes %}
+		 {{attribute}}: {{obj.table_title.attribute_values[loop.index-1]}}, 
+		{% endfor %}
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					{% for head_item in obj.header_row %}
+						<th>
+							{% if loop.index == 1 %}
+								{% if head_item != obj.header_column[0] %}
+									{{obj.header_column[0]}} \
+								{% endif %}
+							{% endif %}
+							{{head_item}}
+						</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in obj.data %}
+					<tr>
+						<th>{{obj.header_column[loop.index]}}</th>
+						{% for col in row %}
+							<td>
+								{% if col != None %}
+									{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+								{% else %}
+									-
+								{% endif %}
+							</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% endfor %}
+</div>
