@@ -68,8 +68,8 @@ def get_items(doc):
 	doc_=doc.get("against_document")
 	dc_process=None
 	apparelo_process=None
-	dc_doc = frappe.get_doc("DC",doc_)
-	if dc_doc.doctype.startswith("D"):
+	if doc.get("against_type")=="DC":
+		dc_doc = frappe.get_doc("DC",doc_)
 		dc_process=dc_doc.process_1
 		doc_ = frappe.db.get_value("Purchase Order",{'dc':doc_},'name')
 	PO=frappe.get_doc("Purchase Order",doc_)
