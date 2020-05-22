@@ -16,6 +16,7 @@ from frappe.utils.background_jobs import enqueue
 
 class ItemProductionDetail(Document):
 	def on_submit(self):
+		self.create_item_templates()
 		if self.ipd_submission_done:
 			return
 		self.validate_process_records()
@@ -32,11 +33,81 @@ class ItemProductionDetail(Document):
 				timeout=6000,
 				event="ipd_submission",
 				job_name=self.name,
-				ipd=self.name,
+				ipd=self.name
 			)
 			frappe.throw(
 				_("Submission job added to queue. Please check after sometime.")
 			)
+
+	def create_item_templates(self):
+		template_item_codes_from_stitching = {"Stitching":" Stitched Cloth", "Checking":" Checked Cloth", "Ironing":" Ironed Cloth", "Packing":" Packed Cloth"}
+		template_item_codes_from_cutting = {"Cutting":" Cut Cloth", "Label Fusing": " Labeled Cloth", "Piece Printing": " Printed Cloth"}
+		for process in self.processes:
+			if process.process_name in template_item_codes_from_stitching.keys():
+				item_code = self.item+template_item_codes_from_stitching[process.process_name]
+				if not frappe.db.exists("Item", item_code):
+					frappe.get_doc({
+						"doctype": "Item",
+						"item_code": item_code,
+						"item_name": item_code,
+						"description":item_code,
+						"item_group": "Sub Assemblies",
+						"stock_uom" : "Nos",
+						"has_variants" : "1",
+						"variant_based_on" : "Item Attribute",
+						"is_sub_contracted_item": "1",
+						"attributes" : [
+							{
+								"attribute" : "Apparelo Colour"
+							},
+							{
+								"attribute" : "Apparelo Size"
+							}
+						]
+					}).save()
+			elif process.process_name in template_item_codes_from_cutting.keys():
+				item_code = self.item+template_item_codes_from_cutting[process.process_name]
+				if self.based_on_style == 0:
+					attribute = [
+							{
+								"attribute" : "Apparelo Colour"
+							},
+							{
+								"attribute" : "Part"
+							},
+							{
+								"attribute" : "Apparelo Size"
+							}
+						]
+				else:
+					attribute = [
+							{
+								"attribute" : "Apparelo Colour"
+							},
+							{
+								"attribute" : "Part"
+							},
+							{
+								"attribute" : "Apparelo Size"
+							},
+							{
+								"attribute" : "Apparelo Style"
+							}
+						]
+				if not frappe.db.exists("Item",item_code):
+					frappe.get_doc({
+					"doctype": "Item",
+					"item_code": item_code,
+					"item_name": item_code,
+					"description":item_code,
+					"item_group": "Sub Assemblies",
+					"stock_uom" : "Nos",
+					"has_variants" : "1",
+					"variant_based_on" : "Item Attribute",
+					"is_sub_contracted_item": "1",
+					"attributes" : attribute
+					}).save()
+				
 
 	def validate_process_records(self):
 		count = 0
@@ -191,7 +262,7 @@ class ItemProductionDetail(Document):
 								input_items_.extend(pro['variants'])
 					process_variants['process_record'] = process.process_record
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
-					variants,attribute_set = cutting_doc.create_variants(input_items_,item_size)
+					variants,attribute_set = cutting_doc.create_variants(input_items_, item_size, self.item)
 					boms,new_variants=cutting_doc.create_boms(input_items_, variants, attribute_set,item_size,colour,piece_count)
 					counter_attr=Counter(cutting_attribute)
 					attr_set=Counter(attribute_set)
@@ -228,7 +299,7 @@ class ItemProductionDetail(Document):
 								input_items_.extend(input_items)
 					process_variants['process_record'] = process.process_record
 					piece_printing_doc = frappe.get_doc('Piece Printing', process.process_record)
-					variants.extend(piece_printing_doc.create_variants(input_items_))
+					variants.extend(piece_printing_doc.create_variants(input_items_, self.item))
 					bom_list,existing_item = piece_printing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count)
 					boms.extend(bom_list)
 					existing_item_list.extend(existing_item)
@@ -318,7 +389,7 @@ class ItemProductionDetail(Document):
 								input_items_.extend(input_items)
 					process_variants['process_record'] = process.process_record
 					label_fusing_doc = frappe.get_doc('Label Fusing', process.process_record)
-					variants.extend(label_fusing_doc.create_variants(input_items_))
+					variants.extend(label_fusing_doc.create_variants(input_items_, self.item))
 					bom_list,existing_item = label_fusing_doc.create_boms(input_items_, variants,cutting_attribute,item_size,colour,piece_count)
 					boms.extend(bom_list)
 					existing_item_list.extend(existing_item)
@@ -553,7 +624,7 @@ def get_existing_process_variants(process_variants,ipd,process,cutting_attribute
 			ipd.append(previous_variants)
 	process_variants['process_record'] = process.process_record
 	process_doc = frappe.get_doc(process.process_name, process.process_record)
-	variants.extend(process_doc.create_variants(list(set(item_list))))
+	variants.extend(process_doc.create_variants(list(set(item_list)), item))
 	bom_list, existing_item= process_doc.create_boms(item_list, variants,cutting_attribute,item_size,colour,piece_count)
 	boms.extend(bom_list)
 	existing_item_list.extend(existing_item)

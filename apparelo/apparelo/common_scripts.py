@@ -12,7 +12,7 @@ def customize_pf_item_code(item_template, attribute_set, variant_attr, variant):
 		if dia in variant_attr["Dia"]:
 			if not dia+" Dia" in variant:
 				hash_=hashlib.sha256(variant.replace(item_template,"").encode()).hexdigest()
-				new_variant=item_template+'-'+variant_attr["Dia"][0]+' Dia'+'-'+variant_attr["Apparelo Colour"][0]+'-'+variant_attr["Knitting Type"][0]
+				new_variant=item_template+'-'+variant_attr["Dia"][0]+' Dia'+'-'+variant_attr["Apparelo Colour"][0].upper()+'-'+variant_attr["Knitting Type"][0].upper()
 				doc=frappe.get_doc("Item",variant)
 				doc.print_code=new_variant
 				doc.save()
