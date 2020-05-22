@@ -6,19 +6,10 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "additional_information",
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
-  },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
@@ -38,7 +29,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-05-22 13:34:15.518779",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Checking",

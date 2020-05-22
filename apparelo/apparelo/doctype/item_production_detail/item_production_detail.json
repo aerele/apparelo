@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
+  "based_on_style",
   "size",
   "colour",
   "style",
@@ -126,11 +127,17 @@
    "fieldtype": "Check",
    "label": "IPD Submission Done",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "based_on_style",
+   "fieldtype": "Check",
+   "label": "Based on style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-17 00:45:16.852360",
+ "modified": "2020-05-21 23:29:13.790075",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",

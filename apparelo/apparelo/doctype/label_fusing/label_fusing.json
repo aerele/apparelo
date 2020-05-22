@@ -6,9 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "part",
-  "based_on_style",
   "additional_information",
   "section_break_4",
   "enable_additional_parts",
@@ -46,13 +44,6 @@
    "fieldtype": "Table",
    "label": "Additional Parts",
    "options": "Stitching Additional Part"
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
   },
   {
    "allow_on_submit": 1,
@@ -182,17 +173,11 @@
    "fieldtype": "Table MultiSelect",
    "label": "Size Additional Items",
    "options": "Additional Item"
-  },
-  {
-   "default": "0",
-   "fieldname": "based_on_style",
-   "fieldtype": "Check",
-   "label": "Based On Style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-05 12:39:22.256807",
+ "modified": "2020-05-22 13:30:58.060296",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Label Fusing",

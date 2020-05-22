@@ -6,7 +6,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "section_break_2",
   "parts",
   "get_piece_colour",
@@ -59,14 +58,6 @@
    "fieldtype": "Table",
    "label": "Additional Parts",
    "options": "Stitching Additional Part"
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
   },
   {
    "collapsible": 1,
@@ -238,7 +229,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-05-22 13:33:24.634622",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching",

@@ -10,9 +10,6 @@ from erpnext.controllers.item_variant import generate_keyed_value_combinations, 
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
 
 class Ironing(Document):
-	def on_submit(self):
-		create_item_template(self)
-
 	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
 		input_items = []
 		for input_item_name in input_item_names:
@@ -22,7 +19,7 @@ class Ironing(Document):
 			attribute_set.pop('Apparelo Colour')
 			variants = create_variants(item, attribute_set)
 		else:
-			variants = create_variants(self.item+" Ironed Cloth", attribute_set)
+			variants = create_variants(item+" Ironed Cloth", attribute_set)
 		return list(set(variants))
 
 	def create_boms(self, input_item_names, variants, colours, attribute_set=None, item_size=None, piece_count=None, final_item=None, final_process=None):
@@ -65,25 +62,3 @@ class Ironing(Document):
 			else:
 				boms.append(existing_bom)
 		return boms
-
-def create_item_template(self):
-	if not frappe.db.exists("Item",self.item+" Ironed Cloth"):
-		frappe.get_doc({
-		"doctype": "Item",
-		"item_code": self.item+" Ironed Cloth",
-		"item_name": self.item+" Ironed Cloth",
-		"description":self.item+" Ironed Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Nos",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes" : [
-			{
-				"attribute" : "Apparelo Colour"
-			},
-			{
-				"attribute" : "Apparelo Size"
-			}
-		]
-		}).save()
