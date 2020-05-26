@@ -16,18 +16,13 @@ from apparelo.apparelo.utils.item_utils import (
 
 
 class Packing(Document):
-	def on_submit(self):
-		create_item_template(self)
-
 	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
-		piece_count=len(colour)
 		input_items = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(
 			list(map(lambda x: x.attributes, input_items)))
 		if "Apparelo Colour" in attribute_set:
-			piece_count = len(attribute_set["Apparelo Colour"])
 			attribute_set.pop('Apparelo Colour')
 		variants = create_variants(item, attribute_set)
 		return variants
@@ -208,12 +203,12 @@ def create_combo_variant(final_item, colours, size):
 	for size_ in size:
 		for attribute_ in colours:
 			attr = ''
-			for color in attribute_:
+			for color in sorted(attribute_):
 				attr += color+","
-			count += 1
 			combo = []
 			for value in item_attribute.item_attribute_values:
 				combo.append(value.attribute_value)
+			count = len(combo)+1
 			if attr[:-1]not in combo:
 				item_attribute.append('item_attribute_values', {
 					"attribute_value": attr[:-1],
@@ -250,29 +245,6 @@ def create_item_combo_template(final_item):
 			"attributes": [
 				{
 					"attribute": "Combo"
-				},
-				{
-					"attribute": "Apparelo Size"
-				}
-			]
-		}).save()
-
-
-def create_item_template(self):
-	if not frappe.db.exists("Item", self.item+" Packed Cloth"):
-		frappe.get_doc({
-			"doctype": "Item",
-			"item_code": self.item+" Packed Cloth",
-			"item_name": self.item+" Packed Cloth",
-			"description": self.item+" Packed Cloth",
-			"item_group": "Sub Assemblies",
-			"stock_uom": "Nos",
-			"has_variants": "1",
-			"variant_based_on": "Item Attribute",
-			"is_sub_contracted_item": "1",
-			"attributes": [
-				{
-					"attribute": "Apparelo Colour"
 				},
 				{
 					"attribute": "Apparelo Size"

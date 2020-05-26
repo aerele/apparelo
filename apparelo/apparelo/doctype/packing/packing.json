@@ -6,7 +6,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "additional_information",
   "conversion_details_section",
   "input_qty",
@@ -36,14 +35,6 @@
   "amended_from"
  ],
  "fields": [
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item",
-   "options": "Item",
-   "reqd": 1
-  },
   {
    "fieldname": "conversion_details_section",
    "fieldtype": "Section Break",
@@ -225,7 +216,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-05-22 13:36:05.192834",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Packing",

@@ -16,11 +16,11 @@ from collections import Counter
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
-		create_item_template(self)
 
-	def create_variants(self, input_item_names,size):
+	def create_variants(self, input_item_names, size, item):
 		cutting_attribute={}
 		input_items = []
+		cutting_size = []
 		for input_item_name in set(input_item_names):
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
@@ -29,6 +29,7 @@ class Cutting(Document):
 			parts = set(self.get_attribute_values("Part"))
 			variant_attribute_set = {}
 			for part in parts:
+				new_cutting_size = []
 				variant_attribute_set['Part'] = []
 				part_=frappe.get_doc("Apparelo Part",part)
 				if part_.is_combined:
@@ -37,23 +38,24 @@ class Cutting(Document):
 				else:
 					variant_attribute_set['Part'].append(part)
 				variant_attribute_set['Apparelo Colour'] = self.get_attribute_values('Apparelo Colour', part)
-				cutting_size=self.get_attribute_values('Apparelo Size', part)
+				cutting_size = self.get_attribute_values('Apparelo Size', part)
 				if self.based_on_style==1:
 					style=self.get_attribute_values('Apparelo Style',part)
 					variant_attribute_set['Apparelo Style'] = style
-				size.sort()
-				cutting_size.sort()
-				if cutting_size==size:
-					variant_attribute_set['Apparelo Size'] = cutting_size
-					variants.extend(create_variants(self.item+" Cut Cloth", variant_attribute_set))
+				if cutting_size:
+					for apparelo_size in cutting_size:
+						if apparelo_size in size:
+							new_cutting_size.append(apparelo_size)
+						else:
+							frappe.throw(_("Size is not available"))
+					variant_attribute_set['Apparelo Size'] = new_cutting_size
+					variants.extend(create_variants(item+" Cut Cloth", variant_attribute_set))
 					counter_attr=Counter(cutting_attribute)
 					attr_set=Counter(variant_attribute_set)
 					counter_attr.update(attr_set)
 					cutting_attribute=dict(counter_attr)
 					for value in cutting_attribute:
 						cutting_attribute[value]=list(set(cutting_attribute[value]))
-				else:
-					frappe.throw(_("Size is not available"))
 		else:
 			frappe.throw(_("Cutting has more colours or Dia that is not available in the input"))
 		return list(set(variants)),cutting_attribute
@@ -151,61 +153,6 @@ def create_item_attribute():
 			"attribute_name": "Apparelo Size",
 			"item_attribute_values": []
 		}).save()
-
-def create_item_template(self):
-	if self.based_on_style==0:
-		if not frappe.db.exists("Item", self.item+" Cut Cloth"):
-			item = frappe.get_doc({
-				"doctype": "Item",
-				"item_code": self.item+" Cut Cloth",
-				"item_name": self.item+" Cut Cloth",
-				"description":self.item+" Cut Cloth",
-				"item_group": "Sub Assemblies",
-				"stock_uom" : "Nos",
-				"has_variants" : "1",
-				"variant_based_on" : "Item Attribute",
-				"is_sub_contracted_item": "1",
-				"attributes" : [
-					{
-						"attribute" : "Apparelo Colour"
-					},
-					{
-						"attribute" : "Part"
-					},
-					{
-						"attribute" : "Apparelo Size"
-					}
-				]
-			})
-			item.save()
-	else:
-		if not frappe.db.exists("Item", self.item+" Cut Cloth"):
-			item = frappe.get_doc({
-				"doctype": "Item",
-				"item_code": self.item+" Cut Cloth",
-				"item_name": self.item+" Cut Cloth",
-				"description":self.item+" Cut Cloth",
-				"item_group": "Sub Assemblies",
-				"stock_uom" : "Nos",
-				"has_variants" : "1",
-				"variant_based_on" : "Item Attribute",
-				"is_sub_contracted_item": "1",
-				"attributes" : [
-					{
-						"attribute" : "Apparelo Colour"
-					},
-					{
-						"attribute" : "Part"
-					},
-					{
-						"attribute" : "Apparelo Size"
-					},
-					{
-						"attribute" : "Apparelo Style"
-					}
-				]
-			})
-			item.save()
 
 
 @frappe.whitelist()

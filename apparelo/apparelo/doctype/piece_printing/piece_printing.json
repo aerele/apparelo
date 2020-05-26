@@ -6,9 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "part",
-  "based_on_style",
   "additional_information",
   "amended_from"
  ],
@@ -19,13 +17,6 @@
    "in_list_view": 1,
    "label": "Part",
    "options": "Apparelo Part",
-   "reqd": 1
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "label": "Item",
-   "options": "Item",
    "reqd": 1
   },
   {
@@ -43,17 +34,11 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
-  },
-  {
-   "default": "0",
-   "fieldname": "based_on_style",
-   "fieldtype": "Check",
-   "label": "Based On Style"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-05 12:40:13.449967",
+ "modified": "2020-05-22 13:32:21.193471",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Piece Printing",

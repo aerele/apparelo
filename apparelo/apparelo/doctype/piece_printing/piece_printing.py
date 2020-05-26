@@ -11,10 +11,8 @@ from erpnext.controllers.item_variant import generate_keyed_value_combinations, 
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 
 class PiecePrinting(Document):
-	def on_submit(self):
-		create_item_template(self)
 
-	def create_variants(self, input_item_names):
+	def create_variants(self, input_item_names, item):
 		input_items = []
 		for input_item_name in input_item_names:
 			input_item_name_doc=frappe.get_doc("Item",input_item_name)
@@ -23,7 +21,7 @@ class PiecePrinting(Document):
 				input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
 		variants = []
-		variants.extend(create_variants(self.item+" Printed Cloth", attribute_set))
+		variants.extend(create_variants(item+" Printed Cloth", attribute_set))
 		return variants
 
 	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour_list,piece_count):
@@ -61,45 +59,3 @@ class PiecePrinting(Document):
 			else:
 				boms.append(existing_bom)
 		return boms, input_item_list
-
-def create_item_template(self):
-	if self.based_on_style == 0:
-		attribute = [
-					{
-						"attribute" : "Apparelo Colour"
-					},
-					{
-						"attribute" : "Part"
-					},
-					{
-						"attribute" : "Apparelo Size"
-					}
-				]
-	else:
-		attribute = [
-					{
-						"attribute" : "Apparelo Colour"
-					},
-					{
-						"attribute" : "Part"
-					},
-					{
-						"attribute" : "Apparelo Size"
-					},
-					{
-						"attribute" : "Apparelo Style"
-					}
-				]
-	if not frappe.db.exists("Item",self.item+" Printed Cloth"):
-		frappe.get_doc({
-		"doctype": "Item",
-		"item_code": self.item+" Printed Cloth",
-		"item_name": self.item+" Printed Cloth",
-		"description":self.item+" Printed Cloth",
-		"item_group": "Sub Assemblies",
-		"stock_uom" : "Nos",
-		"has_variants" : "1",
-		"variant_based_on" : "Item Attribute",
-		"is_sub_contracted_item": "1",
-		"attributes" : attribute
-	}).save()

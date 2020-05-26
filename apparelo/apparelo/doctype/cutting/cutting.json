@@ -6,7 +6,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "item",
   "section_break_3",
   "parts",
   "get_size_combination",
@@ -32,14 +31,6 @@
    "fieldtype": "Table",
    "label": "Details",
    "options": "Cutting Detail"
-  },
-  {
-   "fieldname": "item",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Item ",
-   "options": "Item",
-   "reqd": 1
   },
   {
    "fieldname": "colour_mapping",
@@ -143,7 +134,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-05-22 13:27:24.260625",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",

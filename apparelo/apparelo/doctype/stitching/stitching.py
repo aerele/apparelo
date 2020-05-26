@@ -12,9 +12,6 @@ from erpnext.controllers.item_variant import generate_keyed_value_combinations, 
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
 
 class Stitching(Document):
-	def on_submit(self):
-		create_item_template(self)
-
 	def create_variants(self, input_item_names,colour,item,final_process):
 		colour.sort()
 		input_items = []
@@ -74,7 +71,7 @@ class Stitching(Document):
 			variant_attribute_set.pop('Apparelo Colour')
 			variants.extend(create_variants(item, variant_attribute_set))
 		else:
-			variants.extend(create_variants(self.item+" Stitched Cloth", variant_attribute_set))
+			variants.extend(create_variants(item+" Stitched Cloth", variant_attribute_set))
 		return list(set(variants))
 
 	def validate_attribute_values(self, attribute_name, input_attribute_values):
@@ -142,29 +139,6 @@ class Stitching(Document):
 			else:
 				boms.append(existing_bom)
 		return boms
-
-def create_item_template(self):
-	if not frappe.db.exists("Item", self.item+" Stitched Cloth"):
-		item = frappe.get_doc({
-			"doctype": "Item",
-			"item_code": self.item+" Stitched Cloth",
-			"item_name": self.item+" Stitched Cloth",
-			"description":self.item+" Stitched Cloth",
-			"item_group": "Sub Assemblies",
-			"stock_uom" : "Nos",
-			"has_variants" : "1",
-			"variant_based_on" : "Item Attribute",
-			"is_sub_contracted_item": "1",
-			"attributes" : [
-				{
-					"attribute" : "Apparelo Colour"
-				},
-				{
-					"attribute" : "Apparelo Size"
-				}
-			]
-		})
-		item.save()
 
 @frappe.whitelist()
 def get_piece_colour_combination(doc):
