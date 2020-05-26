@@ -200,11 +200,11 @@ class DC(Document):
 				{
 					"dimension": (None, 'Apparelo Size'),
 					"group_by": [],
-					"attribute_list": [ 'Apparelo Size']
+					"attribute_list": ['Apparelo Size']
 				}
 			]
 		}
-		return gp_list[self.process_1]
+		return gp_list[self.process_1] if self.process_1 in gp_list else []
 
 	def validate_delivery(self):
 		for item in self.items:

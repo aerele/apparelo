@@ -121,9 +121,9 @@ def generate_printable_list(items, grouping_params):
 			grouping_param = next(param for param in grouping_params if sort_and_return(param['attribute_list']) == list(attribute_list))
 		except StopIteration:
 			grouping_param = {
-			"dimension": (None, None),
-			"group_by": [],
-			"attribute_list": attribute_list}
+				"dimension": (None, None),
+				"group_by": [],
+				"attribute_list": attribute_list}
 		group_by = grouping_param['group_by']
 		dimension = grouping_param['dimension']
 		for key, group2 in groupby_unsorted(list(group), key=lambda x: get_values_as_tuple(x, group_by)):
