@@ -34,3 +34,16 @@ def set_custom_fields(update=True):
 			]
 		}
 	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
+
+def se_custom_field(update=True):
+	custom_fields = {
+		'Stock Entry': [
+			{
+				"fieldname": "dc",
+				"fieldtype": "Link",
+				"label": "DC",
+				"options": "DC"
+			}
+		]
+		}
+	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
