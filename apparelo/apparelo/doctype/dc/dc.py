@@ -469,7 +469,10 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		# TODO: What will happen if an item has been made out of multiple raw materials?
 		for rm in item_to_be_received['raw_materials']:
 			# if item_to_be_received['qty'] >= rm['supply_qty']:
-			item_to_be_received['qty'] = rm['supply_qty']
+			if 'supply_qty' in rm:
+				item_to_be_received['qty'] = rm['supply_qty']
+			else:
+				item_to_be_received['qty'] = 0
 		
 		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
 			item_to_be_received['qty'] = int(item_to_be_received['qty'])
@@ -618,3 +621,53 @@ def calculate_expected_qty_from_delivery_qty(doc):
 				return_item['qty'] = item_to_be_received['qty']
 
 	return return_items
+
+@frappe.whitelist()
+def duplicate_values(doc):
+	dc_items = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('items'):
+		field_dict = {'Available Qty':'available_quantity','Delivery Qty':'quantity','Secondary Qty':'secondary_qty'}
+		if doc.from_field in field_dict and doc.to_field in field_dict:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],field_dict[doc.from_field]:item[field_dict[doc.from_field]],field_dict[doc.to_field]:item[field_dict[doc.from_field]],"primary_uom":item['primary_uom'],"secondary_uom":item['secondary_uom']}
+			if item['deliver_later']:
+				item_dict["deliver_later"] = item['deliver_later']
+				item_dict["delivery_location"] = item['delivery_location']
+		field_dict.pop(doc.from_field)
+		field_dict.pop(doc.to_field)
+		if list(field_dict.values())[0] in item:
+			item_dict[list(field_dict.values())[0]]	= item[list(field_dict.values())[0]]
+		dc_items.append(item_dict)
+	return dc_items
+
+@frappe.whitelist()
+def delete_unavailable_delivery_items(doc):
+	dc_available_items = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('items'):
+		item_dict={}
+		if item['available_quantity']!=0:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"available_quantity":item['available_quantity'],"quantity":item['quantity'],"primary_uom":item['primary_uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+			if item['deliver_later']:
+				item_dict["deliver_later"] = item['deliver_later']
+				item_dict["delivery_location"] = item['delivery_location']
+		if item_dict:
+			dc_available_items.append(item_dict)
+	return dc_available_items
+
+@frappe.whitelist()
+def delete_unavailable_return_items(doc):
+	available_return_items = []
+	if isinstance(doc, string_types):
+    		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('return_materials'):
+		item_dict={}
+		if item['qty']!=0:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":item['qty'],"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+			if 'additional_parameters' in item:
+				item_dict["additional_parameters"] = item['additional_parameters']
+		if item_dict:
+			available_return_items.append(item_dict)
+	return available_return_items

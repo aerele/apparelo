@@ -13,10 +13,18 @@
   "location",
   "expect_return_items_at",
   "get_items",
+  "enable_duplicate_field",
+  "section_break_9",
+  "from_field",
+  "to_field",
+  "duplicate",
+  "section_break_13",
   "items",
+  "delete_unavailable_delivery_items",
   "get_return_item",
   "section_break_5",
   "return_materials",
+  "delete_unavailable_return_items",
   "calculate_delivery_quantity",
   "printable_section_section",
   "address_and_contact_section",
@@ -170,11 +178,51 @@
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_duplicate_field",
+   "fieldtype": "Check",
+   "label": "Enable Duplicate Field"
+  },
+  {
+   "depends_on": "eval:doc.enable_duplicate_field==1",
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "from_field",
+   "fieldtype": "Select",
+   "label": "From Field"
+  },
+  {
+   "fieldname": "to_field",
+   "fieldtype": "Select",
+   "label": "To Field"
+  },
+  {
+   "fieldname": "duplicate",
+   "fieldtype": "Button",
+   "label": "Duplicate"
+  },
+  {
+   "fieldname": "section_break_13",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "delete_unavailable_delivery_items",
+   "fieldtype": "Button",
+   "label": "Delete Unavailable Delivery Items"
+  },
+  {
+   "fieldname": "delete_unavailable_return_items",
+   "fieldtype": "Button",
+   "label": "Delete Unavailable Return Items"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-20 17:39:15.362085",
+ "modified": "2020-05-30 14:28:42.689090",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
