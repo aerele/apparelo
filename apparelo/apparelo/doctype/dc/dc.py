@@ -466,6 +466,12 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		item_to_be_received['item_code'] = item_to_be_received['item']
 		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
 
+		for attr in item.attributes:
+			if attr.attribute == "Apparelo Size":
+				item_to_be_received['attribute'] = attr.attribute_value
+			if attr.attribute == "Dia":
+				item_to_be_received['attribute'] = attr.attribute_value
+
 		# TODO: What will happen if an item has been made out of multiple raw materials?
 		for rm in item_to_be_received['raw_materials']:
 			# if item_to_be_received['qty'] >= rm['supply_qty']:
@@ -494,6 +500,8 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		if not use_delivery_qty:
 			item_to_be_received['projected_qty'] = item_to_be_received['qty']
 			item_to_be_received['qty'] = 0
+	
+	items_to_be_received = sorted(items_to_be_received, key = lambda i: i['attribute']) 
 
 	return items_to_be_received
 
@@ -671,3 +679,31 @@ def delete_unavailable_return_items(doc):
 		if item_dict:
 			available_return_items.append(item_dict)
 	return available_return_items
+
+@frappe.whitelist()
+def make_entry(doc):
+	return_items_after_entry = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	items_to_be_sent = get_ipd_item(doc)
+	items_to_be_received = get_expected_items_in_return(doc, items_to_be_sent=items_to_be_sent, use_delivery_qty=False)
+	size = doc.size
+	colour = doc.colour
+	piece_count = doc.piece_count	
+	for item in items_to_be_received:
+		item_dict={}
+		count=0
+		item_doc = frappe.get_doc('Item', item['item_code'])
+		for attr in item_doc.attributes:
+			if attr.attribute == "Apparelo Size":
+				if attr.attribute_value == size:
+					count+=1
+			if attr.attribute == "Apparelo Colour":
+				if attr.attribute_value == colour:
+					count+=1
+		if count==2:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+			if 'additional_parameters' in item:
+				item_dict["additional_parameters"] = item['additional_parameters']
+			return_items_after_entry.append(item_dict)
+	return return_items_after_entry

@@ -13,15 +13,21 @@
   "location",
   "expect_return_items_at",
   "get_items",
-  "enable_duplicate_field",
+  "helper_section",
+  "select_helper",
   "section_break_9",
   "from_field",
   "to_field",
-  "duplicate",
+  "copy_over",
   "section_break_13",
   "items",
   "delete_unavailable_delivery_items",
   "get_return_item",
+  "section_break_18",
+  "colour",
+  "size",
+  "piece_count",
+  "make_entry",
   "section_break_5",
   "return_materials",
   "delete_unavailable_return_items",
@@ -180,15 +186,10 @@
    "options": "Company"
   },
   {
-   "default": "0",
-   "fieldname": "enable_duplicate_field",
-   "fieldtype": "Check",
-   "label": "Enable Duplicate Field"
-  },
-  {
-   "depends_on": "eval:doc.enable_duplicate_field==1",
+   "depends_on": "eval:doc.select_helper=='Copy Over'",
    "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Copy Over Section"
   },
   {
    "fieldname": "from_field",
@@ -199,11 +200,6 @@
    "fieldname": "to_field",
    "fieldtype": "Select",
    "label": "To Field"
-  },
-  {
-   "fieldname": "duplicate",
-   "fieldtype": "Button",
-   "label": "Duplicate"
   },
   {
    "fieldname": "section_break_13",
@@ -218,11 +214,69 @@
    "fieldname": "delete_unavailable_return_items",
    "fieldtype": "Button",
    "label": "Delete Unavailable Return Items"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "helper_section",
+   "fieldtype": "Section Break",
+   "label": "Helper Section",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "fieldname": "select_helper",
+   "fieldtype": "Select",
+   "label": "Select Helper",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "depends_on": "eval:doc.process_1==\"Cutting\"",
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "Cutting Section",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Link",
+   "label": "Colour",
+   "options": "Apparelo Colour",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Link",
+   "label": "Size",
+   "options": "Apparelo Size",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "fieldname": "piece_count",
+   "fieldtype": "Float",
+   "label": "Piece Count",
+   "show_days": 1,
+   "show_seconds": 1
+  },
+  {
+   "fieldname": "copy_over",
+   "fieldtype": "Button",
+   "label": "Copy Over"
+  },
+  {
+   "fieldname": "make_entry",
+   "fieldtype": "Button",
+   "label": "Make Entry",
+   "show_days": 1,
+   "show_seconds": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-30 14:28:42.689090",
+ "modified": "2020-06-01 20:43:48.162172",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",

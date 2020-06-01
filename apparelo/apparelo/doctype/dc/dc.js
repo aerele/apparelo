@@ -4,6 +4,7 @@
 frappe.ui.form.on('DC', {
 	onload: function(frm) {
 		frm.set_value("company",frappe.defaults.get_default("company"));
+		frm.set_df_property("select_helper","options",['','Copy Over'].join('\n'))
 		frm.set_df_property("from_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
 		frm.set_df_property("to_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
 		frm.set_query("supplier", function() {
@@ -31,7 +32,7 @@ frappe.ui.form.on('DC', {
 			}
 		});
 	},
-	duplicate:function(frm){
+	copy_over:function(frm){
 		const set_fields = ['deliver_later','pf_item_code','item_code','available_quantity','quantity','primary_uom','secondary_qty','secondary_uom','delivery_location'];
 		frappe.call({
 			method: "apparelo.apparelo.doctype.dc.dc.duplicate_values",
@@ -52,6 +53,30 @@ frappe.ui.form.on('DC', {
 				refresh_field('items');
 			}
 		});
+	},
+	make_entry:function(frm){
+		const set_fields = ['item_code', 'uom', 'qty', 'projected_qty', 'secondary_uom', 'additional_parameters', 'pf_item_code', 'bom'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.make_entry",
+			freeze: true,
+			args: {
+				doc: frm.doc
+			},
+			callback: function(r) {
+				if(r.message) {
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
+		});
+
 	},
 	supplier:function(frm){
 		if (frm.doc.supplier)
@@ -234,7 +259,7 @@ var update_company_address = function(frm){
 }
 
 var update_supplier_and_company_address = function(frm,address_name,address_field){
-	if(address_field) {
+	if(address_name) {
 		frappe.call({
 			method: "frappe.contacts.doctype.address.address.get_address_display",
 			args: {"address_dict": address_name},
@@ -243,7 +268,7 @@ var update_supplier_and_company_address = function(frm,address_name,address_fiel
 			}
 		})
 	}
-	if(!address_field){
+	if(!address_name){
 		frm.set_value(address_field, "");
 	}
 }
