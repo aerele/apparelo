@@ -49,6 +49,7 @@ class DC(Document):
 			rm_items.append(item_list)
 		stock_dict = make_rm_stock_entry(new_po.name, json.dumps(rm_items))
 		stock_entry = frappe.get_doc(stock_dict)
+		stock_entry.dc = self.name
 		stock_entry.save()
 		stock_entry.submit()
 
@@ -57,6 +58,10 @@ class DC(Document):
 		msgprint(_("{0} created").format(comma_and(
 			"""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock_entry.name, stock_entry.name))))
 
+	def on_cancel(self):
+		self.db_set("docstatus",2)
+		msgprint(_("{0} cancelled").format(comma_and("""<a href="#Form/DC/{0}">{1}</a>""".format(self.name, self.name))))
+		
 	def create_purchase_order(self):
 		dc_items = []
 		lot_warehouse = frappe.db.get_value("Warehouse", {
@@ -200,11 +205,11 @@ class DC(Document):
 				{
 					"dimension": (None, 'Apparelo Size'),
 					"group_by": [],
-					"attribute_list": [ 'Apparelo Size']
+					"attribute_list": ['Apparelo Size']
 				}
 			]
 		}
-		return gp_list[self.process_1]
+		return gp_list[self.process_1] if self.process_1 in gp_list else []
 
 	def validate_delivery(self):
 		for item in self.items:

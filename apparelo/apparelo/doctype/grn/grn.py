@@ -12,11 +12,15 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 
 class GRN(Document):
 	def validate(self):
-		self.po=None
 		self.get_po()
 	def on_submit(self):
 		pr=self.create_purchase_receipt()
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
+	
+	def on_cancel(self):
+		self.db_set("docstatus",2)
+		msgprint(_("{0} cancelled").format(comma_and("""<a href="#Form/GRN/{0}">{1}</a>""".format(self.name, self.name))))
+	
 	def create_purchase_receipt(self):
 		item_list=[]
 		lot_warehouse= frappe.db.get_value("Warehouse", {'location': self.location,'lot': self.lot,'warehouse_type':'Actual'},'name')
@@ -31,6 +35,7 @@ class GRN(Document):
 			"is_subcontracted": po_doc.is_subcontracted,
 			"supplier_warehouse": po_doc.supplier_warehouse,
 			"doctype": "Purchase Receipt",
+			"grn": self.name,
 			"items": item_list })
 		pr.save()
 		pr.submit()
