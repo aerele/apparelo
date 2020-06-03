@@ -8,6 +8,7 @@ from frappe.model.document import Document
 from frappe.core.doctype.version.version import get_diff
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant, create_variant
 
+stock_settings_doc = frappe.get_doc("Stock Settings")
 def create_variants(item_template, args):
 	args_set = generate_keyed_value_combinations(args)
 	variants = []
@@ -15,6 +16,7 @@ def create_variants(item_template, args):
 		existing_variant = get_variant(item_template, args=attribute_values)
 		if not existing_variant:
 			variant = create_variant(item_template, attribute_values)
+			variant.over_delivery_receipt_allowance = stock_settings_doc.over_delivery_receipt_allowance
 			variant.save()
 			variants.append(variant.name)
 		else:

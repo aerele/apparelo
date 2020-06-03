@@ -22,7 +22,6 @@ class Compacting(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
-		attribute_set.update(self.get_variant_values())
 		variants = create_variants('Compacted Cloth', attribute_set)
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
@@ -44,7 +43,7 @@ class Compacting(Document):
 				variant_attr = get_attr_dict(variant_doc.attributes)
 				for color in attribute_set['Apparelo Colour']:
 					for dia in self.dia_conversions:
-						if color in input_attr["Apparelo Colour"] and color in variant_attr["Apparelo Colour"] and dia.from_dia in input_attr["Dia"] and dia.to_dia in variant_attr["Dia"]:
+						if color in input_attr["Apparelo Colour"] and color in variant_attr["Apparelo Colour"] and dia.from_dia in input_attr["Dia"] and dia.from_dia in variant_attr["Dia"]:
 							bom_for_variant = frappe.get_doc({
 								"doctype": "BOM",
 								"currency": get_default_currency(),
@@ -74,14 +73,6 @@ class Compacting(Document):
 								else:
 									frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
 		return boms
-
-	def get_variant_values(self):
-		attribute_set = {}
-		variant_to_dia = []
-		for to_dia in self.dia_conversions:
-			variant_to_dia.append(to_dia.to_dia)
-		attribute_set['Dia']=variant_to_dia
-		return attribute_set
 
 def create_item_template():
 	if not frappe.db.exists("Item","Compacted Cloth"):
