@@ -4,6 +4,9 @@
 frappe.ui.form.on('DC', {
 	onload: function(frm) {
 		frm.set_value("company",frappe.defaults.get_default("company"));
+		frm.set_df_property("select_helper","options",['','Copy Over'].join('\n'))
+		frm.set_df_property("from_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
+		frm.set_df_property("to_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
 		frm.set_query("supplier", function() {
 			return {
 				query: "apparelo.apparelo.doctype.dc.dc.get_supplier",
@@ -29,6 +32,52 @@ frappe.ui.form.on('DC', {
 			}
 		});
 	},
+	copy_over:function(frm){
+		const set_fields = ['deliver_later','pf_item_code','item_code','available_quantity','quantity','primary_uom','secondary_qty','secondary_uom','delivery_location'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.duplicate_values",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('items', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('items');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('items');
+			}
+		});
+	},
+	make_entry:function(frm){
+		const set_fields = ['item_code', 'uom', 'qty', 'projected_qty', 'secondary_uom', 'additional_parameters', 'pf_item_code', 'bom'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.make_entry",
+			freeze: true,
+			args: {
+				doc: frm.doc
+			},
+			callback: function(r) {
+				if(r.message) {
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
+		});
+
+	},
 	supplier:function(frm){
 		if (frm.doc.supplier)
 		{
@@ -45,19 +94,22 @@ frappe.ui.form.on('DC', {
 				}
 			})
 		}
+		update_supplier_and_company_address(frm,frm.doc.supplier_address_name, "supplier_address");
 		refresh_field('supplier_address_name');
 	},
 	location:function(frm){
 		update_company_address(frm);
+		update_supplier_and_company_address(frm,frm.doc.company_address_name, "company_address");
 		},
 	company:function(frm){
 		update_company_address(frm);
+		update_supplier_and_company_address(frm,frm.doc.company_address_name, "company_address");
 	},
 	company_address_name: function(frm) {
-		update_supplier_and_company_address(frm.doc.company_address_name, "company_address");
+		update_supplier_and_company_address(frm,frm.doc.company_address_name, "company_address");
 	},
 	supplier_address_name: function(frm) {
-		update_supplier_and_company_address(frm.doc.supplier_address_name, "supplier_address");
+		update_supplier_and_company_address(frm,frm.doc.supplier_address_name, "supplier_address");
 	},
 	
 	get_items:function(frm) {
@@ -119,6 +171,50 @@ frappe.ui.form.on('DC', {
 		});
 
 	},
+	delete_unavailable_delivery_items:function(frm){
+		const set_fields = ['deliver_later','pf_item_code','item_code','available_quantity','quantity','primary_uom','secondary_qty','secondary_uom','delivery_location'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.delete_unavailable_delivery_items",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('items', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('items');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('items');
+			}
+		});
+	},
+	delete_unavailable_return_items:function(frm){
+		const set_fields = ['pf_item_code','item_code','bom','qty','projected_qty','uom','secondary_qty','secondary_uom','additional_parameters'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.delete_unavailable_return_items",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('return_materials', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
+		});
+	},
 	calculate_delivery_quantity:function(frm) {
 		const set_fields =['item_code', 'available_quantity', 'quantity', 'primary_uom', 'secondary_uom', 'secondary_qty', 'pf_item_code'];
 		frappe.call({
@@ -162,19 +258,17 @@ var update_company_address = function(frm){
 	refresh_field('company_address_name');
 }
 
-var update_supplier_and_company_address = function(address_name,address_field){
-	if(address_field) {
+var update_supplier_and_company_address = function(frm,address_name,address_field){
+	if(address_name) {
 		frappe.call({
 			method: "frappe.contacts.doctype.address.address.get_address_display",
-			args: {"address_dict": address_field},
+			args: {"address_dict": address_name},
 			callback: function(r) {
-				if(r.message) {
-					frm.set_value(address_name, r.message.replace(/<\/?[^>]+>/ig, "\n"))
-				}
+				frm.set_value(address_field, r.message);
 			}
 		})
-	} else {
-		frm.set_value(address_name, "");
 	}
-	refresh_field(address_name);
+	if(!address_name){
+		frm.set_value(address_field, "");
+	}
 }
