@@ -13,6 +13,14 @@
   "against_type",
   "against_document",
   "get_items",
+  "enable_total_quantity",
+  "section_break_8",
+  "attribute",
+  "total_quantity_received",
+  "divide_total_quantity",
+  "column_break_11",
+  "attribute_value",
+  "section_break_11",
   "return_materials",
   "amended_from",
   "po"
@@ -86,11 +94,51 @@
    "label": "Location",
    "options": "Location",
    "reqd": 1
+  },
+  {
+   "depends_on": "eval:doc.enable_total_quantity == 1",
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_total_quantity",
+   "fieldtype": "Check",
+   "label": "Enable Total Quantity"
+  },
+  {
+   "fieldname": "divide_total_quantity",
+   "fieldtype": "Button",
+   "label": "Divide Total Quantity"
+  },
+  {
+   "fieldname": "total_quantity_received",
+   "fieldtype": "Float",
+   "label": "Total Quantity Received"
+  },
+  {
+   "fieldname": "column_break_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attribute",
+   "fieldtype": "Link",
+   "label": "Attribute",
+   "options": "Item Attribute"
+  },
+  {
+   "fieldname": "attribute_value",
+   "fieldtype": "Select",
+   "label": "Attribute Value"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 22:34:51.639348",
+ "modified": "2020-05-28 22:23:11.157135",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",
