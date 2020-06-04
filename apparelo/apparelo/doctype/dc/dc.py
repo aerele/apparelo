@@ -49,6 +49,7 @@ class DC(Document):
 			rm_items.append(item_list)
 		stock_dict = make_rm_stock_entry(new_po.name, json.dumps(rm_items))
 		stock_entry = frappe.get_doc(stock_dict)
+		stock_entry.dc = self.name
 		stock_entry.save()
 		stock_entry.submit()
 
@@ -57,6 +58,10 @@ class DC(Document):
 		msgprint(_("{0} created").format(comma_and(
 			"""<a href="#Form/Stock Entry/{0}">{1}</a>""".format(stock_entry.name, stock_entry.name))))
 
+	def on_cancel(self):
+		self.db_set("docstatus",2)
+		msgprint(_("{0} cancelled").format(comma_and("""<a href="#Form/DC/{0}">{1}</a>""".format(self.name, self.name))))
+		
 	def create_purchase_order(self):
 		dc_items = []
 		lot_warehouse = frappe.db.get_value("Warehouse", {
@@ -200,11 +205,11 @@ class DC(Document):
 				{
 					"dimension": (None, 'Apparelo Size'),
 					"group_by": [],
-					"attribute_list": [ 'Apparelo Size']
+					"attribute_list": ['Apparelo Size']
 				}
 			]
 		}
-		return gp_list[self.process_1]
+		return gp_list[self.process_1] if self.process_1 in gp_list else []
 
 	def validate_delivery(self):
 		for item in self.items:
@@ -466,10 +471,19 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		item_to_be_received['item_code'] = item_to_be_received['item']
 		item_to_be_received['qty'] = receivable_list[item_to_be_received['item_code']]
 
+		for attr in item.attributes:
+			if attr.attribute == "Apparelo Size":
+				item_to_be_received['attribute'] = attr.attribute_value
+			if attr.attribute == "Dia":
+				item_to_be_received['attribute'] = attr.attribute_value
+
 		# TODO: What will happen if an item has been made out of multiple raw materials?
 		for rm in item_to_be_received['raw_materials']:
 			# if item_to_be_received['qty'] >= rm['supply_qty']:
-			item_to_be_received['qty'] = rm['supply_qty']
+			if 'supply_qty' in rm:
+				item_to_be_received['qty'] = rm['supply_qty']
+			else:
+				item_to_be_received['qty'] = 0
 		
 		if frappe.db.get_value('UOM', item.stock_uom, 'must_be_whole_number'):
 			item_to_be_received['qty'] = int(item_to_be_received['qty'])
@@ -491,6 +505,8 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		if not use_delivery_qty:
 			item_to_be_received['projected_qty'] = item_to_be_received['qty']
 			item_to_be_received['qty'] = 0
+	
+	items_to_be_received = sorted(items_to_be_received, key = lambda i: i['attribute']) 
 
 	return items_to_be_received
 
@@ -618,3 +634,81 @@ def calculate_expected_qty_from_delivery_qty(doc):
 				return_item['qty'] = item_to_be_received['qty']
 
 	return return_items
+
+@frappe.whitelist()
+def duplicate_values(doc):
+	dc_items = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('items'):
+		field_dict = {'Available Qty':'available_quantity','Delivery Qty':'quantity','Secondary Qty':'secondary_qty'}
+		if doc.from_field in field_dict and doc.to_field in field_dict:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],field_dict[doc.from_field]:item[field_dict[doc.from_field]],field_dict[doc.to_field]:item[field_dict[doc.from_field]],"primary_uom":item['primary_uom'],"secondary_uom":item['secondary_uom']}
+			if item['deliver_later']:
+				item_dict["deliver_later"] = item['deliver_later']
+				item_dict["delivery_location"] = item['delivery_location']
+		field_dict.pop(doc.from_field)
+		field_dict.pop(doc.to_field)
+		if list(field_dict.values())[0] in item:
+			item_dict[list(field_dict.values())[0]]	= item[list(field_dict.values())[0]]
+		dc_items.append(item_dict)
+	return dc_items
+
+@frappe.whitelist()
+def delete_unavailable_delivery_items(doc):
+	dc_available_items = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('items'):
+		item_dict={}
+		if item['available_quantity']!=0:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"available_quantity":item['available_quantity'],"quantity":item['quantity'],"primary_uom":item['primary_uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+			if item['deliver_later']:
+				item_dict["deliver_later"] = item['deliver_later']
+				item_dict["delivery_location"] = item['delivery_location']
+		if item_dict:
+			dc_available_items.append(item_dict)
+	return dc_available_items
+
+@frappe.whitelist()
+def delete_unavailable_return_items(doc):
+	available_return_items = []
+	if isinstance(doc, string_types):
+    		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('return_materials'):
+		item_dict={}
+		if item['qty']!=0:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":item['qty'],"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+			if 'additional_parameters' in item:
+				item_dict["additional_parameters"] = item['additional_parameters']
+		if item_dict:
+			available_return_items.append(item_dict)
+	return available_return_items
+
+@frappe.whitelist()
+def make_entry(doc):
+	return_items_after_entry = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	items_to_be_sent = get_ipd_item(doc)
+	items_to_be_received = get_expected_items_in_return(doc, items_to_be_sent=items_to_be_sent, use_delivery_qty=False)
+	size = doc.size
+	colour = doc.colour
+	piece_count = doc.piece_count	
+	for item in items_to_be_received:
+		item_dict={}
+		count=0
+		item_doc = frappe.get_doc('Item', item['item_code'])
+		for attr in item_doc.attributes:
+			if attr.attribute == "Apparelo Size":
+				if attr.attribute_value == size:
+					count+=1
+			if attr.attribute == "Apparelo Colour":
+				if attr.attribute_value == colour:
+					count+=1
+		if count==2:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+			if 'additional_parameters' in item:
+				item_dict["additional_parameters"] = item['additional_parameters']
+			return_items_after_entry.append(item_dict)
+	return return_items_after_entry

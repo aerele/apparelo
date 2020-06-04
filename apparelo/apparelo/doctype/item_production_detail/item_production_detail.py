@@ -16,7 +16,6 @@ from frappe.utils.background_jobs import enqueue
 
 class ItemProductionDetail(Document):
 	def on_submit(self):
-		self.create_item_templates()
 		if self.ipd_submission_done:
 			return
 		self.validate_process_records()
@@ -636,6 +635,7 @@ def get_existing_process_variants(process_variants,ipd,process,cutting_attribute
 def submit_ipd(ipd):
 	try:
 		ipd_doc = frappe.get_doc("Item Production Detail", ipd)
+		item_templates=ipd_doc.create_item_templates()
 		ipd_list=ipd_doc.create_process_details()
 		ipd_item_mapping(ipd_list,ipd_doc.name,ipd_doc.item)
 		ipd_bom_mapping(ipd_list,ipd_doc.name,ipd_doc.item)
