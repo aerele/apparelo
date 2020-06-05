@@ -12,13 +12,14 @@ class AppareloPart(Document):
 		self.create_attribute_value()
 	def create_attribute_value(self):
 		item_attribute=frappe.get_doc("Item Attribute","Part")
-		part=[]  
+		part=[]
+		part_name = self.part_name.strip()
 		for value in item_attribute.item_attribute_values:
 			part.append(value.attribute_value)
-		if not self.part_name in part:
+		if not part_name in part:
 			item_attribute.append('item_attribute_values',{
-				"attribute_value" : self.part_name,
-				"abbr" : self.part_name
+				"attribute_value" : part_name,
+				"abbr" : part_name
 			})
 			item_attribute.save()
 @frappe.whitelist()
