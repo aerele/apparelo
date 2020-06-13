@@ -30,90 +30,124 @@
    "fieldname": "details",
    "fieldtype": "Table",
    "label": "Details",
-   "options": "Cutting Detail"
+   "options": "Cutting Detail",
+   "reqd": 1,
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "colour_mapping",
    "fieldtype": "Table",
    "label": "Colour Mapping",
-   "options": "Cutting colour details"
+   "options": "Cutting colour details",
+   "reqd": 1,
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "column_break_4",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.__islocal",
    "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "section_break_3",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "section_break_7",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "parts",
    "fieldtype": "Table MultiSelect",
    "label": "Parts",
-   "options": "Cutting Part"
+   "options": "Cutting Part",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "sizes",
    "fieldtype": "Table MultiSelect",
    "label": "Sizes",
-   "options": "Cutting Size"
+   "options": "Cutting Size",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "get_size_combination",
    "fieldtype": "Button",
-   "label": "Get size combination"
+   "label": "Get size combination",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "collapsible": 1,
    "collapsible_depends_on": "eval: doc.__islocal",
    "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "colours",
    "fieldtype": "Table MultiSelect",
    "label": "Colours",
-   "options": "Cutting Colors"
+   "options": "Cutting Colors",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "get_colour_combination",
    "fieldtype": "Button",
-   "label": "Get colour combination"
+   "label": "Get colour combination",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "section_break_12",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "colour_parts",
    "fieldtype": "Table MultiSelect",
    "label": "Parts",
-   "options": "Cutting Part"
+   "options": "Cutting Part",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "column_break_12",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "default": "0",
    "fieldname": "based_on_style",
    "fieldtype": "Check",
-   "label": "Based on style"
+   "label": "Based on style",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "depends_on": "based_on_style",
    "fieldname": "styles",
    "fieldtype": "Table MultiSelect",
    "label": "Styles",
-   "options": "Cutting Styles"
+   "options": "Cutting Styles",
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "fieldname": "amended_from",
@@ -122,19 +156,23 @@
    "no_copy": 1,
    "options": "Cutting",
    "print_hide": 1,
-   "read_only": 1
+   "read_only": 1,
+   "show_days": 1,
+   "show_seconds": 1
   },
   {
    "allow_on_submit": 1,
    "fieldname": "additional_information",
    "fieldtype": "Table",
    "label": "Additional Information",
-   "options": "Additional Information Table"
+   "options": "Additional Information Table",
+   "show_days": 1,
+   "show_seconds": 1
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-05-22 13:27:24.260625",
+ "modified": "2020-06-13 23:24:38.498884",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Cutting",

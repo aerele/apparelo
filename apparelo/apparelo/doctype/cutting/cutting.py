@@ -90,7 +90,7 @@ class Cutting(Document):
 					weight=detail.weight
 		return {"Dia": dia, "Weight": weight},count
 
-	def create_boms(self, input_item_names, variants, attribute_set,item_size,colour,piece_count):
+	def create_boms(self, input_item_names, variants, attribute_set, item_size,colour, piece_count, process_record, idx):
 		input_items = []
 		boms = []
 		for input_item_name in input_item_names:
@@ -98,7 +98,7 @@ class Cutting(Document):
 		for variant in variants:
 			var=frappe.get_doc('Item', variant)
 			attr = get_attr_dict(var.attributes)
-			bom=create_common_bom(self,variant,attr,input_items)
+			bom=create_common_bom(self, variant,attr, input_items, process_record, idx, input_item_names)
 			boms.append(bom)
 		return boms,variants
 
@@ -191,7 +191,7 @@ def get_part_colour_combination(doc):
 					part_colour_combination.append({'part':part['parts'],'colour':colour['colors'],'style':style['styles']})
 	return(part_colour_combination)
 
-def create_common_bom(self,variant,attr,input_items):
+def create_common_bom(self, variant,attr, input_items, process_record, idx, input_item_names):
 	dia_weight,count=self.get_matching_details(attr["Part"], attr["Apparelo Size"])
 	attr.update(dia_weight)
 	for input_item in input_items:
@@ -220,7 +220,7 @@ def create_common_bom(self,variant,attr,input_items):
 					return bom.name
 				else:
 					return existing_bom
-	frappe.throw(_('Colour and Dia entered in cutting process was not found in IPD colour list.'))
+	frappe.throw(_(f'Colour {attr["Apparelo Colour"][0]} or Dia {attr["Dia"]} entered in cutting process record {process_record} at row {idx} was not found in the input item list {input_item_names}'))
 
 def is_combined_parts(item):
 	item_doc=frappe.get_doc("Item",item)
