@@ -11,12 +11,13 @@ class AppareloSize(Document):
 		self.create_attribute_value()
 	def create_attribute_value(self):
 		item_attribute=frappe.get_doc("Item Attribute","Apparelo Size")
-		sizes=[]  
+		sizes=[]
+		size = self.size.strip()
 		for value in item_attribute.item_attribute_values:
 			sizes.append(value.attribute_value)
-		if not self.size in sizes:
+		if not size in sizes:
 			item_attribute.append('item_attribute_values',{
-				"attribute_value" : self.size,
-				"abbr" : self.size
+				"attribute_value" : size,
+				"abbr" : size
 			})
 			item_attribute.save()

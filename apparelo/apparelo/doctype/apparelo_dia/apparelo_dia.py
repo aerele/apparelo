@@ -13,14 +13,15 @@ class AppareloDia(Document):
 	def append_to_item_attribute(self):
 		item_attribute = frappe.get_doc("Item Attribute","Dia")
 		dias=[]
+		dia = self.dia.strip()
 
 		for value in item_attribute.item_attribute_values:
 			dias.append(value.attribute_value)
 		
-		if not self.dia in dias:
+		if not dia in dias:
 			item_attribute.append('item_attribute_values',{
-				"attribute_value" : self.dia,
-				"abbr" : self.dia
+				"attribute_value" : dia,
+				"abbr" : dia
 			})
 			item_attribute.save()
 

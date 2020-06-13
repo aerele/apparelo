@@ -10,6 +10,7 @@ class AppareloStyle(Document):
 	def validate(self):
 		self.create_attribute_value()
 	def create_attribute_value(self):
+		style = self.style.strip()
 		if not frappe.db.exists("Item Attribute", "Apparelo Style"):
 			frappe.get_doc({
 				"doctype": "Item Attribute",
@@ -20,14 +21,14 @@ class AppareloStyle(Document):
 		styles=[]  
 		for value in item_attribute.item_attribute_values:
 			styles.append(value.attribute_value)
-		if not self.style in styles:
+		if not style in styles:
 			item_attribute.append('item_attribute_values',{
-				"attribute_value" : self.style,
-				"abbr" : self.style
+				"attribute_value" : style,
+				"abbr" : style
 			})
 		item_attribute.save()
-		existing_doc=frappe.db.get_value('Apparelo Colour', {'colour': self.style}, 'name')
+		existing_doc=frappe.db.get_value('Apparelo Colour', {'colour': style}, 'name')
 		if not existing_doc:
 			color_doc=frappe.new_doc("Apparelo Colour")
-			color_doc.colour=self.style
+			color_doc.colour=style
 			color_doc.save()

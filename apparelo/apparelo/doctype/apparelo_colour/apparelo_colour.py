@@ -11,12 +11,13 @@ class AppareloColour(Document):
 		self.create_attribute_value()
 	def create_attribute_value(self):
 		item_attribute=frappe.get_doc("Item Attribute","Apparelo Colour")
-		colours=[]  
+		colours=[]
+		colour = self.colour.strip()
 		for value in item_attribute.item_attribute_values:
 			colours.append(value.attribute_value)
-		if not self.colour in colours:
+		if not colour in colours:
 			item_attribute.append('item_attribute_values',{
-				"attribute_value" : self.colour,
-				"abbr" : self.colour
+				"attribute_value" : colour,
+				"abbr" : colour
 			})
 			item_attribute.save()
