@@ -98,7 +98,7 @@ class Cutting(Document):
 		for variant in variants:
 			var=frappe.get_doc('Item', variant)
 			attr = get_attr_dict(var.attributes)
-			bom=create_common_bom(self, variant,attr, input_items, process_record, idx, input_item_names)
+			bom=create_common_bom(self, variant,attr, input_items, process_record, idx)
 			boms.append(bom)
 		return boms,variants
 
@@ -191,7 +191,7 @@ def get_part_colour_combination(doc):
 					part_colour_combination.append({'part':part['parts'],'colour':colour['colors'],'style':style['styles']})
 	return(part_colour_combination)
 
-def create_common_bom(self, variant,attr, input_items, process_record, idx, input_item_names):
+def create_common_bom(self, variant,attr, input_items, process_record, idx):
 	dia_weight,count=self.get_matching_details(attr["Part"], attr["Apparelo Size"])
 	attr.update(dia_weight)
 	for input_item in input_items:
@@ -220,7 +220,7 @@ def create_common_bom(self, variant,attr, input_items, process_record, idx, inpu
 					return bom.name
 				else:
 					return existing_bom
-	frappe.throw(_(f'Colour {attr["Apparelo Colour"][0]} or Dia {attr["Dia"]} entered in cutting process record {process_record} at row {idx} was not found in the input item list {input_item_names}'))
+	frappe.throw(_(f'Colour {attr["Apparelo Colour"][0]} or Dia {attr["Dia"]} entered in cutting process record {process_record} at row {idx} was not found in the input item list'))
 
 def is_combined_parts(item):
 	item_doc=frappe.get_doc("Item",item)
