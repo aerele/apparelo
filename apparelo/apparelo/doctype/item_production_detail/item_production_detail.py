@@ -262,7 +262,7 @@ class ItemProductionDetail(Document):
 					process_variants['process_record'] = process.process_record
 					cutting_doc = frappe.get_doc('Cutting', process.process_record)
 					variants,attribute_set = cutting_doc.create_variants(input_items_, item_size, self.item)
-					boms,new_variants=cutting_doc.create_boms(input_items_, variants, attribute_set,item_size,colour,piece_count)
+					boms,new_variants=cutting_doc.create_boms(input_items_, variants, attribute_set, item_size, colour, piece_count, process.process_record, process.idx)
 					counter_attr=Counter(cutting_attribute)
 					attr_set=Counter(attribute_set)
 					counter_attr.update(attr_set)
