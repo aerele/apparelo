@@ -150,8 +150,6 @@ class Packing(Document):
 						"doctype": "BOM",
 						"currency": get_default_currency(),
 						"uom": "Nos",
-						"is_default": 0,
-						"is_active": 1,
 						"item": variant,
 						"company": get_default_company(),
 						"items": item_list_
