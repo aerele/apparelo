@@ -14,6 +14,7 @@ from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_date
 from apparelo.apparelo.doctype.dc.dc import get_receivable_list_values
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from frappe.utils import today
+from apparelo.apparelo.utils.item_utils import get_attr_dict
 
 
 class LotCreation(Document):
@@ -142,7 +143,9 @@ def get_ipd_item(doc):
 	                            "variant_of": item_template})
 	for _size in ipd_sizes:
 		for item in item_code:
-			if _size.upper() in item.get('item_code'):
+			item_doc=frappe.get_doc("Item",item.get('item_code'))
+			item_attr = get_attr_dict(item_doc.attributes)
+			if _size.upper()==item_attr['Apparelo Size'][0]:
 				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(item.get("item_code")).get("bom_no")})
 				break
 	return po_items
