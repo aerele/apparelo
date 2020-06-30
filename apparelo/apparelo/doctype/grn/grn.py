@@ -14,7 +14,7 @@ import itertools
 
 class GRN(Document):
 	def validate(self):
-		self.get_po()
+		self.set_po()
 	def on_submit(self):
 		pr=self.create_purchase_receipt()
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
@@ -42,10 +42,12 @@ class GRN(Document):
 		pr.save()
 		pr.submit()
 		return pr
-	def get_po(self):
-		dc_doc = frappe.get_doc("DC",self.against_document)
-		if dc_doc.doctype.startswith("D"):
-			self.po = frappe.db.get_value("Purchase Order",{'dc':self.against_document},'name')
+	def set_po(self):
+		if self.against_type == 'Purchase Order':
+			self.po = self.against_document
+		else:
+			dc_doc = frappe.get_doc("DC", self.against_document)
+			self.po = frappe.db.get_value("Purchase Order", {'dc':self.against_document}, 'name')
 
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':
