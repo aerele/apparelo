@@ -3,6 +3,9 @@
 
 frappe.ui.form.on('GRN', {
 	onload: function(frm) {
+		frm.set_df_property("select_helper","options",['','Copy Over','Divide Total Quantity'].join('\n'))
+		frm.set_df_property("from_field","options",['Received Qty','Rejected Qty'].join('\n'))
+		frm.set_df_property("to_field","options",['Received Qty','Rejected Qty'].join('\n'))
 		frm.set_query("supplier", function() {
 			return {
 				query: "apparelo.apparelo.doctype.grn.grn.get_supplier",
@@ -25,6 +28,28 @@ frappe.ui.form.on('GRN', {
 						"lot": frm.doc.lot
 					}
 				};
+		});
+	},
+	copy_over:function(frm){
+		const set_fields = ['pf_item_code','item_code','qty','received_qty','rejected_qty','uom','secondary_qty','secondary_uom'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.grn.grn.duplicate_values",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('return_materials', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
 		});
 	},
 	attribute: function(frm)

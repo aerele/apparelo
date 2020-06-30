@@ -144,3 +144,19 @@ def get_attribute_value(attribute):
 	for attr in attr_doc.item_attribute_values:
 		attribute_value_list.append([attr.attribute_value])
 	return attribute_value_list
+
+@frappe.whitelist()
+def duplicate_values(doc):
+	grn_items = []
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('return_materials'):
+		field_dict = {'Received Qty':'received_qty','Rejected Qty':'rejected_qty'}
+		if doc.from_field in field_dict and doc.to_field in field_dict:
+			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],field_dict[doc.from_field]:item[field_dict[doc.from_field]],field_dict[doc.to_field]:item[field_dict[doc.from_field]],"qty":item['qty'],"uom":item['uom'],"secondary_qty":item["secondary_qty"],"secondary_uom":item['secondary_uom']}
+		field_dict.pop(doc.from_field)
+		field_dict.pop(doc.to_field)
+		if list(field_dict.values())[0] in item:
+			item_dict[list(field_dict.values())[0]]	= item[list(field_dict.values())[0]]
+		grn_items.append(item_dict)
+	return grn_items
