@@ -4,8 +4,8 @@
 frappe.ui.form.on('GRN', {
 	onload: function(frm) {
 		frm.set_df_property("select_helper","options",['','Copy Over','Divide Total Quantity'].join('\n'))
-		frm.set_df_property("from_field","options",['Received Qty','Rejected Qty'].join('\n'))
-		frm.set_df_property("to_field","options",['Received Qty','Rejected Qty'].join('\n'))
+		frm.set_df_property("from_field","options",['Expected Qty','Received Qty','Rejected Qty'].join('\n'))
+		frm.set_df_property("to_field","options",['Expected Qty','Received Qty','Rejected Qty'].join('\n'))
 		frm.set_query("supplier", function() {
 			return {
 				query: "apparelo.apparelo.doctype.grn.grn.get_supplier",
