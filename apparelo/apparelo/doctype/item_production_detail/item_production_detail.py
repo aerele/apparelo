@@ -15,7 +15,7 @@ from frappe.core.page.background_jobs.background_jobs import get_info
 from frappe.utils.background_jobs import enqueue
 
 class ItemProductionDetail(Document):
-	def validate(self):
+	def before_insert(self):
 		if self.ipd_submission_done:
 			self.ipd_submission_done = 0
 	def on_submit(self):
