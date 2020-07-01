@@ -145,7 +145,7 @@ def get_ipd_item(doc):
 		for item in item_code:
 			item_doc=frappe.get_doc("Item",item.get('item_code'))
 			item_attr = get_attr_dict(item_doc.attributes)
-			if _size.upper()==item_attr['Apparelo Size'][0]:
+			if _size==item_attr['Apparelo Size'][0]:
 				po_items.append({"item_code": item.get("item_code"), "bom_no": get_item_details(item.get("item_code")).get("bom_no")})
 				break
 	return po_items
@@ -261,7 +261,9 @@ def cloth_qty(doc):
 			dia_total = 0
 			for colour in colour_list:
 				for item in final_item_list:
-					if (colour.upper() in item['item_code']) and (dia in item['item_code']) and (item['item_code'] in ipd_item_list):
+					item_doc = frappe.get_doc("Item",item['item_code'])
+					item_attr = get_attr_dict(item_doc.attributes)
+					if (colour==item_attr['Apparelo Colour'][0]) and (dia==item_attr['Dia'][0]) and (item['item_code'] in ipd_item_list):
 						dia_list[colour_list.index(colour)+1] = item['qty']
 						dia_total += item['qty']
 						if 'FOLD' in item['item_code']:
