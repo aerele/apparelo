@@ -20,6 +20,9 @@ def is_similar_bom(bom1, bom2):
 			for key in row[3]:
 				if key[0] in ["qty", "uom"]:
 					return False
+	if diff.added:
+		if 'items' in diff.added[0]:
+			return False
 	return True
 
 
