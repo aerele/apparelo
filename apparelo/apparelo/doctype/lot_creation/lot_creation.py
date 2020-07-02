@@ -202,13 +202,18 @@ def cloth_qty(doc):
 
 	ipd = frappe.get_doc('Item Production Detail',doc.item_production_detail)
 	# get yarn, dia and end process list
+	knit_idx = []
 	for ipd_process in ipd.processes:
 		if ipd_process.process_name == 'Knitting':
+			knit_idx.append(str(ipd_process.idx))
 			dia_list = []
 			knitted_colour = []
 			for knitting_dia in frappe.get_doc('Knitting',ipd_process.process_record).dia:
 				dia_list.append(knitting_dia.dia)
 			process_name =  frappe.get_list("Item Production Detail Process", filters={'parent': ['in',doc.item_production_detail],'input_index':ipd_process.idx}, fields=['process_name','process_record'])
+			if not process_name:
+				process_name =  frappe.get_list("Item Production Detail Process", filters={'parent': ['in',doc.item_production_detail],'input_index':','.join(knit_idx)}, fields=['process_name','process_record'])
+				knit_idx = []
 			if process_name[0]['process_name'] == 'Bleaching':
 				table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).types
 			else:
@@ -246,12 +251,16 @@ def cloth_qty(doc):
 			item_list['qty'] = flt(receivable_list[item_to_be_received['item']] + (receivable_list[item_to_be_received['item']] * (flt(doc.percentage)/100)), 3)
 			item_list['uom'] = item.stock_uom
 			final_item_list.append(item_list)
-
+	combined_input_idx = []
 	for data in yarn_list:
 		html_body = ''
 		dia_qty_list =[]
+		combined_input_idx.append(str(data['index']))
 		ipd_item_mapping_name = frappe.db.get_value('IPD Item Mapping',{'item_production_details':doc.item_production_detail},'name')
 		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
+		if not ipd_items:
+			ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':','.join(combined_input_idx)}, fields='item')
+			combined_input_idx = []
 		ipd_item_list = []
 		for item in ipd_items:
 			ipd_item_list.append(item['item'])
