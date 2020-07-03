@@ -3,8 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-import frappe
+import frappe, json
 from frappe import _
+from six import string_types
 from frappe.model.document import Document
 from apparelo.apparelo.utils.utils import is_similar_bom
 from erpnext import get_default_company, get_default_currency
@@ -19,11 +20,15 @@ class Bleaching(Document):
 	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
 		new_variants=[]
 		input_items = []
+		variants = []
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
-		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,input_items)))
-		attribute_set.update(self.get_variant_values())
-		variants = create_variants('Bleached cloth', attribute_set)
+		for item in input_items:
+			attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes,[item])))
+			for mapping in self.colour_shade_mapping:
+				if mapping.yarn_shade in attribute_set['Yarn Shade']:
+					attribute_set['Apparelo Colour'] = [mapping.colour]
+					variants.extend(create_variants('Bleached cloth', attribute_set))
 		for variant in variants:
 			variant_doc=frappe.get_doc("Item",variant)
 			variant_attr = get_attr_dict(variant_doc.attributes)
@@ -37,9 +42,9 @@ class Bleaching(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		boms = []
-		doc_values = self.get_variant_values()
 		for item in input_items:
 			attr = get_attr_dict(item.attributes)
+			doc_values = self.get_variant_values(attr['Yarn Shade'])
 			attr.update(doc_values)
 			args_set = generate_keyed_value_combinations(attr)
 			for attribute_values in args_set:
@@ -77,11 +82,12 @@ class Bleaching(Document):
 					frappe.throw(_("Unexpected error while creating BOM. Expected variant not found in list of supplied variants"))
 		return boms
 
-	def get_variant_values(self):
+	def get_variant_values(self, yarn_shade):
 		attribute_set = {}
 		variant_colour = []
-		for colour in self.types:
-			variant_colour.append(colour.colour)
+		for value in self.colour_shade_mapping:
+			if value.yarn_shade in yarn_shade:
+				variant_colour.append(value.colour)
 		attribute_set['Apparelo Colour'] = variant_colour
 		return attribute_set
 
@@ -118,3 +124,20 @@ def create_item_template():
 			}
 		]
 	}).save()
+
+@frappe.whitelist()
+def get_field_values(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	colour_shade_mapping =[]
+	if doc.get("is_similar_yarn_shade")==0:
+		if doc.get('types'):
+			for colour in doc.get('types'):
+				if 'colour' in colour:
+					colour_shade_mapping.append({'colour':colour['colour']})
+	else:
+		if doc.get('types'):
+			for colour in doc.get('types'):
+				if 'colour' in colour:
+					colour_shade_mapping.append({'yarn_shade':doc.get('yarn_shade'),'colour':colour['colour']})
+	return(colour_shade_mapping)

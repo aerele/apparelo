@@ -15,6 +15,7 @@ from apparelo.apparelo.doctype.dc.dc import make_custom_fields
 from apparelo.apparelo.doctype.dc.dc import make_item_fields
 from apparelo.apparelo.doctype.additional_parameters import additional_parameters
 from apparelo.apparelo.doctype.apparelo_dia import apparelo_dia
+from apparelo.apparelo.doctype.apparelo_yarn_shade import apparelo_yarn_shade
 from apparelo.apparelo.doctype.apparelo_process.apparelo_process import create_apparelo_process
 from apparelo.apparelo.doctype.grn.warehouse_custom_fields import make_warehouse_custom_fields, create_warehouse_type
 from apparelo.apparelo.doctype.lot_creation.custom_scripts import set_custom_fields
@@ -60,6 +61,7 @@ def create_attr_values():
     knitting.create_additional_attribute()
     additional_parameters.create_parameter()
     apparelo_dia.populate()
+    apparelo_yarn_shade.populate()
 
 
 def remove_defaults():

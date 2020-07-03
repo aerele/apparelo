@@ -1,0 +1,41 @@
+{
+ "actions": [],
+ "creation": "2020-07-03 15:44:21.949258",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "yarn_shade",
+  "colour"
+ ],
+ "fields": [
+  {
+   "fieldname": "yarn_shade",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Yarn Shade",
+   "options": "Apparelo Yarn Shade",
+   "reqd": 1
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Colour",
+   "options": "Apparelo Colour",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2020-07-03 15:51:22.713943",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Colour Shade Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

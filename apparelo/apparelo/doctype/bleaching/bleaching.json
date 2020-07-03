@@ -7,6 +7,13 @@
  "engine": "InnoDB",
  "field_order": [
   "types",
+  "section_break_2",
+  "is_similar_yarn_shade",
+  "yarn_shade",
+  "get_field_values",
+  "section_break_6",
+  "colour_shade_mapping",
+  "section_break_8",
   "additional_information",
   "conversion_details_section",
   "input_qty",
@@ -68,7 +75,7 @@
   {
    "fieldname": "types",
    "fieldtype": "Table",
-   "label": "Types",
+   "label": "Colours",
    "options": "Item Production Detail Colour",
    "reqd": 1
   },
@@ -88,11 +95,48 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
+  },
+  {
+   "fieldname": "colour_shade_mapping",
+   "fieldtype": "Table",
+   "label": "Colour Shade Mapping",
+   "options": "Colour Shade Mapping",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_similar_yarn_shade",
+   "fieldtype": "Check",
+   "label": "Is Similar Yarn Shade"
+  },
+  {
+   "depends_on": "is_similar_yarn_shade",
+   "fieldname": "yarn_shade",
+   "fieldtype": "Link",
+   "label": "Yarn Shade",
+   "options": "Apparelo Yarn Shade"
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "get_field_values",
+   "fieldtype": "Button",
+   "label": "Get Field Values"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-07-03 18:58:18.919847",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",
