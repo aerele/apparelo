@@ -213,11 +213,13 @@ def cloth_qty(doc):
 			process_name =  frappe.get_list("Item Production Detail Process", filters={'parent': ['in',doc.item_production_detail],'input_index':ipd_process.idx}, fields=['process_name','process_record'])
 			if not process_name:
 				process_name =  frappe.get_list("Item Production Detail Process", filters={'parent': ['in',doc.item_production_detail],'input_index':','.join(knit_idx)}, fields=['process_name','process_record'])
-				knit_idx = []
-			if process_name[0]['process_name'] == 'Bleaching':
-				table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).types
-			else:
-				table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).colours
+				if process_name:
+					knit_idx = []
+			if process_name:
+				if process_name[0]['process_name'] == 'Bleaching':
+					table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).types
+				else:
+					table = frappe.get_doc(process_name[0]['process_name'],process_name[0]['process_record']).colours
 			for colth_colour in table:
 				knitted_colour.append(colth_colour.colour)
 				colour_list.add(colth_colour.colour)
@@ -260,7 +262,8 @@ def cloth_qty(doc):
 		ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':data['index']}, fields='item')
 		if not ipd_items:
 			ipd_items = frappe.get_list("Item Mapping", filters={'parent': ['in',ipd_item_mapping_name],'input_index':','.join(combined_input_idx)}, fields='item')
-			combined_input_idx = []
+			if ipd_items:
+				combined_input_idx = []
 		ipd_item_list = []
 		for item in ipd_items:
 			ipd_item_list.append(item['item'])

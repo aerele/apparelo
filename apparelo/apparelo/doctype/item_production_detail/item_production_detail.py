@@ -594,10 +594,10 @@ def get_default_process_variants(ipd_name,ipd,process,process_variants,attribute
 			if str(pro['index'])==input_index and pro['ipd']==ipd_name:
 				input_items=pro['variants']
 				input_items_.extend(input_items)
-				process_variants['process_record'] = process.process_record
-				process_doc = frappe.get_doc(process.process_name, process.process_record)
-				variants.extend(process_doc.create_variants(input_item_names=input_items, colour=colour, item=item, final_process=final_process))
-				boms.extend(process_doc.create_boms(input_items, variants, colour, attribute_set=attribute_set, item_size=item_size, piece_count=piece_count, final_item=item, final_process=final_process))
+	process_variants['process_record'] = process.process_record
+	process_doc = frappe.get_doc(process.process_name, process.process_record)
+	variants.extend(process_doc.create_variants(input_item_names=input_items_, colour=colour, item=item, final_process=final_process))
+	boms.extend(process_doc.create_boms(input_items_, variants, colour, attribute_set=attribute_set, item_size=item_size, piece_count=piece_count, final_item=item, final_process=final_process))
 	process_variants['variants'] = list(set(variants))
 	process_variants['BOM']=list(set(boms))
 	process_variants['input_item']=list(set(input_items_))
