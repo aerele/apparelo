@@ -48,26 +48,5 @@ onload: function(frm) {
             }
         };
     });
-    frm.set_query("part", "colour_mappings", function() {
-        return {
-            filters: {
-                "is_combined":0
-            }
-        };
-    });
-    frm.set_query("part", "parts_per_piece", function() {
-        return {
-            filters: {
-                "is_combined":0
-            }
-        };
-    });
-    frm.set_query("parts", function() {
-        return {
-            filters: {
-                "is_combined":0
-            }
-        };
-    });
 }
 });
