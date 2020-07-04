@@ -48,5 +48,28 @@ onload: function(frm) {
             }
         };
     });
+    if(cur_frm && cur_frm.doctype==='Stitching'){
+    frm.set_query("part", "colour_mappings", function() {
+        return {
+            filters: {
+                "is_combined":0
+            }
+        };
+    });
+    frm.set_query("part", "parts_per_piece", function() {
+        return {
+            filters: {
+                "is_combined":0
+            }
+        };
+    });
+    frm.set_query("parts", function() {
+        return {
+            filters: {
+                "is_combined":0
+            }
+        };
+    });
+}
 }
 });
