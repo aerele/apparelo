@@ -15,6 +15,7 @@ from apparelo.apparelo.doctype.dc.dc import get_receivable_list_values
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from frappe.utils import today
 from apparelo.apparelo.utils.item_utils import get_attr_dict
+from numpy import prod
 
 
 class LotCreation(Document):
@@ -201,6 +202,10 @@ def cloth_qty(doc):
 		bom_qty.append({item['bom_no']:item['planned_qty']})
 
 	ipd = frappe.get_doc('Item Production Detail',doc.item_production_detail)
+	colour_count = len(ipd.colour)
+	final_process = frappe.db.get_value("Item Production Detail",{'name':doc.item_production_detail}, 'final_process')
+	process_record = frappe.db.get_value("Item Production Detail Process",{'parent': doc.item_production_detail,'process_name':final_process},'process_record')
+	input_qty = frappe.db.get_value("Packing",process_record,'input_qty')
 	# get yarn, dia and end process list
 	knit_idx = []
 	for ipd_process in ipd.processes:
@@ -276,8 +281,14 @@ def cloth_qty(doc):
 					item_doc = frappe.get_doc("Item",item['item_code'])
 					item_attr = get_attr_dict(item_doc.attributes)
 					if (colour==item_attr['Apparelo Colour'][0]) and (dia==item_attr['Dia'][0]) and (item['item_code'] in ipd_item_list):
-						dia_list[colour_list.index(colour)+1] = item['qty']
-						dia_total += item['qty']
+						if input_qty < colour_count and item['qty']:
+							combination_count = find_combination(colour_count, input_qty)
+							qty = round(item['qty']/combination_count,3)
+							dia_list[colour_list.index(colour)+1] = qty
+							dia_total += qty
+						else:
+							dia_list[colour_list.index(colour)+1] = item['qty']
+							dia_total += item['qty']
 						if 'FOLD' in item['item_code']:
 							dia_list[0] = f'{dia} (FOLD)'
 						break
@@ -315,4 +326,9 @@ def create_new_warehouse(doc):
 					"is_group": 0,
 					"parent_warehouse": f"{doc.name} - {abbr}"
 					}).save()
+
+def find_combination(n, r):
+	numerator = range(n, max(n-r,r),-1)
+	denominator = range(1, min(n-r,r) +1,1)
+	return int(prod(numerator)/prod(denominator))
 
