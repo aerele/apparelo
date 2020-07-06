@@ -26,9 +26,9 @@ class DC(Document):
 		self.return_materials = list(filter(lambda x: x.qty != 0, self.return_materials))
 
 		# printable table creation
-		printable_list_d = generate_printable_list(self.items, self.get_grouping_params())
+		printable_list_d = generate_printable_list(self.items, get_grouping_params(self.process_1), field='quantity')
 		printable_list_d[0]['section_title'] = 'Delivery Items'
-		printable_list_r = generate_printable_list(self.return_materials, self.get_grouping_params())
+		printable_list_r = generate_printable_list(self.return_materials, get_grouping_params(self.process_1), field='qty')
 		printable_list_r[0]['section_title'] = 'Expected Return Items'
 		self.dc_cloth_quantity = generate_html_from_list(printable_list_d+printable_list_r)
 
@@ -103,114 +103,6 @@ class DC(Document):
 		po.submit()
 		return po
 
-	def get_grouping_params(self):
-		gp_list = {
-			'Knitting': [
-				{
-					"dimension": ('Dia', None),
-					"group_by": ['Knitting Type', 'Yarn Category'],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
-				},
-				{
-					"dimension": (None, None),
-					"group_by": [],
-					"attribute_list": ['Yarn Category', 'Yarn Count', 'Yarn Shade']
-				},
-			],
-			'Dyeing': [
-				{
-					"dimension": ('Dia', None),
-					"group_by": [],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
-				},
-				{
-					"dimension": ('Dia', 'Apparelo Colour'),
-					"group_by": ['Knitting Type'],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
-				}
-			],
-			'Bleaching': [
-				{
-					"dimension": ('Dia', None),
-					"group_by": [],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
-				},
-				{
-					"dimension": ('Dia', 'Apparelo Colour'),
-					"group_by": ['Knitting Type'],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
-				}
-			],
-			'Compacting': [
-				{
-					"dimension": ('Dia', 'Apparelo Colour'),
-					"group_by": ['Knitting Type'],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
-				}
-			],
-			'Cutting': [
-				{
-					"dimension": ('Dia', 'Apparelo Colour'),
-					"group_by": ['Knitting Type'],
-					"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
-				},
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
-				},
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
-				}
-			],
-			'Label Fusing': [
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
-				},
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
-				}
-			],
-			'Stitching': [
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
-				},
-				{
-					"dimension": ('Part', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
-				},
-				{
-					"dimension": ('Apparelo Colour', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size']
-				}
-			],
-			'Ironing': [
-				{
-					"dimension": ('Apparelo Colour', 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Colour', 'Apparelo Size']
-				}
-			],
-			'Packing': [
-				{
-					"dimension": (None, 'Apparelo Size'),
-					"group_by": [],
-					"attribute_list": ['Apparelo Size']
-				}
-			]
-		}
-		return gp_list[self.process_1] if self.process_1 in gp_list else []
-
 	def validate_delivery(self):
 		for item in self.items:
 			if item.quantity > item.available_quantity:
@@ -229,8 +121,120 @@ class DC(Document):
 		
 		return item_reserve_warehouse_location
 
-
-
+def get_grouping_params(process):
+	gp_list = {
+		'Raw Material': [
+			{
+				"dimension": (None, None),
+				"group_by": [],
+				"attribute_list": []
+			}
+		],
+		'Knitting': [
+			{
+				"dimension": ('Dia', None),
+				"group_by": ['Knitting Type', 'Yarn Category'],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+			},
+			{
+				"dimension": (None, None),
+				"group_by": [],
+				"attribute_list": ['Yarn Category', 'Yarn Count', 'Yarn Shade']
+			},
+		],
+		'Dyeing': [
+			{
+				"dimension": ('Dia', None),
+				"group_by": [],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+			},
+			{
+				"dimension": ('Dia', 'Apparelo Colour'),
+				"group_by": ['Knitting Type'],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+			}
+		],
+		'Bleaching': [
+			{
+				"dimension": ('Dia', None),
+				"group_by": [],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade']
+			},
+			{
+				"dimension": ('Dia', 'Apparelo Colour'),
+				"group_by": ['Knitting Type'],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+			}
+		],
+		'Compacting': [
+			{
+				"dimension": ('Dia', 'Apparelo Colour'),
+				"group_by": ['Knitting Type'],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+			}
+		],
+		'Cutting': [
+			{
+				"dimension": ('Dia', 'Apparelo Colour'),
+				"group_by": ['Knitting Type'],
+				"attribute_list": ['Dia', 'Knitting Type', 'Yarn Category', 'Yarn Count', 'Yarn Shade', 'Apparelo Colour']
+			},
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+			},
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+			}
+		],
+		'Label Fusing': [
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+			},
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+			}
+		],
+		'Stitching': [
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part', 'Apparelo Style']
+			},
+			{
+				"dimension": ('Part', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size', 'Part']
+			},
+			{
+				"dimension": ('Apparelo Colour', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size']
+			}
+		],
+		'Ironing': [
+			{
+				"dimension": ('Apparelo Colour', 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Colour', 'Apparelo Size']
+			}
+		],
+		'Packing': [
+			{
+				"dimension": (None, 'Apparelo Size'),
+				"group_by": [],
+				"attribute_list": ['Apparelo Size']
+			}
+		]
+	}
+	return gp_list[process] if process in gp_list else []
 
 @frappe.whitelist()
 def get_location_based_address(location,company):
