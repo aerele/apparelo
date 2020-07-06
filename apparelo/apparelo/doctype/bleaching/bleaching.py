@@ -28,11 +28,11 @@ class Bleaching(Document):
 			for mapping in self.colour_shade_mapping:
 				if mapping.yarn_shade in attribute_set['Yarn Shade']:
 					attribute_set['Apparelo Colour'] = [mapping.colour]
-					variants.extend(create_variants('Bleached cloth', attribute_set))
-		for variant in variants:
-			variant_doc=frappe.get_doc("Item",variant)
-			variant_attr = get_attr_dict(variant_doc.attributes)
-			new_variants.append(customize_pf_item_code('Bleached Cloth', attribute_set, variant_attr, variant))
+					variant = create_variants('Bleached cloth', attribute_set)
+					variants.extend(variant)
+					variant_doc=frappe.get_doc("Item",variant[0])
+					variant_attr = get_attr_dict(variant_doc.attributes)
+					new_variants.append(customize_pf_item_code('Bleached Cloth', attribute_set, variant_attr, variant[0]))
 		if len(new_variants)==0:
 			new_variants=variants
 		return new_variants
