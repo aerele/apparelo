@@ -65,6 +65,28 @@ frappe.ui.form.on('GRN', {
 			}
 		  });
 	},
+	delete_unavailable_return_items:function(frm){
+		const set_fields = ['pf_item_code','item_code','qty','received_qty','rejected_qty','uom','secondary_qty','secondary_uom'];
+		frappe.call({
+			method: "apparelo.apparelo.doctype.grn.grn.delete_unavailable_return_items",
+			freeze: true,
+			args: {doc: frm.doc},
+			callback: function(r) {
+				if(r.message) {
+					frm.set_value('return_materials', []);
+					$.each(r.message, function(i, d) {
+						var item = frm.add_child('return_materials');
+						for (let key in d) {
+							if (d[key] && in_list(set_fields, key)) {
+								item[key] = d[key];
+							}
+						}
+					});
+				}
+				refresh_field('return_materials');
+			}
+		});
+	},
 	get_items: function(frm) {
 		const set_fields = ['item_code','uom','qty','pf_item_code',"secondary_uom"];
 		frappe.call({

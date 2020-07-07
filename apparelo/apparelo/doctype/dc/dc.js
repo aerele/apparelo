@@ -4,6 +4,11 @@
 frappe.ui.form.on('DC', {
 	onload: function(frm) {
 		frm.set_value("company",frappe.defaults.get_default("company"));
+		frappe.db.get_list("Address",{filters:{is_primary_address: 1, is_shipping_address: 1}}).then(data => {
+			if(data && data.length){
+				frm.set_value("company_address_name",data[0].name);
+			}
+		})
 		frm.set_df_property("select_helper","options",['','Copy Over'].join('\n'))
 		frm.set_df_property("from_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
 		frm.set_df_property("to_field","options",['Available Qty','Delivery Qty','Secondary Qty'].join('\n'))
@@ -250,7 +255,11 @@ var update_company_address = function(frm){
 					frm.set_value("company_address_name",r.message)
 				}
 				else {
-					frm.set_value("company_address_name","")
+					frappe.db.get_list("Address",{filters:{is_primary_address: 1, is_shipping_address: 1}}).then(data => {
+						if(data && data.length){
+							frm.set_value("company_address_name",data[0].name);
+						}
+					})
 				}
 			}
 		})

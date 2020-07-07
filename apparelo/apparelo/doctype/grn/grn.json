@@ -27,6 +27,7 @@
   "attribute_value",
   "section_break_11",
   "return_materials",
+  "delete_unavailable_return_items",
   "section_break_22",
   "grn_cloth_quantity",
   "amended_from",
@@ -109,7 +110,8 @@
   },
   {
    "fieldname": "section_break_11",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Return Materials"
   },
   {
    "fieldname": "divide_total_quantity",
@@ -176,11 +178,16 @@
   {
    "fieldname": "section_break_22",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "delete_unavailable_return_items",
+   "fieldtype": "Button",
+   "label": "Delete Unavailable Return Items"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-06 12:27:20.704173",
+ "modified": "2020-07-07 13:12:16.634172",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

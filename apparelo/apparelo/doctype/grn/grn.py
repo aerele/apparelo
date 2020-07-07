@@ -115,11 +115,25 @@ def get_items(doc):
 				if item.item_code == key:
 					item.qty-=total_received_qty
 	for item in PO.items:
+		return_material = {}
 		item_detail = frappe.get_doc('Item', item.item_code)
+		for attr in item_detail.attributes:
+			if attr.attribute == "Dia":
+				return_material['Dia'] = attr.attribute_value
+			if attr.attribute == "Apparelo Colour":
+				return_material['Apparelo Colour'] = attr.attribute_value
+			if attr.attribute == "Apparelo Size":
+				return_material['Apparelo Size'] = attr.attribute_value
 		if apparelo_process:
-			return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":apparelo_process.in_secondary_uom})
+			return_material.update({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":apparelo_process.in_secondary_uom})
+			return_materials.append(return_material)
 		else:
-			return_materials.append({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":item.uom})
+			return_material.update({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":item.uom})
+			return_materials.append(return_material)
+	if 'Apparelo Colour' in return_materials[0] and 'Dia' in return_materials[0]:
+		return_materials = sorted(sorted(return_materials, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+	if 'Apparelo Size' in return_materials[0]:
+		return_materials = sorted(return_materials, key = lambda i: i['Apparelo Size'])
 	return return_materials
 
 @frappe.whitelist()
@@ -180,3 +194,26 @@ def duplicate_values(doc):
 			item_dict[list(field_dict.values())[0]]	= item[list(field_dict.values())[0]]
 		grn_items.append(item_dict)
 	return grn_items
+
+@frappe.whitelist()
+def delete_unavailable_return_items(doc):
+	available_return_items = []
+	if isinstance(doc, string_types):
+    		doc = frappe._dict(json.loads(doc))
+	for item in doc.get('return_materials'):
+		item_dict={}
+		if 'received_qty' in item:
+			if 'rejected_qty' in item:
+				if 'secondary_qty' in item:
+					item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"qty":item['qty'],"received_qty":item['received_qty'],"rejected_qty":item['rejected_qty'],"uom":item['uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+				else:
+					item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"qty":item['qty'],"received_qty":item['received_qty'],"rejected_qty":item['rejected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+			else:
+				if 'secondary_qty' in item:
+					item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"qty":item['qty'],"received_qty":item['received_qty'],"uom":item['uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
+				else:
+					item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"qty":item['qty'],"received_qty":item['received_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+
+		if item_dict:
+			available_return_items.append(item_dict)
+	return available_return_items
