@@ -10,11 +10,18 @@ from six import string_types, iteritems
 from frappe.utils import cstr, flt, cint, nowdate, add_days, comma_and, now_datetime, ceil
 from apparelo.apparelo.utils.item_utils import get_item_attribute_set
 import itertools
+from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list
+from apparelo.apparelo.doctype.dc.dc import get_grouping_params
 
 
 class GRN(Document):
 	def validate(self):
 		self.set_po()
+		printable_list_received = generate_printable_list(self.return_materials, self.get_grouping_params(),field='received_qty')
+		printable_list_received[0]['section_title'] = 'Received Return Items'
+		printable_list_rejected = generate_printable_list(self.return_materials, self.get_grouping_params(),field='rejected_qty')
+		printable_list_rejected[0]['section_title'] = 'Rejected Return Items'
+		self.grn_cloth_quantity = generate_html_from_list(printable_list_received+printable_list_rejected)
 	def on_submit(self):
 		pr=self.create_purchase_receipt()
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))
@@ -48,6 +55,14 @@ class GRN(Document):
 		else:
 			dc_doc = frappe.get_doc("DC", self.against_document)
 			self.po = frappe.db.get_value("Purchase Order", {'dc':self.against_document}, 'name')
+
+	def get_grouping_params(self):
+		if self.against_type=='Purchase Order':
+			return get_grouping_params('Raw Material')
+
+		if self.against_type=="DC":
+			process = frappe.db.get_value('DC',{'name': self.against_document},'process_1')
+			return get_grouping_params(process)
 
 def get_type(doctype, txt, searchfield, start, page_len, filters):
 	if filters['type']=='DC':

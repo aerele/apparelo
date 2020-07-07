@@ -27,6 +27,8 @@
   "attribute_value",
   "section_break_11",
   "return_materials",
+  "section_break_22",
+  "grn_cloth_quantity",
   "amended_from",
   "po"
  ],
@@ -37,9 +39,7 @@
    "in_list_view": 1,
    "label": "Supplier",
    "options": "Supplier",
-   "reqd": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "reqd": 1
   },
   {
    "fieldname": "lot",
@@ -47,33 +47,25 @@
    "in_list_view": 1,
    "label": "Lot",
    "options": "Lot Creation",
-   "reqd": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "reqd": 1
   },
   {
    "fieldname": "get_items",
    "fieldtype": "Button",
-   "label": "Get Items",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Get Items"
   },
   {
    "default": "DC",
    "fieldname": "against_type",
    "fieldtype": "Select",
    "label": "Against Type",
-   "options": "\nDC\nPurchase Order",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "\nDC\nPurchase Order"
   },
   {
    "fieldname": "against_document",
    "fieldtype": "Dynamic Link",
    "label": "Against Document",
-   "options": "against_type",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "against_type"
   },
   {
    "fieldname": "amended_from",
@@ -82,140 +74,113 @@
    "no_copy": 1,
    "options": "GRN",
    "print_hide": 1,
-   "read_only": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "read_only": 1
   },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
    "label": "Series",
    "options": "GRN-",
-   "reqd": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "reqd": 1
   },
   {
    "fieldname": "return_materials",
    "fieldtype": "Table",
    "label": "Items Expected in Return",
-   "options": "GRN Return Materials",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "GRN Return Materials"
   },
   {
    "fieldname": "po",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Purchase_order",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Purchase_order"
   },
   {
    "fieldname": "location",
    "fieldtype": "Link",
    "label": "Location",
    "options": "Location",
-   "reqd": 1,
-   "show_days": 1,
-   "show_seconds": 1
+   "reqd": 1
   },
   {
    "depends_on": "eval:doc.select_helper=='Divide Total Quantity'",
    "fieldname": "section_break_8",
-   "fieldtype": "Section Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "section_break_11",
-   "fieldtype": "Section Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Section Break"
   },
   {
    "fieldname": "divide_total_quantity",
    "fieldtype": "Button",
-   "label": "Divide Total Quantity",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Divide Total Quantity"
   },
   {
    "fieldname": "total_quantity_received",
    "fieldtype": "Float",
-   "label": "Total Quantity Received",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Total Quantity Received"
   },
   {
    "fieldname": "column_break_11",
-   "fieldtype": "Column Break",
-   "show_days": 1,
-   "show_seconds": 1
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "attribute",
    "fieldtype": "Link",
    "label": "Attribute",
-   "options": "Item Attribute",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Item Attribute"
   },
   {
    "fieldname": "attribute_value",
    "fieldtype": "Select",
-   "label": "Attribute Value",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Attribute Value"
   },
   {
    "collapsible": 1,
    "fieldname": "helper_section",
    "fieldtype": "Section Break",
-   "label": "Helper Section",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Helper Section"
   },
   {
    "depends_on": "eval:doc.select_helper=='Copy Over'",
    "fieldname": "copy_over_section_section",
    "fieldtype": "Section Break",
-   "label": "Copy Over Section",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Copy Over Section"
   },
   {
    "fieldname": "to_field",
    "fieldtype": "Select",
-   "label": "To Field",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "To Field"
   },
   {
    "fieldname": "from_field",
    "fieldtype": "Select",
-   "label": "From Field",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "From Field"
   },
   {
    "fieldname": "copy_over",
    "fieldtype": "Button",
-   "label": "Copy Over",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Copy Over"
   },
   {
    "fieldname": "select_helper",
    "fieldtype": "Select",
-   "label": "Select Helper",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Select Helper"
+  },
+  {
+   "fieldname": "grn_cloth_quantity",
+   "fieldtype": "HTML Editor",
+   "label": "GRN Cloth Quantity"
+  },
+  {
+   "fieldname": "section_break_22",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-06-30 12:26:23.416444",
+ "modified": "2020-07-06 12:27:20.704173",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",
