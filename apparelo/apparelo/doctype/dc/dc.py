@@ -17,6 +17,7 @@ from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
 from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list
+from apparelo.apparelo.utils.item_utils import get_item_attribute_set
 
 
 class DC(Document):
@@ -698,21 +699,22 @@ def make_entry(doc):
 	items_to_be_received = get_expected_items_in_return(doc, items_to_be_sent=items_to_be_sent, use_delivery_qty=False)
 	size = doc.size
 	colour = doc.colour
-	piece_count = doc.piece_count	
+	piece_count = doc.piece_count 
+	ipd = frappe.db.get_value('Lot Creation',{'name': doc.get('lot')},'item_production_detail')
+	process_record = frappe.db.get_value("Item Production Detail Process",{'parent': ipd,'process_name':'Stitching'},'process_record')
+	colour_mappings = frappe.get_list("Stitching",filters={'name':['in',[process_record]]},fields=["`tabStitching Colour Mapping`.part","`tabStitching Colour Mapping`.piece_colour","`tabStitching Colour Mapping`.part_colour"])
 	for item in items_to_be_received:
 		item_dict={}
 		count=0
 		item_doc = frappe.get_doc('Item', item['item_code'])
-		for attr in item_doc.attributes:
-			if attr.attribute == "Apparelo Size":
-				if attr.attribute_value == size:
-					count+=1
-			if attr.attribute == "Apparelo Colour":
-				if attr.attribute_value == colour:
-					count+=1
-		if count==2:
-			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
-			if 'additional_parameters' in item:
-				item_dict["additional_parameters"] = item['additional_parameters']
-			return_items_after_entry.append(item_dict)
+		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, [item_doc])))
+		for colour_mapping in colour_mappings:
+			if attribute_set["Part"][0] == colour_mapping.part and attribute_set['Apparelo Size'][0] == size:
+				if colour_mapping.piece_colour == colour and colour_mapping.part_colour == attribute_set["Apparelo Colour"][0]:
+						count+=1
+			if count==1:
+				item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+				if 'additional_parameters' in item:
+					item_dict["additional_parameters"] = item['additional_parameters']
+				return_items_after_entry.append(item_dict)
 	return return_items_after_entry

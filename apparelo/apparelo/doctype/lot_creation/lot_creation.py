@@ -303,29 +303,32 @@ def cloth_qty(doc):
 
 @frappe.whitelist()
 def create_new_warehouse(doc):
-		for location in doc.new_location:
-			lot_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': doc.name,'warehouse_type': 'Actual'},'name')
-			mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location.location,'lot': doc.name,'warehouse_type':'Mistake'},'name')
-			if not lot_warehouse:
-				frappe.get_doc({
-					"doctype": "Warehouse",
-					"location": location.location,
-					"lot": doc.name,
-					"warehouse_type":'Actual',
-					"warehouse_name": f"{doc.name}-{location.location}",
-					"is_group": 0,
-					"parent_warehouse": f"{doc.name} - {abbr}"
-					}).save()
-			if not mistake_warehouse:
-				frappe.get_doc({
-					"doctype": "Warehouse",
-					"location": location.location,
-					"lot": doc.name,
-					"warehouse_type":'Mistake',
-					"warehouse_name": f"{doc.name}-{location.location} Mistake",
-					"is_group": 0,
-					"parent_warehouse": f"{doc.name} - {abbr}"
-					}).save()
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+
+	for location in doc.new_location:
+		lot_warehouse= frappe.db.get_value("Warehouse", {'location': location['location'],'lot': doc.name,'warehouse_type': 'Actual'},'name')
+		mistake_warehouse= frappe.db.get_value("Warehouse", {'location': location['location'],'lot': doc.name,'warehouse_type':'Mistake'},'name')
+		if not lot_warehouse:
+			frappe.get_doc({
+				"doctype": "Warehouse",
+				"location": location['location'],
+				"lot": doc.name,
+				"warehouse_type":'Actual',
+				"warehouse_name": f"{doc.name}-{location['location']}",
+				"is_group": 0,
+				"parent_warehouse": f"{doc.name} - {abbr}"
+				}).save()
+		if not mistake_warehouse:
+			frappe.get_doc({
+				"doctype": "Warehouse",
+				"location": location['location'],
+				"lot": doc.name,
+				"warehouse_type":'Mistake',
+				"warehouse_name": f"{doc.name}-{location['location']} Mistake",
+				"is_group": 0,
+				"parent_warehouse": f"{doc.name} - {abbr}"
+				}).save()
 
 def find_combination(n, r):
 	numerator = range(n, max(n-r,r),-1)
