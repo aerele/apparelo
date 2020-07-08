@@ -47,3 +47,19 @@ def se_custom_field(update=True):
 		]
 		}
 	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
+
+def set_user_permissions():
+	saved_apparelo_docs = ['Additional Parameters', 'Apparelo Size', 'Apparelo Style', 'Apparelo Dia', 'Apparelo Part', 'Apparelo Colour', 'Apparelo Process', 'Apparelo Settings', 'Apparelo Yarn Shade', 'Knitting Type', 'Multi Process', 'Print Type']
+	submittable_apparelo_docs = ['Bleaching', 'Checking', 'Compacting', 'Cutting', 'DC', 'Dyeing', 'GRN', 'Ironing', 'Item Production Detail', 'Knitting','Label Fusing', 'Lot Closure', 'Lot Creation', 'Packing', 'Piece Printing', 'Roll Printing', 'Steaming', 'Stitching']
+	data_entry_docs =['DC','GRN','Lot Creation','Lot Closure']
+	for apparelo_doc in saved_apparelo_docs:
+		doc = frappe.get_doc('DocType',apparelo_doc)
+		doc.append('permissions',{'role':'Apparelo Admin','read':1,'write':1,'create':1,'delete':1,'report':1,'export':1,'share':1,'print':1,'email':1})
+		doc.save()
+	for apparelo_doc in submittable_apparelo_docs:
+		doc = frappe.get_doc('DocType',apparelo_doc)
+		if apparelo_doc in data_entry_docs:
+			doc.append('permissions',{'role':'Apparelo Data Entry Operator','read':1,'write':1,'create':1,'delete':1,'submit':1, 'cancel':1, 'report':1,'export':1,'share':1,'print':1,'email':1})
+			doc.append('permissions',{'role':'Apparelo Report Analyst','read':1,'report':1,'export':1,'share':1,'print':1,'email':1})
+		doc.append('permissions',{'role':'Apparelo Admin','read':1,'write':1,'create':1,'delete':1,'submit':1, 'cancel':1, 'report':1,'export':1,'share':1,'print':1,'email':1})
+		doc.save()
