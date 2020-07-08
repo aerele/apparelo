@@ -21,6 +21,7 @@ from apparelo.apparelo.doctype.grn.warehouse_custom_fields import make_warehouse
 from apparelo.apparelo.doctype.lot_creation.custom_scripts import set_custom_fields
 from apparelo.apparelo.common_scripts import set_address_custom_fields
 from apparelo.apparelo.doctype.lot_creation.custom_scripts import change_stores_warehouse
+from apparelo.apparelo.common_scripts import create_default_roles
 
 
 def after_install():
@@ -40,6 +41,7 @@ def after_install():
     set_custom_fields()
     set_address_custom_fields()
     change_stores_warehouse()
+    create_default_roles()
 
 
 def create_item_attributes():

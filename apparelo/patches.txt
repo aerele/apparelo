@@ -15,3 +15,4 @@ apparelo.apparelo.patches.v1.warehouse_update
 apparelo.apparelo.patches.v1.se_custom_field
 apparelo.apparelo.patches.v1.create_apparelo_yarn_shade
 apparelo.apparelo.patches.v1.custom_field_address
+apparelo.apparelo.patches.v1.create_default_roles

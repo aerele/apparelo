@@ -46,3 +46,11 @@ def se_custom_field(update=True):
 		]
 		}
 	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
+
+def create_default_roles():
+	roles = ['Apparelo Admin','Data Entry Operator','Report Analyst']
+	for role in roles:
+		if not frappe.db.exists('Role', role):
+			role_doc = frappe.new_doc("Role")
+			role_doc.role_name = role
+			role_doc.save()
