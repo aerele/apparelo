@@ -21,15 +21,14 @@ def customize_pf_item_code(item_template, attribute_set, variant_attr, variant):
 			else:
 				return variant
 
-def set_custom_fields(update=True):
+def set_address_custom_fields(update=True):
 	custom_fields = {
 		'Address': [
 			{
 				"fieldname": "location",
 				"fieldtype": "Link",
 				"label": "Location",
-				"options": "Location",
-				"reqd": 1
+				"options": "Location"
 				}
 			]
 		}
