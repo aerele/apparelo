@@ -4,7 +4,7 @@
 frappe.ui.form.on('DC', {
 	onload: function(frm) {
 		frm.set_value("company",frappe.defaults.get_default("company"));
-		frappe.db.get_list("Address",{filters:{is_primary_address: 1, is_shipping_address: 1}}).then(data => {
+		frappe.db.get_list("Address",{filters:{is_shipping_address: 1}}).then(data => {
 			if(data && data.length){
 				frm.set_value("company_address_name",data[0].name);
 			}
@@ -255,7 +255,7 @@ var update_company_address = function(frm){
 					frm.set_value("company_address_name",r.message)
 				}
 				else {
-					frappe.db.get_list("Address",{filters:{is_primary_address: 1, is_shipping_address: 1}}).then(data => {
+					frappe.db.get_list("Address",{filters:{is_shipping_address: 1}}).then(data => {
 						if(data && data.length){
 							frm.set_value("company_address_name",data[0].name);
 						}
