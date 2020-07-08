@@ -512,8 +512,11 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		if not use_delivery_qty:
 			item_to_be_received['projected_qty'] = item_to_be_received['qty']
 			item_to_be_received['qty'] = 0
-	if 'Apparelo Colour' in item_to_be_received and 'Dia' in item_to_be_received:
-		items_to_be_received = sorted(sorted(items_to_be_received, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+	if 'Dia' in item_to_be_received:
+		if 'Apparelo Colour' in item_to_be_received:
+			items_to_be_received = sorted(sorted(items_to_be_received, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+		else:
+			items_to_be_received = sorted(items_to_be_received, key = lambda i: i['Dia'])
 	if 'Apparelo Size' in item_to_be_received:
 		items_to_be_received = sorted(items_to_be_received, key = lambda i: i['Apparelo Size'])
 

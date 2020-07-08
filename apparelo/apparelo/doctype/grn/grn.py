@@ -130,8 +130,11 @@ def get_items(doc):
 		else:
 			return_material.update({"item_code":item.item_code,"uom":item.uom,"qty":item.qty,"pf_item_code":item_detail.print_code,"secondary_uom":item.uom})
 			return_materials.append(return_material)
-	if 'Apparelo Colour' in return_materials[0] and 'Dia' in return_materials[0]:
-		return_materials = sorted(sorted(return_materials, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+	if 'Dia' in return_materials[0]:
+		if 'Apparelo Colour' in return_materials[0]:
+			return_materials = sorted(sorted(return_materials, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+		else:
+			return_materials = sorted(return_materials, key = lambda i: i['Dia'])
 	if 'Apparelo Size' in return_materials[0]:
 		return_materials = sorted(return_materials, key = lambda i: i['Apparelo Size'])
 	return return_materials
