@@ -219,47 +219,35 @@
    "collapsible": 1,
    "fieldname": "helper_section",
    "fieldtype": "Section Break",
-   "label": "Helper Section",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Helper Section"
   },
   {
    "fieldname": "select_helper",
    "fieldtype": "Select",
-   "label": "Select Helper",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Select Helper"
   },
   {
    "depends_on": "eval:doc.process_1==\"Cutting\"",
    "fieldname": "section_break_18",
    "fieldtype": "Section Break",
-   "label": "Cutting Section",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Cutting Section"
   },
   {
    "fieldname": "colour",
    "fieldtype": "Link",
    "label": "Colour",
-   "options": "Apparelo Colour",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Apparelo Colour"
   },
   {
    "fieldname": "size",
    "fieldtype": "Link",
    "label": "Size",
-   "options": "Apparelo Size",
-   "show_days": 1,
-   "show_seconds": 1
+   "options": "Apparelo Size"
   },
   {
    "fieldname": "piece_count",
    "fieldtype": "Float",
-   "label": "Piece Count",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Piece Count"
   },
   {
    "fieldname": "copy_over",
@@ -269,14 +257,12 @@
   {
    "fieldname": "make_entry",
    "fieldtype": "Button",
-   "label": "Make Entry",
-   "show_days": 1,
-   "show_seconds": 1
+   "label": "Make Entry"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-06-01 20:43:48.162172",
+ "modified": "2020-07-09 15:12:16.548368",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
@@ -292,6 +278,20 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
