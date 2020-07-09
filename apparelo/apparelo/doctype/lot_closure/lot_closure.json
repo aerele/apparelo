@@ -109,7 +109,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:19.785130",
+ "modified": "2020-07-09 15:31:32.802598",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Closure",
@@ -152,6 +152,29 @@
    "share": 1,
    "submit": 1,
    "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Data Entry Operator",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Report Analyst",
+   "share": 1
   }
  ],
  "sort_field": "modified",
