@@ -21,15 +21,14 @@ def customize_pf_item_code(item_template, attribute_set, variant_attr, variant):
 			else:
 				return variant
 
-def set_custom_fields(update=True):
+def set_address_custom_fields(update=True):
 	custom_fields = {
 		'Address': [
 			{
 				"fieldname": "location",
 				"fieldtype": "Link",
 				"label": "Location",
-				"options": "Location",
-				"reqd": 1
+				"options": "Location"
 				}
 			]
 		}
@@ -47,3 +46,11 @@ def se_custom_field(update=True):
 		]
 		}
 	create_custom_fields(custom_fields, ignore_validate=frappe.flags.in_patch, update=update)
+
+def create_default_roles():
+	roles = ['Apparelo Admin','Apparelo Data Entry Operator','Apparelo Report Analyst']
+	for role in roles:
+		if not frappe.db.exists('Role', role):
+			role_doc = frappe.new_doc("Role")
+			role_doc.role_name = role
+			role_doc.save()

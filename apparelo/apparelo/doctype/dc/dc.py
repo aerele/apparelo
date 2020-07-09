@@ -478,9 +478,11 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 
 		for attr in item.attributes:
 			if attr.attribute == "Apparelo Size":
-				item_to_be_received['attribute'] = attr.attribute_value
+				item_to_be_received['Apparelo Size'] = attr.attribute_value
 			if attr.attribute == "Dia":
-				item_to_be_received['attribute'] = attr.attribute_value
+				item_to_be_received['Dia'] = attr.attribute_value
+			if attr.attribute == "Apparelo Colour":
+				item_to_be_received['Apparelo Colour'] = attr.attribute_value
 
 		# TODO: What will happen if an item has been made out of multiple raw materials?
 		for rm in item_to_be_received['raw_materials']:
@@ -510,8 +512,13 @@ def get_expected_items_in_return(doc, items_to_be_sent=None, use_delivery_qty=Fa
 		if not use_delivery_qty:
 			item_to_be_received['projected_qty'] = item_to_be_received['qty']
 			item_to_be_received['qty'] = 0
-	
-	items_to_be_received = sorted(items_to_be_received, key = lambda i: i['attribute']) 
+	if 'Dia' in item_to_be_received:
+		if 'Apparelo Colour' in item_to_be_received:
+			items_to_be_received = sorted(sorted(items_to_be_received, key = lambda i: i['Dia']), key = lambda i: i['Apparelo Colour'])
+		else:
+			items_to_be_received = sorted(items_to_be_received, key = lambda i: i['Dia'])
+	if 'Apparelo Size' in item_to_be_received:
+		items_to_be_received = sorted(items_to_be_received, key = lambda i: i['Apparelo Size'])
 
 	return items_to_be_received
 

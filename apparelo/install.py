@@ -19,7 +19,9 @@ from apparelo.apparelo.doctype.apparelo_yarn_shade import apparelo_yarn_shade
 from apparelo.apparelo.doctype.apparelo_process.apparelo_process import create_apparelo_process
 from apparelo.apparelo.doctype.grn.warehouse_custom_fields import make_warehouse_custom_fields, create_warehouse_type
 from apparelo.apparelo.doctype.lot_creation.custom_scripts import set_custom_fields
+from apparelo.apparelo.common_scripts import set_address_custom_fields
 from apparelo.apparelo.doctype.lot_creation.custom_scripts import change_stores_warehouse
+from apparelo.apparelo.common_scripts import create_default_roles
 
 
 def after_install():
@@ -37,7 +39,9 @@ def after_install():
     make_warehouse_custom_fields()
     create_warehouse_type()
     set_custom_fields()
+    set_address_custom_fields()
     change_stores_warehouse()
+    create_default_roles()
 
 
 def create_item_attributes():
