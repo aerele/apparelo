@@ -35,7 +35,7 @@
   }
  ],
  "links": [],
- "modified": "2020-01-06 11:51:04.149006",
+ "modified": "2020-07-11 14:31:58.576364",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "IPD BOM Mapping",
@@ -52,6 +52,15 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
+   "share": 1
   }
  ],
  "quick_entry": 1,
