@@ -9,6 +9,7 @@ from frappe.core.doctype.version.version import get_diff
 from frappe import _
 import collections
 from frappe.utils import cint
+import copy
 
 def is_similar_bom(bom1, bom2):
 	diff = get_bom_diff(bom1, bom2)
@@ -191,6 +192,8 @@ def generate_printable_list(items, grouping_params, field=None):
 				for column_index in range(1, len(header_row)):
 					tmp_column.append(temp_data[f'r{column_index}c{row_index}'] if f'r{column_index}c{row_index}' in temp_data else None)
 				data.append(tmp_column)
+			header_row.append('Total')
+			header_column.append('Total')
 			table_object = frappe._dict({
 				'data': data,
 				'header_row': header_row,
@@ -210,6 +213,40 @@ def generate_html_from_list(printable_list):
 		is_path=True
 		)
 
+def generate_total_row_and_column(datas):
+	for data in datas:
+		if len(data['data'])==1:
+			calculate_row_total(data)
+		else:
+			calculate_row_total(data)
+			calculate_column_total(data)
+
+def calculate_row_total(data):
+	for row_list in data['data']:
+		total = 0
+		secondary_total = 0
+		for row_data in row_list:
+			if row_data != None:
+				total+=row_data['qty']
+				uom=row_data['uom']
+				secondary_total+=row_data['secondary_qty']
+				secondary_uom = row_data['secondary_uom']
+		row_list.append({'qty':total,'uom':uom,'secondary_qty':secondary_total,'secondary_uom':secondary_uom})
+
+
+def calculate_column_total(data):
+	column_total_list = copy.deepcopy(data['data'][0])
+	no_of_columns = len(data['data'][0])
+	for idx, value in enumerate(data['data']):
+		if idx > 0:
+			for i in range(0,no_of_columns):
+				if value[i] != None:
+					if column_total_list[i] != None:
+						column_total_list[i]['qty'] = round(column_total_list[i]['qty'] + value[i]['qty'], 3)
+						column_total_list[i]['secondary_qty'] = round(column_total_list[i]['secondary_qty'] + value[i]['secondary_qty'], 3)
+					else:
+						column_total_list[i] = copy.deepcopy(value[i])
+	data['data'].extend([column_total_list])
 
 def groupby_unsorted(seq, key=lambda x: x):
 	indexes = collections.defaultdict(list)

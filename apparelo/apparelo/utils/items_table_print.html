@@ -27,7 +27,17 @@
 						{% for col in row %}
 							<td>
 								{% if col != None %}
-									{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+									{% if col.qty!=0 %}
+										{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+										<br>
+										{% if col.secondary_qty!=0 %}
+											<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
+										{% else %}
+											-
+										{% endif %}
+									{% else %}
+										-
+									{% endif %}
 								{% else %}
 									-
 								{% endif %}
