@@ -16,7 +16,7 @@ from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_e
 from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
-from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list
+from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list, generate_total_row_and_column
 from apparelo.apparelo.utils.item_utils import get_item_attribute_set
 
 
@@ -28,8 +28,10 @@ class DC(Document):
 
 		# printable table creation
 		printable_list_d = generate_printable_list(self.items, get_grouping_params(self.process_1), field='quantity')
+		generate_total_row_and_column(printable_list_d)
 		printable_list_d[0]['section_title'] = 'Delivery Items'
 		printable_list_r = generate_printable_list(self.return_materials, get_grouping_params(self.process_1), field='qty')
+		generate_total_row_and_column(printable_list_r)
 		printable_list_r[0]['section_title'] = 'Expected Return Items'
 		self.dc_cloth_quantity = generate_html_from_list(printable_list_d+printable_list_r)
 
