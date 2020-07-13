@@ -38,7 +38,7 @@
   }
  ],
  "links": [],
- "modified": "2020-07-09 15:12:13.337225",
+ "modified": "2020-07-11 14:31:14.542563",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Process",
@@ -59,14 +59,18 @@
   {
    "create": 1,
    "delete": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "write": 1
+  },
+  {
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
-   "role": "Apparelo Admin",
-   "share": 1,
-   "write": 1
+   "role": "Apparelo Data Entry Operator",
+   "share": 1
   }
  ],
  "quick_entry": 1,

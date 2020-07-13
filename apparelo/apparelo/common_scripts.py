@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 import hashlib
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.permissions import add_permission, update_permission_property
 
 def customize_pf_item_code(item_template, attribute_set, variant_attr, variant):
 	for dia in attribute_set["Dia"]:
@@ -54,3 +55,36 @@ def create_default_roles():
 			role_doc = frappe.new_doc("Role")
 			role_doc.role_name = role
 			role_doc.save()
+
+def set_permissions_to_core_doctypes():
+	roles = ['Apparelo Admin', 'Apparelo Data Entry Operator']
+	admin_all_permission = ['Item', 'Purchase Order', 'Stock Entry']
+	common_read_permission = ['Item Attribute', 'Item Group', 'Warehouse', 'Location', 'Supplier', 'Address', 'Company']
+	read_permission_dict = {'Apparelo Admin': ['BOM', 'UOM', 'DocType', 'Material Request', 'Stock Entry Type'], 'Apparelo Data Entry Operator': ['Account', 'Item', 'Purchase Order']}
+	
+	# assign journal entry create permission to data entry operator.
+	add_permission('Journal Entry', 'Apparelo Data Entry Operator', 0)
+	update_permission_property('Journal Entry', 'Apparelo Data Entry Operator', 0, 'create', 1)
+	
+	# assign read permission to the corresponding doctype.
+	for role in read_permission_dict.keys():
+		for doc in read_permission_dict[role]:
+			add_permission(doc, role, 0)
+			update_permission_property(doc, role, 0, 'read', 1)
+	
+	# assign common read permission to both roles.
+	for role in roles:
+		for doc in common_read_permission:
+			add_permission(doc, role, 0)
+			update_permission_property(doc, role, 0, 'read', 1)
+
+	# assign all permission to apparelo admin.
+	for doc in admin_all_permission:
+		add_permission(doc, 'Apparelo Admin', 0)
+		if doc != 'Item':
+			update_permission_property(doc, 'Apparelo Admin', 0, 'submit', 1)
+			update_permission_property(doc, 'Apparelo Admin', 0, 'cancel', 1)
+		update_permission_property(doc, 'Apparelo Admin', 0, 'read', 1)
+		update_permission_property(doc, 'Apparelo Admin', 0, 'create', 1)
+		update_permission_property(doc, 'Apparelo Admin', 0, 'delete', 1)
+		update_permission_property(doc, 'Apparelo Admin', 0, 'write', 1)
