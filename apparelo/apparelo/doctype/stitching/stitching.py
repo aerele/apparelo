@@ -10,24 +10,18 @@ from six import string_types, iteritems
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
-from apparelo.apparelo.utils.utils import validate_mappings
+from apparelo.apparelo.utils.utils import validate_additional_parts_mapping, validate_table_fields
 
 class Stitching(Document):
 	def on_submit(self):
-		self.validate_stitching_tables()
+		result, value = validate_table_fields(self.parts_per_piece, self.colour_mappings, 'Stitching')
+		if not result:
+			frappe.throw(_(f'The part {value} entered in parts per piece table was not found in colour mappings table.'))
+		result, value = validate_table_fields(self.colour_mappings, self.parts_per_piece, 'Stitching')
+		if not result:
+			frappe.throw(_(f'The part {value} entered in colour mappings table was not found in parts per piece table.'))
 		if self.enable_additional_parts:
-			validate_mappings(self.additional_parts, self.additional_parts_size, self.additional_parts_colour)
-		
-	def validate_stitching_tables(self):
-		for parts_per_piece in self.parts_per_piece:
-			found = False
-			for colour_mapping in self.colour_mappings:
-				if colour_mapping.part == parts_per_piece.part:
-					found = True
-			if found:
-				continue 
-			else:
-				frappe.throw(_(f'The part {parts_per_piece.part} entered in parts per piece table was not found in colour mappings table.'))
+			validate_additional_parts_mapping(self.additional_parts, self.additional_parts_size, self.additional_parts_colour)
 
 	def create_variants(self, input_item_names,colour,item,final_process):
 		colour.sort()

@@ -12,22 +12,17 @@ from erpnext.controllers.item_variant import generate_keyed_value_combinations, 
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants
 from erpnext.stock.get_item_details import get_conversion_factor
 from collections import Counter
+from apparelo.apparelo.utils.utils import validate_table_fields
 
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
-		self.validate_mappings()
-
-	def validate_mappings(self):
-		for colour_mapping in self.colour_mapping:
-			found = False
-			for detail in self.details:
-				if colour_mapping.part == detail.part:
-					found = True
-			if found:
-				continue 
-			else:
-				frappe.throw(_(f'The part {colour_mapping.part} entered in colour mapping table was not found in details table.'))
+		result, value = validate_table_fields(self.colour_mapping, self.details, 'Cutting')
+		if not result:
+			frappe.throw(_(f'The part {value} entered in colour mapping table was not found in details table.'))
+		result, value = validate_table_fields(self.details, self.colour_mapping, 'Cutting')
+		if not result:
+			frappe.throw(_(f'The part {value} entered in details table was not found in colour mapping table.'))
 
 
 	def create_variants(self, input_item_names, size, item):

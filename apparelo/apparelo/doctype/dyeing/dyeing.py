@@ -17,18 +17,6 @@ class Dyeing(Document):
 	def on_submit(self):
 		create_item_template()
 		create_item_attribute()
-		self.validate_mappings()
-
-	def validate_mappings(self):
-		for colour_shade_mapping in self.colour_shade_mapping:
-			found = False
-			for colours in self.colours:
-				if colours.colour == colour_shade_mapping.colour:
-					found = True
-			if found:
-				continue 
-			else:
-				frappe.throw(_(f'The colour {colour_shade_mapping.colour} entered in colour shade mapping table was not found in colours table.'))
 
 	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
 		new_variants=[]
@@ -146,20 +134,3 @@ def create_item_template():
 				}
 			]
 		}).save()
-
-@frappe.whitelist()
-def get_field_values(doc):
-	if isinstance(doc, string_types):
-		doc = frappe._dict(json.loads(doc))
-	colour_shade_mapping =[]
-	if doc.get("is_similar_yarn_shade")==0:
-		if doc.get('colours'):
-			for colour in doc.get('colours'):
-				if 'colour' in colour:
-					colour_shade_mapping.append({'colour':colour['colour']})
-	else:
-		if doc.get('colours'):
-			for colour in doc.get('colours'):
-				if 'colour' in colour:
-					colour_shade_mapping.append({'yarn_shade':doc.get('yarn_shade'),'colour':colour['colour']})
-	return(colour_shade_mapping)
