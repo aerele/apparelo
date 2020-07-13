@@ -26,7 +26,7 @@
   }
  ],
  "links": [],
- "modified": "2020-07-03 15:29:36.871912",
+ "modified": "2020-07-09 15:12:13.888705",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Apparelo Yarn Shade",
@@ -41,6 +41,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
    "share": 1,
    "write": 1
   }

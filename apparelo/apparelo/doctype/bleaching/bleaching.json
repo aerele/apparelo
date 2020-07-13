@@ -136,7 +136,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-03 18:58:18.919847",
+ "modified": "2020-07-09 15:12:15.109487",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Bleaching",
@@ -152,6 +152,20 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
