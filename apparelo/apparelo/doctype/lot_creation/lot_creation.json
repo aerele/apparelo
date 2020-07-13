@@ -141,7 +141,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-03-18 15:08:50.313323",
+ "modified": "2020-07-11 14:30:08.121216",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Lot Creation",
@@ -158,6 +158,24 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Data Entry Operator",
+   "share": 1
   }
  ],
  "sort_field": "modified",

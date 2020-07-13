@@ -32,11 +32,11 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
-   }
+  }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-02-21 15:04:18.537665",
+ "modified": "2020-07-09 15:12:21.273407",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Roll Printing",
@@ -52,6 +52,20 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

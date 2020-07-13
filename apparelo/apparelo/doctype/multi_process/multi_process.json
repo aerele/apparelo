@@ -24,7 +24,7 @@
   }
  ],
  "links": [],
- "modified": "2020-02-11 12:38:28.827020",
+ "modified": "2020-07-09 15:12:14.523853",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Multi Process",
@@ -39,6 +39,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
    "share": 1,
    "write": 1
   }
