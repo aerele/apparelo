@@ -16,6 +16,18 @@ from apparelo.apparelo.common_scripts import customize_pf_item_code
 class Bleaching(Document):
 	def on_submit(self):
 		create_item_template()
+		self.validate_mappings()
+
+	def validate_mappings(self):
+		for colour_shade_mapping in self.colour_shade_mapping:
+			found = False
+			for colours in self.types:
+				if colours.colour == colour_shade_mapping.colour:
+					found = True
+			if found:
+				continue 
+			else:
+				frappe.throw(_(f'The colour {colour_shade_mapping.colour} entered in colour shade mapping table was not found in colours table.'))
 
 	def create_variants(self, input_item_names, colour=None, item=None, final_process=None):
 		new_variants=[]

@@ -16,6 +16,19 @@ from collections import Counter
 class Cutting(Document):
 	def on_submit(self):
 		create_item_attribute()
+		self.validate_mappings()
+
+	def validate_mappings(self):
+		for colour_mapping in self.colour_mapping:
+			found = False
+			for detail in self.details:
+				if colour_mapping.part == detail.part:
+					found = True
+			if found:
+				continue 
+			else:
+				frappe.throw(_(f'The part {colour_mapping.part} entered in colour mapping table was not found in details table.'))
+
 
 	def create_variants(self, input_item_names, size, item):
 		cutting_attribute={}

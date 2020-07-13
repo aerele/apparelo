@@ -10,8 +10,25 @@ from six import string_types, iteritems
 from erpnext import get_default_company, get_default_currency
 from erpnext.controllers.item_variant import generate_keyed_value_combinations, get_variant
 from apparelo.apparelo.utils.item_utils import get_attr_dict, get_item_attribute_set, create_variants,create_additional_parts,matching_additional_part
+from apparelo.apparelo.utils.utils import validate_mappings
 
 class Stitching(Document):
+	def on_submit(self):
+		self.validate_stitching_tables()
+		if self.enable_additional_parts:
+			validate_mappings(self.additional_parts, self.additional_parts_size, self.additional_parts_colour)
+		
+	def validate_stitching_tables(self):
+		for parts_per_piece in self.parts_per_piece:
+			found = False
+			for colour_mapping in self.colour_mappings:
+				if colour_mapping.part == parts_per_piece.part:
+					found = True
+			if found:
+				continue 
+			else:
+				frappe.throw(_(f'The part {parts_per_piece.part} entered in parts per piece table was not found in colour mappings table.'))
+
 	def create_variants(self, input_item_names,colour,item,final_process):
 		colour.sort()
 		input_items = []
