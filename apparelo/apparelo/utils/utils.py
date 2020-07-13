@@ -73,7 +73,7 @@ def get_bom_diff(bom1, bom2):
 	return out
 
 
-def generate_printable_list(items, grouping_params, field=None):
+def generate_printable_list(items, grouping_params, field=None, deliver_later=None):
 	""" This function generates simple printable objects from items list with quantities
 	by applying the parameters provided.
 
@@ -115,6 +115,8 @@ def generate_printable_list(items, grouping_params, field=None):
 		field_list = {'qty': item.qty if hasattr(item, 'qty') else '','received_qty': item.received_qty if hasattr(item, 'received_qty') else '','rejected_qty': item.rejected_qty if hasattr(item, 'rejected_qty') else '', 'quantity': item.quantity if hasattr(item, 'quantity') else ''}
 		temp_item['qty'] = field_list[field]
 		temp_item['uom'] = item.uom if hasattr(item, 'uom') else item.primary_uom
+		if 'delivery_location' in vars(item) and item.delivery_location:
+			temp_item['delivery_location'] = item.delivery_location
 		temp_item.update(item_list_with_attributes[item.item_code])
 		temp_item['attribute_list'].sort()
 		item_dict_list.append(temp_item)
@@ -125,10 +127,16 @@ def generate_printable_list(items, grouping_params, field=None):
 		try:
 			grouping_param = next(param for param in grouping_params if sort_and_return(param['attribute_list']) == list(attribute_list))
 		except StopIteration:
-			grouping_param = {
-				"dimension": (None, None),
+			if grouping_params[0]['group_by']==['Delivery Location']:
+				grouping_param = {
+				"dimension": ('item_code', 'delivery_location'),
 				"group_by": [],
 				"attribute_list": attribute_list}
+			else:
+				grouping_param = {
+					"dimension": (None, None),
+					"group_by": [],
+					"attribute_list": attribute_list}
 		group_by = grouping_param['group_by']
 		dimension = grouping_param['dimension']
 		for key, group2 in groupby_unsorted(list(group), key=lambda x: get_values_as_tuple(x, group_by)):
@@ -147,7 +155,10 @@ def generate_printable_list(items, grouping_params, field=None):
 			for key, table_group in groupby_unsorted(list(group2), key=lambda x: get_values_as_tuple(x, dimension)):
 				table_group = list(table_group)
 				if not header_column or not header_row:
-					if dimension[0] is not None and dimension[1] is not None:
+					if dimension[0] == 'item_code' and dimension[1] == 'delivery_location':
+						header_column = ['Items']
+						header_row = ['Location']
+					elif dimension[0] is not None and dimension[1] is not None:
 						header_column = [dimension[0]]
 						header_row = [dimension[1]]
 					elif dimension[0] is not None and dimension[0] != 'item_code':
@@ -194,6 +205,8 @@ def generate_printable_list(items, grouping_params, field=None):
 				data.append(tmp_column)
 			header_row.append('Total')
 			header_column.append('Total')
+			if deliver_later:
+				header_row.append('Signature with seal')
 			table_object = frappe._dict({
 				'data': data,
 				'header_row': header_row,
@@ -213,15 +226,15 @@ def generate_html_from_list(printable_list):
 		is_path=True
 		)
 
-def generate_total_row_and_column(datas):
+def generate_total_row_and_column(datas, deliver_later=None):
 	for data in datas:
 		if len(data['data'])==1:
-			calculate_row_total(data)
+			calculate_row_total(data, deliver_later)
 		else:
-			calculate_row_total(data)
+			calculate_row_total(data, deliver_later)
 			calculate_column_total(data)
 
-def calculate_row_total(data):
+def calculate_row_total(data, deliver_later):
 	for row_list in data['data']:
 		total = 0
 		secondary_total = 0
@@ -232,7 +245,8 @@ def calculate_row_total(data):
 				secondary_total+=row_data['secondary_qty']
 				secondary_uom = row_data['secondary_uom']
 		row_list.append({'qty':total,'uom':uom,'secondary_qty':secondary_total,'secondary_uom':secondary_uom})
-
+		if deliver_later:
+			row_list.append(None)
 
 def calculate_column_total(data):
 	column_total_list = copy.deepcopy(data['data'][0])
@@ -295,3 +309,39 @@ def check_if_same_value_dict_list(dict_list, key):
 
 # things to figureout
 	# - how to separate out different tables for different size sets
+
+def validate_mappings(additional_parts, additional_parts_sizes, additional_parts_colours):
+	for additional_part in additional_parts:
+		found = False
+		if additional_part.based_on!=None:
+
+			# Check whether the items entered in additional parts tables are exist in additional part size table
+			if additional_part.based_on == 'Size':
+				for additional_parts_size in additional_parts_sizes:
+					if additional_part.item == additional_parts_size.item:
+						found = True
+				if not found:
+					frappe.throw(_(f'Item {additional_part.item} entered in additional parts table was not found in additional parts size table.'))
+
+			# Check whether the items entered in additional parts tables are exist in additional part colour table
+			if additional_part.based_on == 'Colour':
+				for additional_parts_colour in additional_parts_colours:
+					if additional_part.item == additional_parts_colour.item:
+						found = True
+				if not found:
+					frappe.throw(_(f'Item {additional_part.item} entered in additional parts table was not found in additional parts colour table.'))
+
+			# Check whether the items entered in additional parts tables are exist in both additional part size and colour table
+			if additional_part.based_on == 'Size and Colour':
+				for additional_parts_size in additional_parts_sizes:
+					if additional_part.item == additional_parts_size.item:
+						found = True
+				if found:
+					found = False
+					for additional_parts_colour in additional_parts_colours:
+						if additional_part.item == additional_parts_colour.item:
+							found = True
+					if not found:
+						frappe.throw(_(f'Item {additional_part.item} entered in additional parts table was not found in additional parts colour table.'))
+				else:
+					frappe.throw(_(f'Item {additional_part.item} entered in additional parts table was not found in additional parts size table.'))

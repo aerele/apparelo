@@ -27,9 +27,16 @@ class DC(Document):
 		self.return_materials = list(filter(lambda x: x.qty != 0, self.return_materials))
 
 		# printable table creation
-		printable_list_d = generate_printable_list(self.items, get_grouping_params(self.process_1), field='quantity')
+		items = [item for item in self.items if vars(item)['deliver_later']==0]
+		printable_list_d = generate_printable_list(items, get_grouping_params(self.process_1), field='quantity')
 		generate_total_row_and_column(printable_list_d)
 		printable_list_d[0]['section_title'] = 'Delivery Items'
+		deliver_later_items = [item for item in self.items if vars(item)['deliver_later']!=0]
+		if deliver_later_items:
+			printable_list = generate_printable_list(deliver_later_items, get_grouping_params('Deliver Later'), field='quantity', deliver_later='yes')
+			generate_total_row_and_column(printable_list, deliver_later='yes')
+			printable_list[0]['section_title'] = 'Deliver Later Items'
+			printable_list_d+=printable_list
 		printable_list_r = generate_printable_list(self.return_materials, get_grouping_params(self.process_1), field='qty')
 		generate_total_row_and_column(printable_list_r)
 		printable_list_r[0]['section_title'] = 'Expected Return Items'
@@ -130,6 +137,13 @@ def get_grouping_params(process):
 			{
 				"dimension": (None, None),
 				"group_by": [],
+				"attribute_list": []
+			}
+		],
+		'Deliver Later': [
+			{
+				"dimension": (None,None),
+				"group_by": ['Delivery Location'],
 				"attribute_list": []
 			}
 		],
