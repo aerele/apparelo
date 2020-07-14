@@ -33,11 +33,11 @@
 											<br>
 											<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
 										{% endif %}
+									{% elif loop.index == loop.length %}
+
 									{% else %}
 										-
 									{% endif %}
-								{% elif loop.index == loop.length %}
-
 								{% else %}
 									-
 								{% endif %}

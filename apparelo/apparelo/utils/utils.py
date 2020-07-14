@@ -73,7 +73,7 @@ def get_bom_diff(bom1, bom2):
 	return out
 
 
-def generate_printable_list(items, grouping_params, field=None, deliver_later=None):
+def generate_printable_list(items, grouping_params, field=None):
 	""" This function generates simple printable objects from items list with quantities
 	by applying the parameters provided.
 
@@ -115,8 +115,6 @@ def generate_printable_list(items, grouping_params, field=None, deliver_later=No
 		field_list = {'qty': item.qty if hasattr(item, 'qty') else '','received_qty': item.received_qty if hasattr(item, 'received_qty') else '','rejected_qty': item.rejected_qty if hasattr(item, 'rejected_qty') else '', 'quantity': item.quantity if hasattr(item, 'quantity') else ''}
 		temp_item['qty'] = field_list[field]
 		temp_item['uom'] = item.uom if hasattr(item, 'uom') else item.primary_uom
-		if 'delivery_location' in vars(item) and item.delivery_location:
-			temp_item['delivery_location'] = item.delivery_location
 		temp_item.update(item_list_with_attributes[item.item_code])
 		temp_item['attribute_list'].sort()
 		item_dict_list.append(temp_item)
@@ -127,16 +125,10 @@ def generate_printable_list(items, grouping_params, field=None, deliver_later=No
 		try:
 			grouping_param = next(param for param in grouping_params if sort_and_return(param['attribute_list']) == list(attribute_list))
 		except StopIteration:
-			if grouping_params[0]['group_by']==['Delivery Location']:
-				grouping_param = {
-				"dimension": ('item_code', 'delivery_location'),
+			grouping_param = {
+				"dimension": (None, None),
 				"group_by": [],
 				"attribute_list": attribute_list}
-			else:
-				grouping_param = {
-					"dimension": (None, None),
-					"group_by": [],
-					"attribute_list": attribute_list}
 		group_by = grouping_param['group_by']
 		dimension = grouping_param['dimension']
 		for key, group2 in groupby_unsorted(list(group), key=lambda x: get_values_as_tuple(x, group_by)):
@@ -155,10 +147,7 @@ def generate_printable_list(items, grouping_params, field=None, deliver_later=No
 			for key, table_group in groupby_unsorted(list(group2), key=lambda x: get_values_as_tuple(x, dimension)):
 				table_group = list(table_group)
 				if not header_column or not header_row:
-					if dimension[0] == 'item_code' and dimension[1] == 'delivery_location':
-						header_column = ['Items']
-						header_row = ['Location']
-					elif dimension[0] is not None and dimension[1] is not None:
+					if dimension[0] is not None and dimension[1] is not None:
 						header_column = [dimension[0]]
 						header_row = [dimension[1]]
 					elif dimension[0] is not None and dimension[0] != 'item_code':
@@ -205,8 +194,6 @@ def generate_printable_list(items, grouping_params, field=None, deliver_later=No
 				data.append(tmp_column)
 			header_row.append('Total')
 			header_column.append('Total')
-			if deliver_later:
-				header_row.append('Signature with seal')
 			table_object = frappe._dict({
 				'data': data,
 				'header_row': header_row,
@@ -226,15 +213,15 @@ def generate_html_from_list(printable_list):
 		is_path=True
 		)
 
-def generate_total_row_and_column(datas, deliver_later=None):
+def generate_total_row_and_column(datas):
 	for data in datas:
 		if len(data['data'])==1:
-			calculate_row_total(data, deliver_later)
+			calculate_row_total(data)
 		else:
-			calculate_row_total(data, deliver_later)
+			calculate_row_total(data)
 			calculate_column_total(data)
 
-def calculate_row_total(data, deliver_later):
+def calculate_row_total(data):
 	for row_list in data['data']:
 		total = 0
 		secondary_total = 0
@@ -245,8 +232,6 @@ def calculate_row_total(data, deliver_later):
 				secondary_total+=row_data['secondary_qty']
 				secondary_uom = row_data['secondary_uom']
 		row_list.append({'qty':total,'uom':uom,'secondary_qty':secondary_total,'secondary_uom':secondary_uom})
-		if deliver_later:
-			row_list.append(None)
 
 def calculate_column_total(data):
 	column_total_list = copy.deepcopy(data['data'][0])
@@ -417,3 +402,10 @@ def validate_table_fields(from_table, to_table, process):
 		if not result:
 			return result, vars(from_table_fields)[from_field]
 	return True, None
+
+def generate_empty_column_list(printable_list):
+	for printable_data in printable_list:
+		printable_data['header_row'].append('Signature With Seal')
+		for row_list in printable_data['data']:
+			row_list.append({'qty':0})
+

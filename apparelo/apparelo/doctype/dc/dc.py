@@ -16,7 +16,7 @@ from erpnext.buying.doctype.purchase_order.purchase_order import make_rm_stock_e
 from erpnext import get_default_company
 from erpnext.manufacturing.doctype.production_plan.production_plan import get_items_for_material_requests
 from erpnext.stock.doctype.item.item import get_uom_conv_factor
-from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list, generate_total_row_and_column
+from apparelo.apparelo.utils.utils import generate_printable_list, generate_html_from_list, generate_total_row_and_column, generate_empty_column_list
 from apparelo.apparelo.utils.item_utils import get_item_attribute_set
 
 
@@ -32,15 +32,24 @@ class DC(Document):
 		generate_total_row_and_column(printable_list_d)
 		printable_list_d[0]['section_title'] = 'Delivery Items'
 		deliver_later_items = [item for item in self.items if vars(item)['deliver_later']!=0]
+		location_wise_items={}
 		if deliver_later_items:
-			printable_list = generate_printable_list(deliver_later_items, get_grouping_params('Deliver Later'), field='quantity', deliver_later='yes')
-			generate_total_row_and_column(printable_list, deliver_later='yes')
-			printable_list[0]['section_title'] = 'Deliver Later Items'
-			printable_list_d+=printable_list
+			printable_list_l=[]
+			for items in deliver_later_items:
+				if not vars(items)['delivery_location'] in location_wise_items:
+					location_wise_items[vars(items)['delivery_location']]=[items]
+				else:
+					location_wise_items[vars(items)['delivery_location']].append(items)
+			for location in location_wise_items.keys():
+				printable_list = generate_printable_list(location_wise_items[location], get_grouping_params(self.process_1), field='quantity')
+				generate_total_row_and_column(printable_list)
+				generate_empty_column_list(printable_list)
+				printable_list[0]['section_title'] = location
+				printable_list_l+=printable_list
 		printable_list_r = generate_printable_list(self.return_materials, get_grouping_params(self.process_1), field='qty')
 		generate_total_row_and_column(printable_list_r)
 		printable_list_r[0]['section_title'] = 'Expected Return Items'
-		self.dc_cloth_quantity = generate_html_from_list(printable_list_d+printable_list_r)
+		self.dc_cloth_quantity = generate_html_from_list(printable_list_d+printable_list_l+printable_list_r)
 
 	def on_submit(self):
 		new_po = self.create_purchase_order()
@@ -137,13 +146,6 @@ def get_grouping_params(process):
 			{
 				"dimension": (None, None),
 				"group_by": [],
-				"attribute_list": []
-			}
-		],
-		'Deliver Later': [
-			{
-				"dimension": (None,None),
-				"group_by": ['Delivery Location'],
 				"attribute_list": []
 			}
 		],
