@@ -233,7 +233,6 @@ def calculate_row_total(data):
 				secondary_uom = row_data['secondary_uom']
 		row_list.append({'qty':total,'uom':uom,'secondary_qty':secondary_total,'secondary_uom':secondary_uom})
 
-
 def calculate_column_total(data):
 	column_total_list = copy.deepcopy(data['data'][0])
 	no_of_columns = len(data['data'][0])
@@ -295,3 +294,118 @@ def check_if_same_value_dict_list(dict_list, key):
 
 # things to figureout
 	# - how to separate out different tables for different size sets
+
+def validate_additional_parts_mapping(additional_parts, additional_parts_sizes, additional_parts_colours):
+	
+	# split additional part items by based_on field
+	additional_parts_based_on_size = [additional_part for additional_part in additional_parts if vars(additional_part)['based_on']=='Size']
+	additional_parts_based_on_colour = [additional_part for additional_part in additional_parts if vars(additional_part)['based_on']=='Colour']
+	additional_parts_based_on_both = [additional_part for additional_part in additional_parts if vars(additional_part)['based_on']=='Size and Colour']
+	additional_parts_based_on_none = [additional_part for additional_part in additional_parts if vars(additional_part)['based_on']=='None']
+	
+	if len(additional_parts_based_on_none)== len(additional_parts):
+		if not additional_parts_sizes and not additional_parts_colours:
+			return True
+		
+		elif additional_parts_sizes:
+			frappe.throw(_(f'Items detected in additional part size table but size based items not found in the additional parts table'))
+		
+		elif additional_parts_colours:
+			frappe.throw(_(f'Items detected in additional part colour table but colour based items not found in the additional parts table'))
+
+	if additional_parts_based_on_colour:
+		if additional_parts_colours:
+			result, value = validate_table_fields(additional_parts_based_on_colour, additional_parts_colours, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts colour table.'))
+			
+			result, value = validate_table_fields(additional_parts_colours, additional_parts_based_on_colour, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts colour table was not found in additional parts table.'))
+		else:
+			frappe.throw(_(f'Items based on colour found but additional parts colour table is empty'))
+	
+	if additional_parts_colours:
+		if additional_parts_based_on_colour:
+			result, value = validate_table_fields(additional_parts_based_on_colour, additional_parts_colours, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts colour table.'))
+			
+			result, value = validate_table_fields(additional_parts_colours, additional_parts_based_on_colour, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts colour table was not found in additional parts table.'))
+		else:
+			frappe.throw(_(f'Items based on colour not found but additional parts colour table is entered'))
+
+	if additional_parts_based_on_size:
+		if additional_parts_sizes:
+			result, value = validate_table_fields(additional_parts_based_on_size, additional_parts_sizes, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts size table.'))
+			
+			result, value = validate_table_fields(additional_parts_sizes, additional_parts_based_on_size, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts size table was not found in additional parts table.'))
+
+		else:
+			frappe.throw(_(f'Items based on size found but additional parts size table is empty'))
+
+	if additional_parts_sizes:
+		if additional_parts_based_on_size:
+			result, value = validate_table_fields(additional_parts_based_on_size, additional_parts_sizes, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts size table.'))
+			
+			result, value = validate_table_fields(additional_parts_sizes, additional_parts_based_on_size, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts size table was not found in additional parts table.'))
+
+		else:
+			frappe.throw(_(f'Items based on size not found but additional parts size table is entered'))
+	
+	if additional_parts_based_on_both:
+		if additional_parts_sizes and additional_parts_colours:
+			result, value = validate_table_fields(additional_parts_based_on_both, additional_parts_sizes, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts size table.'))
+			
+			result, value = validate_table_fields(additional_parts_sizes, additional_parts_based_on_both, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts size table was not found in additional parts table.'))
+			
+			result, value = validate_table_fields(additional_parts_based_on_both, additional_parts_colours, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts table was not found in additional parts colour table.'))
+
+			result, value = validate_table_fields(additional_parts_colours, additional_parts_based_on_both, None)
+			if not result:
+				frappe.throw(_(f'Item {value} entered in additional parts colour table was not found in additional parts table.'))
+			
+		else:
+			frappe.throw(_(f'Size and colour based items found but additional part size or additional part colour table is empty'))
+
+
+
+
+def validate_table_fields(from_table, to_table, process):
+	if process in ['Stitching', 'Cutting']:
+		from_field = 'part'
+		to_field = 'part'
+	else:
+		from_field = 'item'
+		to_field = 'item'
+	for from_table_fields in from_table:
+		result = False
+		for to_table_fields in to_table:
+			if vars(from_table_fields)[from_field] == vars(to_table_fields)[to_field]:
+				result = True
+		if not result:
+			return result, vars(from_table_fields)[from_field]
+	return True, None
+
+def generate_empty_column_list(printable_list):
+	for printable_data in printable_list:
+		printable_data['header_row'].append('Signature With Seal')
+		for row_list in printable_data['data']:
+			row_list.append({'qty':0})
+

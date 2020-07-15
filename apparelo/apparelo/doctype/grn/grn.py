@@ -20,10 +20,15 @@ class GRN(Document):
 		printable_list_received = generate_printable_list(self.return_materials, self.get_grouping_params(),field='received_qty')
 		printable_list_received[0]['section_title'] = 'Received Return Items'
 		generate_total_row_and_column(printable_list_received)
-		printable_list_rejected = generate_printable_list(self.return_materials, self.get_grouping_params(),field='rejected_qty')
-		printable_list_rejected[0]['section_title'] = 'Rejected Return Items'
-		generate_total_row_and_column(printable_list_rejected)
-		self.grn_cloth_quantity = generate_html_from_list(printable_list_received+printable_list_rejected)
+
+		# Check for rejected quantity
+		rejected_qty_items = [item for item in self.return_materials if vars(item)['rejected_qty']!=0]
+		if rejected_qty_items:
+			printable_list_rejected = generate_printable_list(rejected_qty_items, self.get_grouping_params(),field='rejected_qty')
+			printable_list_rejected[0]['section_title'] = 'Rejected Return Items'
+			generate_total_row_and_column(printable_list_rejected)
+			printable_list_received+=printable_list_rejected
+		self.grn_cloth_quantity = generate_html_from_list(printable_list_received)
 	def on_submit(self):
 		pr=self.create_purchase_receipt()
 		msgprint(_("{0} created").format(comma_and("""<a href="#Form/Purchase Receipt/{0}">{1}</a>""".format(pr.name, pr.name))))

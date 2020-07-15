@@ -7,10 +7,6 @@
  "engine": "InnoDB",
  "field_order": [
   "colours",
-  "section_break_2",
-  "is_similar_yarn_shade",
-  "yarn_shade",
-  "get_field_values",
   "section_break_6",
   "colour_shade_mapping",
   "section_break_8",
@@ -28,7 +24,7 @@
    "allow_in_quick_entry": 1,
    "fieldname": "colours",
    "fieldtype": "Table",
-   "label": "Colours",
+   "label": "Colours (*Deprecated)",
    "options": "Item Production Detail Colour",
    "reqd": 1
   },
@@ -100,28 +96,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_2",
-   "fieldtype": "Section Break"
-  },
-  {
-   "default": "0",
-   "fieldname": "is_similar_yarn_shade",
-   "fieldtype": "Check",
-   "label": "Is Similar Yarn Shade"
-  },
-  {
-   "depends_on": "is_similar_yarn_shade",
-   "fieldname": "yarn_shade",
-   "fieldtype": "Link",
-   "label": "Yarn Shade",
-   "options": "Apparelo Yarn Shade"
-  },
-  {
-   "fieldname": "get_field_values",
-   "fieldtype": "Button",
-   "label": "Get Field Values"
-  },
-  {
    "fieldname": "section_break_6",
    "fieldtype": "Section Break"
   },
@@ -132,7 +106,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:17.283436",
+ "modified": "2020-07-13 17:52:27.739755",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Dyeing",

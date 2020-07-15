@@ -29,12 +29,12 @@
 								{% if col != None %}
 									{% if col.qty!=0 %}
 										{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
-										<br>
 										{% if col.secondary_qty!=0 %}
+											<br>
 											<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
-										{% else %}
-											-
 										{% endif %}
+									{% elif loop.index == loop.length %}
+
 									{% else %}
 										-
 									{% endif %}

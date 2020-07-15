@@ -124,20 +124,3 @@ def create_item_template():
 			}
 		]
 	}).save()
-
-@frappe.whitelist()
-def get_field_values(doc):
-	if isinstance(doc, string_types):
-		doc = frappe._dict(json.loads(doc))
-	colour_shade_mapping =[]
-	if doc.get("is_similar_yarn_shade")==0:
-		if doc.get('types'):
-			for colour in doc.get('types'):
-				if 'colour' in colour:
-					colour_shade_mapping.append({'colour':colour['colour']})
-	else:
-		if doc.get('types'):
-			for colour in doc.get('types'):
-				if 'colour' in colour:
-					colour_shade_mapping.append({'yarn_shade':doc.get('yarn_shade'),'colour':colour['colour']})
-	return(colour_shade_mapping)

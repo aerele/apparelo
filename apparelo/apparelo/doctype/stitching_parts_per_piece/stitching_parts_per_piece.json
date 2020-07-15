@@ -14,18 +14,20 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Part",
-   "options": "Apparelo Part"
+   "options": "Apparelo Part",
+   "reqd": 1
   },
   {
    "fieldname": "qty",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Qty"
+   "label": "Qty",
+   "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-01-09 15:37:04.081714",
+ "modified": "2020-07-13 19:11:52.704344",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Stitching Parts Per Piece",
