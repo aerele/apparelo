@@ -33,8 +33,8 @@ class DC(Document):
 		printable_list_d[0]['section_title'] = 'Delivery Items'
 		deliver_later_items = [item for item in self.items if vars(item)['deliver_later']!=0]
 		location_wise_items={}
+		printable_list_l=[]
 		if deliver_later_items:
-			printable_list_l=[]
 			for items in deliver_later_items:
 				if not vars(items)['delivery_location'] in location_wise_items:
 					location_wise_items[vars(items)['delivery_location']]=[items]
@@ -691,7 +691,7 @@ def delete_unavailable_delivery_items(doc):
 		doc = frappe._dict(json.loads(doc))
 	for item in doc.get('items'):
 		item_dict={}
-		if item['available_quantity']!=0:
+		if item['quantity']!=0:
 			item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"available_quantity":item['available_quantity'],"quantity":item['quantity'],"primary_uom":item['primary_uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']}
 			if item['deliver_later']:
 				item_dict["deliver_later"] = item['deliver_later']
@@ -743,9 +743,9 @@ def make_entry(doc):
 						if colour_mapping.piece_colour == colour and colour_mapping.part_colour == attribute_set["Apparelo Colour"][0]:
 								count+=1
 								piece_qty = parts_per_piece.qty
-				if count==1:
-					item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count*piece_qty,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
-					if 'additional_parameters' in item:
-						item_dict["additional_parameters"] = item['additional_parameters']
-					return_items_after_entry.append(item_dict)
+			if count==1:
+				item_dict = {"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"bom":item['bom'],"qty":piece_count*piece_qty,"projected_qty":item['projected_qty'],"uom":item['uom'],"secondary_uom":item['secondary_uom']}
+				if 'additional_parameters' in item:
+					item_dict["additional_parameters"] = item['additional_parameters']
+				return_items_after_entry.append(item_dict)
 	return return_items_after_entry
