@@ -22,16 +22,35 @@
 			</thead>
 			<tbody>
 				{% for row in obj.data %}
+					{% set outer_loop = loop %}
 					<tr>
 						<th>{{obj.header_column[loop.index]}}</th>
 						{% for col in row %}
 							<td>
 								{% if col != None %}
 									{% if col.qty!=0 %}
-										{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
-										{% if col.secondary_qty!=0 %}
-											<br>
-											<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
+										{% if loop.index == loop.length or outer_loop.index == outer_loop.length %}
+											{% if obj.header_row[loop.index]=='Total' or obj.header_column[outer_loop.index]=='Total' %}
+												<b>
+												{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+												{% if col.secondary_qty!=0 %}
+													<br>
+													<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
+												{% endif %}
+												</b>
+											{% else %}
+												{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+												{% if col.secondary_qty!=0 %}
+													<br>
+													<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
+												{% endif %}
+											{% endif %}
+										{% else %}
+											{{frappe.utils.rounded(col.qty, 3)}} {{col.uom}}
+											{% if col.secondary_qty!=0 %}
+												<br>
+												<div align="right";><small>{{'('}}{{frappe.utils.rounded(col.secondary_qty, 3)}} {{col.secondary_uom}}{{')'}}</small></div>
+											{% endif %}
 										{% endif %}
 									{% elif loop.index == loop.length %}
 

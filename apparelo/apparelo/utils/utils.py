@@ -192,8 +192,6 @@ def generate_printable_list(items, grouping_params, field=None):
 				for column_index in range(1, len(header_row)):
 					tmp_column.append(temp_data[f'r{column_index}c{row_index}'] if f'r{column_index}c{row_index}' in temp_data else None)
 				data.append(tmp_column)
-			header_row.append('Total')
-			header_column.append('Total')
 			table_object = frappe._dict({
 				'data': data,
 				'header_row': header_row,
@@ -216,8 +214,14 @@ def generate_html_from_list(printable_list):
 def generate_total_row_and_column(datas):
 	for data in datas:
 		if len(data['data'])==1:
+			data['header_row'].append('Total')
 			calculate_row_total(data)
+		elif len(data['header_row'])==2:
+			data['header_column'].append('Total')
+			calculate_column_total(data)
 		else:
+			data['header_row'].append('Total')
+			data['header_column'].append('Total')
 			calculate_row_total(data)
 			calculate_column_total(data)
 
