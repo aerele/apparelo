@@ -104,7 +104,7 @@
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.select_helper=='Divide Total Quantity'",
+   "depends_on": "eval:doc.select_helper=='Divide Total Quantity' && doc.docstatus == 0",
    "fieldname": "section_break_8",
    "fieldtype": "Section Break"
   },
@@ -140,12 +140,13 @@
   },
   {
    "collapsible": 1,
+   "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "helper_section",
    "fieldtype": "Section Break",
    "label": "Helper Section"
   },
   {
-   "depends_on": "eval:doc.select_helper=='Copy Over'",
+   "depends_on": "eval:doc.select_helper=='Copy Over' && doc.docstatus == 0",
    "fieldname": "copy_over_section_section",
    "fieldtype": "Section Break",
    "label": "Copy Over Section"
@@ -187,7 +188,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:31:32.229517",
+ "modified": "2020-07-16 21:40:42.600003",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "GRN",

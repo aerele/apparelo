@@ -186,7 +186,7 @@
    "options": "Company"
   },
   {
-   "depends_on": "eval:doc.select_helper=='Copy Over'",
+   "depends_on": "eval:doc.select_helper=='Copy Over' && doc.docstatus == 0",
    "fieldname": "section_break_9",
    "fieldtype": "Section Break",
    "label": "Copy Over Section"
@@ -217,6 +217,7 @@
   },
   {
    "collapsible": 1,
+   "depends_on": "eval: doc.docstatus == 0",
    "fieldname": "helper_section",
    "fieldtype": "Section Break",
    "label": "Helper Section"
@@ -227,7 +228,7 @@
    "label": "Select Helper"
   },
   {
-   "depends_on": "eval:doc.process_1==\"Cutting\"",
+   "depends_on": "eval:doc.process_1==\"Cutting\" && doc.docstatus == 0",
    "fieldname": "section_break_18",
    "fieldtype": "Section Break",
    "label": "Cutting Section"
@@ -262,7 +263,7 @@
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:31:31.499369",
+ "modified": "2020-07-16 21:43:30.707906",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "DC",
