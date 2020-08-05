@@ -28,7 +28,8 @@ def create_supplier_warehouse(doc, action):
 		supplier_warehouse= frappe.db.get_value("Warehouse",{'supplier':doc.name},"name")
 		if not supplier_warehouse:
 			frappe.get_doc({"doctype": "Warehouse", "warehouse_name": f"{doc.name}","supplier": doc.name,
-							"is_group": 0, "parent_warehouse": f"Supplier Warehouse - {abbr}"}).save()
+							"is_group": 0, "parent_warehouse": f"Supplier Warehouse - {abbr}",
+							"company": default_company}).save()
 
 
 def set_lot_link_field_in_po(doc, action):

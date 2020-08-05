@@ -311,8 +311,7 @@ def make_custom_fields(update=True):
 			"fieldname": "supplier_process",
 			"fieldtype": "Table",
 			"label": "Supplier Process",
-			"options": "Supplier_Process",
-			"reqd": 1
+			"options": "Supplier_Process"
 		}
 	],
 		'BOM': [
