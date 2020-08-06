@@ -16,6 +16,13 @@ onload: function(frm) {
             },
         };
     });
+    frm.set_query("intermediate_item","combined_item_mapping", function() {
+        return {
+            "filters":{
+                "has_variants": 1,
+            },
+        };
+    });
     frm.set_query("color_additional_items", function() {
         return {
             filters: {
