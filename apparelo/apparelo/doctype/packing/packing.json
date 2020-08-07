@@ -32,6 +32,10 @@
   "section_break_25",
   "additional_parts_size",
   "additional_parts",
+  "section_break_27",
+  "is_combined",
+  "section_break_29",
+  "combined_item_mapping",
   "amended_from"
  ],
  "fields": [
@@ -212,11 +216,32 @@
    "fieldtype": "Table MultiSelect",
    "label": "Size Additional Items",
    "options": "Additional Item"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_combined",
+   "fieldtype": "Check",
+   "label": "Is Combined"
+  },
+  {
+   "depends_on": "eval: doc.is_combined==1",
+   "fieldname": "section_break_29",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "combined_item_mapping",
+   "fieldtype": "Table",
+   "label": "Combined Item Mapping",
+   "options": "Combined Item Mapping"
+  },
+  {
+   "fieldname": "section_break_27",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:20.663693",
+ "modified": "2020-08-06 10:12:25.547200",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Packing",

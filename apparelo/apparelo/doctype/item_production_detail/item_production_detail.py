@@ -409,7 +409,7 @@ class ItemProductionDetail(Document):
 			for combined_ipd in self.combined_ipds:
 				item_mapping = frappe.db.get_value("IPD Item Mapping", {'item_production_details': combined_ipd.ipd})
 				ipd_doc=frappe.get_doc("Item Production Detail",combined_ipd.ipd)
-				variants = frappe.get_doc('IPD Item Mapping', item_mapping).get_process_variants(ipd_doc.final_process)
+				variants = frappe.get_doc('IPD Item Mapping', item_mapping).get_process_variants(ipd_doc.processes[-1].process_name)
 				input_items_.extend(variants)
 			if self.process_name == 'Packing':
 				process_variants['process'] = 'Packing'
