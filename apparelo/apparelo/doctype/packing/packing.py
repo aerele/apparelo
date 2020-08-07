@@ -56,7 +56,7 @@ class Packing(Document):
 									"uom": "Nos"
 								})
 				if self.enable_additional_parts:
-					matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
+					matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,intermediate_variant)
 					for additional_part in self.additional_parts:
 						if additional_part.based_on=="None":
 							item_list_.append({"item_code": additional_part.item,"qty":additional_part.qty ,"uom": additional_part.uom})
