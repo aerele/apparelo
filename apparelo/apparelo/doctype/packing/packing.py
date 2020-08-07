@@ -351,6 +351,8 @@ def create_intermediate_item_template(final_item):
 				}
 			]
 		}).save()
+	else:
+		frappe.throw(_(f"Item template {final_item} Intermediate Cloth already exists"))
 
 def create_intermediate_variant(final_item, colours, size):
 	"""Return the intermediate variants."""
