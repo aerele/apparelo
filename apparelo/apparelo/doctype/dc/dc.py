@@ -282,6 +282,7 @@ def get_supplier_based_address(supplier):
 	else:
 		return ''
 
+@frappe.whitelist()
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers = []
 	all_supplier = frappe.db.get_all("Supplier")
@@ -748,3 +749,23 @@ def make_entry(doc):
 					item_dict["additional_parameters"] = item['additional_parameters']
 				return_items_after_entry.append(item_dict)
 	return return_items_after_entry
+
+@frappe.whitelist()
+def make_grn(doc):
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	grn_items = []
+	for item in doc.get('return_materials'):
+		grn_items.append({"pf_item_code":item['pf_item_code'],"item_code":item['item_code'],"qty":item['qty'],"received_qty":item['qty'],"rejected_qty":0,"uom":item['uom'],"secondary_qty":item['secondary_qty'],"secondary_uom":item['secondary_uom']})
+	grn = frappe.get_doc({
+			"doctype": "GRN",
+			"supplier": doc.get('supplier'),
+			"lot": doc.get('lot'),
+			"location": doc.get('expect_return_items_at'),
+			"against_type": 'DC',
+			"against_document": doc.get('name'),
+			"return_materials": grn_items})
+	grn.save()
+	grn.submit()
+	msgprint(_("{0} created").format(comma_and(
+			"""<a href="#Form/GRN/{0}">{1}</a>""".format(grn.name, grn.name))))

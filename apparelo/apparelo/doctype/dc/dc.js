@@ -2,6 +2,21 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('DC', {
+	refresh : (frm) => {
+        if(frm.doc.docstatus == 1) {
+        frm.add_custom_button(__("Submit GRN"), function() {
+            frm.trigger('submit_grn');
+        });
+    }
+    },
+    submit_grn: function(frm){
+        frappe.call({
+			method: "apparelo.apparelo.doctype.dc.dc.make_grn",
+			freeze: true,
+            args: {doc: frm.doc},
+        }
+        )
+    },
 	onload: function(frm) {
 		frm.set_value("company",frappe.defaults.get_default("company"));
 		frappe.db.get_list("Address",{filters:{is_shipping_address: 1}}).then(data => {
