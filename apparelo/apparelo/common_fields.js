@@ -39,12 +39,24 @@ onload: function(frm) {
             }
         };
     });
-    frm.set_query("item", "additional_parts", function() {
-        return {
-            filters: {
-                "item_group":"Raw Material",
-            }
-        };
+    frm.set_query("item", "additional_parts", function(doc, cdt, cdn) {
+        var fields = frappe.get_doc(cdt, cdn);
+		if(fields.based_on==="None") {
+            return {
+                filters: {
+                    "item_group":"Raw Material",
+                    "has_variants":0
+                }
+            };
+        }
+        else{
+            return {
+                filters: {
+                    "item_group":"Raw Material",
+                    "has_variants":1
+                }
+            };
+        }
     });
     frm.set_query("item", "additional_parts_size", function() {
         return {

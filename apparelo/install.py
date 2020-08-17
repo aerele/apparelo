@@ -31,6 +31,7 @@ def after_install():
     create_item_attributes()
     create_attr_values()
     create_roll_uom()
+    create_bags_uom()
     create_apparelo_process()
     create_item_template()
     make_item_fields()
@@ -108,3 +109,9 @@ def create_item_group():
         item_group=frappe.new_doc("Item Group")
         item_group.item_group_name="Intermediate Product"
         item_group.save()
+
+def create_bags_uom():
+    if not frappe.db.exists("UOM","Bags"):
+        uom=frappe.new_doc("UOM")
+        uom.uom_name= 'Bags'
+        uom.save()
