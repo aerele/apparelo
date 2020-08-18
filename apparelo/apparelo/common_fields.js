@@ -13,13 +13,7 @@ onload: function(frm) {
         return {
             "filters":{
                 "item_group":["in",["Products","Intermediate Product"]],
-            },
-        };
-    });
-    frm.set_query("intermediate_item","combined_item_mapping", function() {
-        return {
-            "filters":{
-                "has_variants": 1,
+                "has_variants": 1
             },
         };
     });

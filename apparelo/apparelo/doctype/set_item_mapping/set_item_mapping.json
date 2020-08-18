@@ -1,47 +1,47 @@
 {
  "actions": [],
- "creation": "2020-08-05 10:56:12.655255",
+ "creation": "2020-08-17 21:09:26.575966",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "intermediate_item",
-  "intermediate_item_colour",
-  "final_item_colour"
+  "part",
+  "part_colour",
+  "piece_colour"
  ],
  "fields": [
   {
-   "fieldname": "intermediate_item",
+   "fieldname": "part",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Intermediate Item",
-   "options": "Item",
+   "label": "Part",
+   "options": "Apparelo Part",
    "reqd": 1
   },
   {
-   "fieldname": "final_item_colour",
+   "fieldname": "part_colour",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Final Item Colour",
-   "options": "Apparelo Colour",
-   "reqd": 1
-  },
-  {
-   "fieldname": "intermediate_item_colour",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Intermediate Item Colour",
+   "label": "Part Colour",
    "options": "Apparelo Colour",
    "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "piece_colour",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Piece Colour",
+   "options": "Apparelo Colour",
    "reqd": 1
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2020-08-06 10:13:15.188674",
+ "modified": "2020-08-17 21:09:26.575966",
  "modified_by": "Administrator",
  "module": "Apparelo",
- "name": "Combined Item Mapping",
+ "name": "Set Item Mapping",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,
