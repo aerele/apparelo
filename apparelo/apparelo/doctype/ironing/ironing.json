@@ -26,6 +26,10 @@
   "section_break_19",
   "additional_parts_size",
   "additional_parts",
+  "section_break_21",
+  "enable_set_item",
+  "section_break_23",
+  "set_item_mapping",
   "amended_from"
  ],
  "fields": [
@@ -164,11 +168,32 @@
    "fieldtype": "Table MultiSelect",
    "label": "Size Additional Items",
    "options": "Additional Item"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_set_item",
+   "fieldtype": "Check",
+   "label": "Enable Set Item"
+  },
+  {
+   "depends_on": "eval: doc.enable_set_item==1",
+   "fieldname": "section_break_23",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "set_item_mapping",
+   "fieldtype": "Table",
+   "label": "Set Item Mapping",
+   "options": "Set Item Mapping"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:18.266456",
+ "modified": "2020-08-17 21:10:53.983457",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Ironing",

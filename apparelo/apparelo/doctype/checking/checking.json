@@ -6,6 +6,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "enable_set_item",
+  "part",
+  "section_break_3",
   "additional_information",
   "amended_from"
  ],
@@ -25,11 +28,28 @@
    "fieldtype": "Table",
    "label": "Additional Information",
    "options": "Additional Information Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_set_item",
+   "fieldtype": "Check",
+   "label": "Enable Set Item"
+  },
+  {
+   "depends_on": "eval:doc.enable_set_item==1",
+   "fieldname": "part",
+   "fieldtype": "Link",
+   "label": "Part",
+   "options": "Apparelo Part"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:15.515711",
+ "modified": "2020-08-17 21:14:58.101152",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Checking",

@@ -20,6 +20,8 @@ class Ironing(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		if self.enable_set_item:
+			attribute_set.pop('Part')
 		if final_process=="Ironing":
 			attribute_set.pop('Apparelo Colour')
 			variants = create_variants(item, attribute_set)
@@ -43,9 +45,15 @@ class Ironing(Document):
 						if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"]:
 							item_list.append({"item_code": input_item,"uom": "Nos"})
 					else:
-						for colour in colours:
-							if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"]:
-								item_list.append({"item_code": input_item,"uom": "Nos"})
+						if self.enable_set_item:
+							for item_mapping in self.set_item_mapping:
+								if item_mapping.part in input_attr['Part'] and item_mapping.part_colour in input_attr["Apparelo Colour"] and item_mapping.piece_colour in variant_attr["Apparelo Colour"]:
+									if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"]:
+										item_list.append({"item_code": input_item,"uom": "Nos"})
+						else:
+							for colour in colours:
+								if size in input_attr["Apparelo Size"]  and size in variant_attr["Apparelo Size"] and colour in input_attr["Apparelo Colour"] and colour in variant_attr["Apparelo Colour"]:
+									item_list.append({"item_code": input_item,"uom": "Nos"})
 			if self.enable_additional_parts:
 				matched_part=matching_additional_part(additional_parts,self.additional_parts_colour,self.additional_parts_size,self.additional_parts,variant)
 				for additional_part in self.additional_parts:

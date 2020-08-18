@@ -42,12 +42,44 @@ class ItemProductionDetail(Document):
 			)
 
 	def create_item_templates(self):
-		template_item_codes_from_stitching = {"Stitching":" Stitched Cloth", "Checking":" Checked Cloth", "Ironing":" Ironed Cloth", "Packing":" Packed Cloth"}
+		template_item_codes_from_stitching = {"Stitching":" Stitched Cloth", "Checking":" Checked Cloth","Ironing":" Ironed Cloth"}
 		template_item_codes_from_cutting = {"Cutting":" Cut Cloth", "Label Fusing": " Labeled Cloth", "Piece Printing": " Printed Cloth"}
+		template_item_codes_for_set_items = {"Stitching":" Stitched Cloth", "Checking":" Checked Cloth"}
 		for process in self.processes:
 			if process.process_name in template_item_codes_from_stitching.keys():
 				item_code = self.item+template_item_codes_from_stitching[process.process_name]
-				if not frappe.db.exists("Item", item_code):
+				if self.enable_set_item:
+					if process.process_name in template_item_codes_for_set_items.keys():
+						attribute = [
+								{
+									"attribute" : "Apparelo Colour"
+								},
+								{
+									"attribute" : "Part"
+								},
+								{
+									"attribute" : "Apparelo Size"
+								}
+							]
+					else:
+						attribute = [
+							{
+								"attribute" : "Apparelo Colour"
+							},
+							{
+								"attribute" : "Apparelo Size"
+							}
+						]					
+				else:
+					attribute = [
+							{
+								"attribute" : "Apparelo Colour"
+							},
+							{
+								"attribute" : "Apparelo Size"
+							}
+						]
+				if not frappe.db.exists("Item",item_code):
 					frappe.get_doc({
 						"doctype": "Item",
 						"item_code": item_code,
@@ -58,14 +90,7 @@ class ItemProductionDetail(Document):
 						"has_variants" : "1",
 						"variant_based_on" : "Item Attribute",
 						"is_sub_contracted_item": "1",
-						"attributes" : [
-							{
-								"attribute" : "Apparelo Colour"
-							},
-							{
-								"attribute" : "Apparelo Size"
-							}
-						]
+						"attributes" : attribute
 					}).save()
 			elif process.process_name in template_item_codes_from_cutting.keys():
 				item_code = self.item+template_item_codes_from_cutting[process.process_name]
@@ -409,7 +434,7 @@ class ItemProductionDetail(Document):
 			for combined_ipd in self.combined_ipds:
 				item_mapping = frappe.db.get_value("IPD Item Mapping", {'item_production_details': combined_ipd.ipd})
 				ipd_doc=frappe.get_doc("Item Production Detail",combined_ipd.ipd)
-				variants = frappe.get_doc('IPD Item Mapping', item_mapping).get_process_variants(ipd_doc.processes[-1].process_name)
+				variants = frappe.get_doc('IPD Item Mapping', item_mapping).get_process_variants(ipd_doc.final_process)
 				input_items_.extend(variants)
 			if self.process_name == 'Packing':
 				process_variants['process'] = 'Packing'

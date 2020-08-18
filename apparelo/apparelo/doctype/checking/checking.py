@@ -15,6 +15,8 @@ class Checking(Document):
 		for input_item_name in input_item_names:
 			input_items.append(frappe.get_doc('Item', input_item_name))
 		attribute_set = get_item_attribute_set(list(map(lambda x: x.attributes, input_items)))
+		if self.enable_set_item:
+			attribute_set['Part'] = [self.part]
 		if final_process=="Checking":
 			attribute_set.pop("Apparelo Colour")
 			variants = create_variants(item, attribute_set)

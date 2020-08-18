@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "item",
+  "enable_set_item",
   "based_on_style",
   "size",
   "colour",
@@ -133,11 +134,17 @@
    "fieldname": "based_on_style",
    "fieldtype": "Check",
    "label": "Based on style"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_set_item",
+   "fieldtype": "Check",
+   "label": "Enable Set Item"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-07-09 15:12:18.658297",
+ "modified": "2020-08-17 19:49:18.958465",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
