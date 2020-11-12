@@ -12,6 +12,10 @@
   "size",
   "colour",
   "style",
+  "helper_section_section",
+  "colour_mapping",
+  "swap_colours",
+  "section_break_9",
   "processes",
   "final_process",
   "additional_flows",
@@ -140,11 +144,33 @@
    "fieldname": "enable_set_item",
    "fieldtype": "Check",
    "label": "Enable Set Item"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval: doc.docstatus == 0",
+   "fieldname": "helper_section_section",
+   "fieldtype": "Section Break",
+   "label": "Helper Section"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "colour_mapping",
+   "fieldtype": "Table",
+   "label": "Colour Mapping",
+   "options": "Colour Mapping"
+  },
+  {
+   "fieldname": "swap_colours",
+   "fieldtype": "Button",
+   "label": "Swap Colours"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-08-17 19:49:18.958465",
+ "modified": "2020-11-12 10:39:59.570940",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Item Production Detail",
