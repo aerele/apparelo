@@ -4,6 +4,7 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
 from frappe import _
 from erpnext import get_default_company, get_default_currency
 from frappe.model.document import Document
@@ -13,6 +14,7 @@ from frappe.utils import comma_and,get_link_to_form
 from collections import Counter
 from frappe.core.page.background_jobs.background_jobs import get_info
 from frappe.utils.background_jobs import enqueue
+from six import string_types
 
 class ItemProductionDetail(Document):
 	def before_insert(self):
@@ -674,3 +676,89 @@ def submit_ipd(ipd):
 		error_message = frappe.get_traceback()+"\n\n IPD Name: \n"+ipd
 		frappe.log_error(error_message, "IPD Submission Error")
 		raise
+
+@frappe.whitelist()
+def create_process_records(doc):
+	processes = []
+	colour_mapping = {}
+	final_colours = set()
+	if isinstance(doc, string_types):
+		doc = frappe._dict(json.loads(doc))
+	ipd_name = doc.get('item')
+	if doc.get('colour_mapping'):
+		for mapping in doc.get('colour_mapping'):
+			colour_mapping[mapping['from_colour']] = mapping['to_colour']
+		if doc.get('colour'):
+			for row in doc.get('colour'):
+				if row['colour'] in colour_mapping:
+					final_colours.add(colour_mapping[row['colour']])
+				else:
+					final_colours.add(row['colour'])
+		if doc.get('processes'):
+			for process in doc.get('processes'):
+				is_changed = 0
+				if process['process_name'] in ['Dyeing', 'Bleaching']:
+					new_doc = get_new_doc(ipd_name, process)
+					for row in new_doc.colour_shade_mapping:
+						if row.colour in colour_mapping:
+							row.colour = colour_mapping[row.colour]
+							is_changed = 1
+					if is_changed:
+						new_doc.save()
+						process['process_record'] = new_doc.name
+				if process['process_name'] == 'Cutting':
+					new_doc = get_new_doc(ipd_name, process)
+					for row in new_doc.colour_mapping:
+						if row.colour in colour_mapping:
+							row.colour = colour_mapping[row.colour]
+							is_changed = 1
+					if is_changed:
+						new_doc.save()
+						process['process_record'] = new_doc.name
+				if process['process_name'] in ['Stitching', 'Label Fusing', 'Packing']:
+					new_doc = get_new_doc(ipd_name, process)
+					if process['process_name'] == 'Stitching':
+						for row in new_doc.colour_mappings:
+							if row.piece_colour in colour_mapping:
+								row.piece_colour = colour_mapping[row.piece_colour]
+								is_changed = 1
+							if row.part_colour in colour_mapping:
+								row.part_colour = colour_mapping[row.part_colour]
+								is_changed = 1
+					if new_doc.additional_parts_colour:
+						for row in new_doc.additional_parts_colour:
+							if row.piece_colour in colour_mapping:
+								row.piece_colour = colour_mapping[row.piece_colour]
+								is_changed = 1
+							if row.part_colour in colour_mapping:
+								row.part_colour = colour_mapping[row.part_colour]
+								is_changed = 1
+							else:
+								frappe.throw(
+									_(f"Unable to swap the additional part colour {row.part_colour} in process record {process['process_record']} at row {process['idx']}")
+								)
+					if is_changed:
+						new_doc.save()
+						process['process_record'] = new_doc.name
+				processes.append({
+						'input_item': process['input_item'] if 'input_item' in process else '',
+						'input_index':process['input_index'] if 'input_index' in process else '',
+						'process_name': process['process_name'],
+						'process_record': process['process_record'],
+						'ipd_name': process['ipd_name'] if 'ipd_name' in process else '',
+						'ipd_process_index': process['ipd_process_index'] if 'ipd_process_index' in process else '',
+						'previous_process': process['previous_process'] if 'previous_process' in process else ''})
+	return [processes, final_colours]
+
+
+def get_new_doc(ipd_name, process):
+	temp = 0
+	doc_name = ''
+	existing_doc = frappe.get_doc(process['process_name'], process['process_record'])
+	new_doc = frappe.copy_doc(existing_doc)
+	while True:
+		temp+=1
+		if not frappe.db.exists(process['process_name'], f'{ipd_name} - {temp}'):
+			new_doc.name = f'{ipd_name} - {temp}'
+			break
+	return new_doc
