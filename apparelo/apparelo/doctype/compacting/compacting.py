@@ -71,7 +71,7 @@ class Compacting(Document):
 								if similar_diff:
 									boms.append(existing_bom_name)
 								else:
-									frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make these BOMs inactive and try again.").format(variant))
+									frappe.throw(_("Active BOM with different Materials or qty already exists for the item {0}. Please make this BOM {1} inactive and try again.").format(variant, """<a href="#Form/BOM/{0}">{1}</a>""".format(existing_bom_name, existing_bom_name)))
 		return boms
 
 def create_item_template():
