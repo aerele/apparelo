@@ -11,8 +11,14 @@
   "process_1",
   "default_target_warehouse",
   "get_items",
-  "section_break_13",
+  "cutting_section_section",
+  "colour",
+  "size",
+  "piece_count",
+  "make_entry",
+  "inward_materials_section",
   "stock_entry_items",
+  "delete_unavailable_items",
   "amended_from"
  ],
  "fields": [
@@ -42,10 +48,6 @@
    "reqd": 1
   },
   {
-   "fieldname": "section_break_13",
-   "fieldtype": "Section Break"
-  },
-  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -71,12 +73,50 @@
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items"
+  },
+  {
+   "depends_on": "eval:doc.process_1==\"Cutting\" && doc.docstatus == 0",
+   "fieldname": "cutting_section_section",
+   "fieldtype": "Section Break",
+   "label": "Cutting Section"
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Link",
+   "label": "Colour",
+   "options": "Apparelo Colour"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Link",
+   "label": "Size",
+   "options": "Apparelo Size"
+  },
+  {
+   "fieldname": "piece_count",
+   "fieldtype": "Float",
+   "label": "Piece Count"
+  },
+  {
+   "fieldname": "make_entry",
+   "fieldtype": "Button",
+   "label": "Make Entry"
+  },
+  {
+   "fieldname": "delete_unavailable_items",
+   "fieldtype": "Button",
+   "label": "Delete Unavailable Items"
+  },
+  {
+   "fieldname": "inward_materials_section",
+   "fieldtype": "Section Break",
+   "label": "Inward Materials"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2021-01-25 23:28:24.024280",
+ "modified": "2021-01-26 14:12:35.356681",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "Custom Stock Entry",

@@ -11,7 +11,7 @@
  ],
  "fields": [
   {
-   "columns": 2,
+   "columns": 3,
    "fieldname": "item_code",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -39,7 +39,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-01-26 00:36:29.989216",
+ "modified": "2021-01-26 13:07:06.669525",
  "modified_by": "Administrator",
  "module": "Apparelo",
  "name": "SE Item",
