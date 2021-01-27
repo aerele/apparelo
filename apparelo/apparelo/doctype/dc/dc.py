@@ -282,6 +282,7 @@ def get_supplier_based_address(supplier):
 	else:
 		return ''
 
+@frappe.whitelist()
 def get_supplier(doctype, txt, searchfield, start, page_len, filters):
 	suppliers = []
 	all_supplier = frappe.db.get_all("Supplier")

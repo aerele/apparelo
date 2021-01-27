@@ -1,0 +1,178 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2021-01-25 17:56:01.724307",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "lot",
+  "process_1",
+  "default_target_warehouse",
+  "get_items",
+  "cutting_section_section",
+  "colour",
+  "size",
+  "piece_count",
+  "make_entry",
+  "inward_materials_section",
+  "stock_entry_items",
+  "delete_unavailable_items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "SE-",
+   "print_hide": 1,
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "lot",
+   "fieldtype": "Link",
+   "label": "Lot",
+   "options": "Lot Creation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "process_1",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Process",
+   "options": "Apparelo Process",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Custom Stock Entry",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "default_target_warehouse",
+   "fieldtype": "Link",
+   "label": "Default Target Warehouse",
+   "options": "Warehouse",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_entry_items",
+   "fieldtype": "Table",
+   "label": "Stock Entry Items",
+   "options": "SE Item"
+  },
+  {
+   "fieldname": "get_items",
+   "fieldtype": "Button",
+   "label": "Get Items"
+  },
+  {
+   "depends_on": "eval:doc.process_1==\"Cutting\" && doc.docstatus == 0",
+   "fieldname": "cutting_section_section",
+   "fieldtype": "Section Break",
+   "label": "Cutting Section"
+  },
+  {
+   "fieldname": "colour",
+   "fieldtype": "Link",
+   "label": "Colour",
+   "options": "Apparelo Colour"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Link",
+   "label": "Size",
+   "options": "Apparelo Size"
+  },
+  {
+   "fieldname": "piece_count",
+   "fieldtype": "Float",
+   "label": "Piece Count"
+  },
+  {
+   "fieldname": "make_entry",
+   "fieldtype": "Button",
+   "label": "Make Entry"
+  },
+  {
+   "fieldname": "delete_unavailable_items",
+   "fieldtype": "Button",
+   "label": "Delete Unavailable Items"
+  },
+  {
+   "fieldname": "inward_materials_section",
+   "fieldtype": "Section Break",
+   "label": "Inward Materials"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "is_submittable": 1,
+ "links": [],
+ "modified": "2021-01-26 14:12:35.356681",
+ "modified_by": "Administrator",
+ "module": "Apparelo",
+ "name": "Custom Stock Entry",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Admin",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Data Entry Operator",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Apparelo Report Analyst",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

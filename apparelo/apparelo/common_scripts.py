@@ -43,6 +43,13 @@ def se_custom_field(update=True):
 				"fieldtype": "Link",
 				"label": "DC",
 				"options": "DC"
+			},
+			{
+				"fieldname": "custom_stock_entry",
+				"fieldtype": "Link",
+				"label": "Custom Stock Entry",
+				"options": "Custom Stock Entry",
+				"insert_after": "dc"
 			}
 		]
 		}
