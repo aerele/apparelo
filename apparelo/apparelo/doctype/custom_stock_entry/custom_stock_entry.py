@@ -30,6 +30,7 @@ class CustomStockEntry(Document):
 			items.append(item_list)
 		stock_entry = frappe.get_doc({
 				"doctype": "Stock Entry",
+				"custom_stock_entry": self.name,
 				"to_warehouse": self.default_target_warehouse,
 				"stock_entry_type": 'Material Receipt',
 				"company": get_default_company(),
